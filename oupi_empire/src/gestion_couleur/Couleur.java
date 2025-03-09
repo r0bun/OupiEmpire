@@ -7,7 +7,7 @@ import java.awt.Color;
  * La couleur blanche et la noire sont exclues de cette liste car elles ont des propiétées spéciales
  * 0 = bleu, 1 = rouge, 2 = cyan, 3 = darck Gray, 4 = gris, 5 = vert, 6 = magenta, 7 = rose, 8 = jaune, 9 = orange
  * 
- * @author Frédéric Houde
+ * @author Badr Rifki
  */
 public class Couleur {
 
@@ -41,7 +41,7 @@ public class Couleur {
 	 *  0 = bleu, 1 = rouge, 2 = cyan, 3 = darck Gray, 4 = gris, 
 	 *  5 = vert, 6 = magenta, 7 = rose, 8 = jaune, 9 = orange
 	 */
-	//Frédéric Houde
+	
 	public Couleur (int n) {
 		valeurEnInt = n;
 		couleur = COULEUR_ELEMENTS [n];
@@ -52,7 +52,7 @@ public class Couleur {
 	 * 
 	 * @return La position de la pichenote dans la liste des couleurs
 	 */
-	//Frédéric Houde
+	
 	public int getValeurEnInt () {
 		return valeurEnInt;
 	}
@@ -61,7 +61,7 @@ public class Couleur {
 	 * 
 	 * @param couleur la couleur en question
 	 */
-	//Frédéric Houde
+
 	public Couleur (Color couleur) {
 		this.couleur = couleur;
 		if(couleur.equals(Color.white)) {
@@ -78,7 +78,7 @@ public class Couleur {
 	 * 
 	 * @return la couleur de la couleur
 	 */
-	//Frédéric Houde
+	
 	public Color getCouleur() {
 		return couleur;
 	}
@@ -90,7 +90,6 @@ public class Couleur {
 	 * 
 	 * @return Vrai si la couleur est la même
 	 */
-	//Frédéric Houde
 	public boolean equals (Couleur couleur) {
 		return this.couleur.equals(couleur.getCouleur());
 	}
@@ -101,7 +100,7 @@ public class Couleur {
 	 * @param color la couleur que l'on désire tester
 	 * @return
 	 */
-	//Frédéric Houde
+	
 	public boolean equals (Color color) {
 		return this.couleur.equals(color);
 	}
@@ -115,7 +114,6 @@ public class Couleur {
 	 *  0 = bleu, 1 = rouge, 2 = cyan, 3 = darck Gray, 4 = gris, 
 	 *  5 = vert, 6 = magenta, 7 = rose, 8 = jaune, 9 = orange
 	 */
-	//Frédéric Houde
 	public String toString() {
 		String representation = "";
 		switch (valeurEnInt) {

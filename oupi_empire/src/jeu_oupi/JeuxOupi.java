@@ -22,8 +22,11 @@ public class JeuxOupi implements Dessinable {
 	public JeuxOupi(int screenWidth, int screenHeight) {
 	    this.screenWidth = screenWidth;
 	    this.screenHeight = screenHeight;
+	   
+	    int taille = (screenWidth/2)/8;
+	    //taille = taille du composant c-a-d screenWidth/2 diviser par le nombre de tuilles
 		
-		plateau = new Plateau(new Couleur (couleurPlateau),new Couleur (couleurBordPlateau), 0, 0, screenWidth/1.5,screenWidth/1.5 );
+	    plateau = new Plateau(8, 8, taille);
 	}
 	
 	@Override

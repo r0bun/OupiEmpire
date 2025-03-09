@@ -1,83 +1,41 @@
 package plateau;
 
-import java.awt.Graphics2D;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 
-import gestion_couleur.Couleur;
-import interfaces.Dessinable;
-import interfaces.ObjetCollision;
-import vecteurs.Vecteur2D;
+public class Plateau {
+    private int lignes, colonnes;
+    private int tailleTuile;
+    private Tuile[][] tuiles; 
 
-public class Plateau extends ObjetCollision{
-
-	private Rectangle2D.Double carrePlat;
-	
-	private Vecteur2D coinGaucheH, coinDroitH, coinGaucheB, coinDroitB;
-	
-	/** largeur d'un cote dy carre interieur du plateau*/
-	private double largeur;
-	
-	/** hauteur d'un cote dy carre interieur du plateau*/
-	private double hauteur;
-	
-	private Couleur couleurPlatLignes, couleurPlateauFond;
-	
-	 /** Support de changement de propriété pour cette classe. */
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-
-    /**
-     * Ajoute un écouteur de changement de propriété à cette classe.
-     * 
-     * @param listener L'écouteur de changement de propriété à ajouter.
-     */
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.addPropertyChangeListener(listener);
+    public Plateau(int lignes, int colonnes, int tailleTuile) {
+        this.lignes = lignes;
+        this.colonnes = colonnes;
+        this.tailleTuile = tailleTuile;
+        initialiserTuiles();
     }
-    
-    
-    public Plateau (Couleur couleurFond, Couleur couleurLignes, double posX, double posY,  double largeur, double hauteur) {
-    	super (new Vecteur2D (posX,posY), 0);
-		this.couleurPlatLignes = couleurLignes;
-		this.couleurPlateauFond = couleurFond;
-		this.largeur = largeur;
-		this.hauteur = hauteur;
-		
-		creerFormes();
-		
-	}
-	
-	@Override
-	public void dessiner(Graphics2D g2d) {
-		Graphics2D g2dPrive = (Graphics2D) g2d.create();
-		
-		g2dPrive.setColor(couleurPlateauFond.getCouleur());
-		g2dPrive.fill(carrePlat);
-	}
 
-
-
-
-	@Override
-	public void creerFormes() {
-		
-		carrePlat = new Rectangle2D.Double(getPos().getX(), getPos().getY(), largeur, hauteur);
-		
-	}
-	
-	 /**
-     * methode qui prend les formes cree dans la methode creer formes et qui retourne un carre propice au collisions
-     */
-    //Badr Rifki
-	/*
-    public void creerZone() {
-    	Area carrePlateau = new Area(carrePlat);
-    	
+    private void initialiserTuiles() {
+        tuiles = new Tuile[lignes][colonnes];
+        for (int ligne = 0; ligne < lignes; ligne++) {
+            for (int colonne = 0; colonne < colonnes; colonne++) {
+                // Alterner les couleurs pour un effet damier
+                Color couleur = (ligne + colonne) % 2 == 0 ? Color.LIGHT_GRAY : Color.DARK_GRAY;
+                tuiles[ligne][colonne] = new Tuile(colonne * tailleTuile, ligne * tailleTuile, tailleTuile, couleur);
+            }
+        }
     }
-    */
 
+    public void dessiner(Graphics2D g2d) {
+        for (int ligne = 0; ligne < lignes; ligne++) {
+            for (int colonne = 0; colonne < colonnes; colonne++) {
+                tuiles[ligne][colonne].dessiner(g2d);
+            }
+        }
+    }
+
+    public Tuile getTuile(int ligne, int colonne) {
+        return tuiles[ligne][colonne];
+    }
 }
+
