@@ -1,5 +1,6 @@
 package jeu_oupi;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -8,13 +9,21 @@ import java.beans.PropertyChangeSupport;
 
 import javax.swing.JPanel;
 
+import plateau.Tuile;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 public class ZoneAnimationOupi extends JPanel implements Runnable{
 
 	private static final long serialVersionUID = 1L;
 	
 	private JeuxOupi jeuxOupi;
 	
+	final int FPS = 27;
 
+	Thread threadJeu;
+	
 	//ajouter le support pour lancer des evenements de type PropertyChange
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
@@ -25,13 +34,55 @@ public class ZoneAnimationOupi extends JPanel implements Runnable{
 			this.pcs.addPropertyChangeListener(listener);
 	}
 
-		 public ZoneAnimationOupi(int screenWidth, int screenHeight) {
-		        jeuxOupi = new JeuxOupi(screenWidth, screenHeight);
+	public ZoneAnimationOupi(int screenWidth, int screenHeight) {
+			 
+			jeuxOupi = new JeuxOupi(screenWidth, screenHeight);
+			 
+		 	addMouseListener(new MouseAdapter() {
+		 		@Override
+		 		public void mousePressed(MouseEvent e) {
+		 			int x = e.getX();
+	                int y = e.getY();
+	                
+	                int taille = (screenWidth/2)/8;
+
+	                // Convertir les coordonnées de la souris en indices de tuile
+	                int ligne = y / taille;
+	                int colonne = x / taille;
+
+	                // Vérifier si le clic est dans les limites du plateau
+	                if (ligne >= 0 && ligne < 8 && colonne >= 0 && colonne < 8) {
+	                    Tuile tuileCliquee = jeuxOupi.getPlateau().getTuile(ligne, colonne);
+	                    System.out.println("Tuile cliquée : Ligne " + ligne + ", Colonne " + colonne);
+
+	                    
+	                }
+		 		}
+		 	});
+		        
 	}
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
+		
+		double intervaleDessin = 1000000000/FPS;
+		double delta = 0;
+		long  tempsAv = System.nanoTime();
+		long tempsAct;
+		
+		while(threadJeu != null) {
+			
+			tempsAct = System.nanoTime();
+			
+			delta += (tempsAct - tempsAv)/intervaleDessin;
+			tempsAv = tempsAct;
+			
+			if(delta>=1) {
+				miseAJour();
+				repaint();
+				delta--;
+			}
+		}
 		
 	}
 	
@@ -47,6 +98,15 @@ public class ZoneAnimationOupi extends JPanel implements Runnable{
 		
 		jeuxOupi.dessiner(g2d);
 		
+	}
+	
+	public void miseAJour() {
+		
+	}
+	
+	public void demarer() {
+		threadJeu = new Thread(this);
+		threadJeu.start();
 	}
 
 

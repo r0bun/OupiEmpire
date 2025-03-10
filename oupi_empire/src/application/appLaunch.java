@@ -40,6 +40,9 @@ public class appLaunch extends JFrame {
         contentPane.setLayout(null);
         setContentPane(contentPane);
         
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setAlwaysOnTop(true);
+        
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice gd = ge.getDefaultScreenDevice();
         DisplayMode dm = gd.getDisplayMode();
@@ -50,18 +53,14 @@ public class appLaunch extends JFrame {
         zoneAnimationOupi.setBounds(50, 30, (int) (screenWidth/2), (int)(screenWidth/2));
         contentPane.add(zoneAnimationOupi);
         
+        zoneAnimationOupi.demarer();
+        
         
 
         setBounds(0, 0, screenWidth, screenHeight);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         
 
-        
-
-        if (gd.isFullScreenSupported()) {
-            gd.setFullScreenWindow(this);
-        }
     }
 }
 

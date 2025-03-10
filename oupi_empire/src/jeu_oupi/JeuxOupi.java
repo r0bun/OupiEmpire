@@ -36,6 +36,10 @@ public class JeuxOupi implements Dessinable {
 		
 	}
 
+	public Plateau getPlateau() {
+		return plateau;
+	}
+
 	
 
 }
