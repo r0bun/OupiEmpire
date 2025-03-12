@@ -17,14 +17,13 @@ public class JeuxOupi implements Dessinable {
 
 																		//PLATEAU
 	private Plateau plateau;
-	private static int nbTuiles = 8;
+	private static int nbTuiles = 20;
 	public static int tailleTuile;
 	
 																		//TROUPES
 	private ArrayList<Troupe> troupes = new ArrayList<>(); // liste pour annuler une decision faite par un joueur
 	private ArrayList<Troupe> simTroupes = new ArrayList<>();
 	private Troupe troupeSelectionnee = null;
-	
 	
 	public JeuxOupi(int screenWidth, int screenHeight) {
 	    this.screenWidth = screenWidth;
@@ -40,6 +39,7 @@ public class JeuxOupi implements Dessinable {
 	public void setTroupes() {
 		
 		troupes.add(new Oupi(0,0));
+		troupes.add(new Oupi(0,1));
 	}
 	
 	private void copyTroupes(ArrayList<Troupe> source, ArrayList<Troupe> dest) {
@@ -75,12 +75,22 @@ public class JeuxOupi implements Dessinable {
 	}
 	
 	public Troupe getTroupeA(int x, int y) {
-		for (Troupe troupe : simTroupes) {
-			if (troupe.estA(x, y)) {
-				return troupe;
+		for (int i=0; i<troupes.size();i++) {
+			if (simTroupes.get(i).estA(x, y)) {
+				return simTroupes.get(i);
 			}
 		}
 		return null;
+	}
+	
+	public void setTroupeA(int x, int y, int newCol, int newLig) {
+		
+		for (int i=0; i<troupes.size();i++) {
+			if (simTroupes.get(i).estA(x, y)) {
+				simTroupes.get(i).setLig(newLig);
+				simTroupes.get(i).setCol(newCol);
+			}
+		}
 	}
 	
 	public void selectionnerTroupe(Troupe troupe) {
@@ -123,4 +133,12 @@ public class JeuxOupi implements Dessinable {
 			troupeSelectionnee.deplacerDroite();
 		}
 	}
+
+	public void resetTroupeAct() {
+		copyTroupes(troupes, simTroupes);
+		troupeSelectionnee.setDistanceParcourable(troupeSelectionnee.getBakDistParc());
+	}
+
+	
+
 }

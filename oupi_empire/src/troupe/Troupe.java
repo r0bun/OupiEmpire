@@ -17,6 +17,9 @@ public class Troupe implements Dessinable {
 	private int col, lig, preCol, preLig;
 	private boolean selectionne;
 	
+	private int bakDistParc=0;
+	private int distanceParcourable=0;
+	
 	public Troupe(int col, int lig) {
 		
 		this.col = col;
@@ -27,6 +30,7 @@ public class Troupe implements Dessinable {
 		preLig= lig;
 		selectionne = false;
 	}
+	
 
 	public BufferedImage getImage() {
 		return image;
@@ -77,43 +81,47 @@ public class Troupe implements Dessinable {
 	}
 	
 	public void deplacerHaut() {
+		if(distanceParcourable != 0) {
 		if (lig > 0) {
 			preLig = lig;
 			lig--;
 			y = getY(lig);
 		}
+		distanceParcourable -= 1;
+		}
 	}
 	
 	public void deplacerBas() {
+		if(distanceParcourable != 0) {
 		if (lig < JeuxOupi.getNbTuiles() - 1) {
 			preLig = lig;
 			lig++;
 			y = getY(lig);
 		}
+		distanceParcourable -= 1;
+		}
 	}
 	
 	public void deplacerGauche() {
+		if(distanceParcourable != 0) {
 		if (col > 0) {
 			preCol = col;
 			col--;
 			x = getX(col);
 		}
+		distanceParcourable -= 1;
+		}
 	}
 	
 	public void deplacerDroite() {
+		if(distanceParcourable != 0) {
 		if (col < JeuxOupi.getNbTuiles() - 1) {
 			preCol = col;
 			col++;
 			x = getX(col);
 		}
-	}
-	
-	public int getCol() {
-		return col;
-	}
-	
-	public int getLig() {
-		return lig;
+		distanceParcourable -= 1;
+		}
 	}
 	
 	public boolean estA(int clickX, int clickY) {
@@ -122,4 +130,41 @@ public class Troupe implements Dessinable {
 		return clickX >= troupeX && clickX < troupeX + JeuxOupi.tailleTuile &&
 			   clickY >= troupeY && clickY < troupeY + JeuxOupi.tailleTuile;
 	}
+	
+	public int getDistanceParcourable() {
+		return distanceParcourable;
+	}
+
+	public void setDistanceParcourable(int distanceParcourable) {
+		this.distanceParcourable = distanceParcourable;
+	}
+
+	
+	public int getBakDistParc() {
+		return bakDistParc;
+	}
+
+
+	public void setBakDistParc(int bakDistParc) {
+		this.bakDistParc = bakDistParc;
+	}
+
+	public int getCol() {
+		return col;
+	}
+	
+	public int getLig() {
+		return lig;
+	}
+
+	public void setCol(int col) {
+		this.col = col;
+	}
+
+
+	public void setLig(int lig) {
+		this.lig = lig;
+	}
+
+	
 }

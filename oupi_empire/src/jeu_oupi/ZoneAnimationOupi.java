@@ -63,8 +63,8 @@ public class ZoneAnimationOupi extends JPanel implements Runnable{
 	                if (ligne >= 0 && ligne < JeuxOupi.getNbTuiles() && colonne >= 0 && colonne < JeuxOupi.getNbTuiles()) {
 	                    Tuile tuileCliquee = jeuxOupi.getPlateau().getTuile(ligne, colonne);
 	                    System.out.println("Tuile cliquée : Ligne " + (ligne+1) + ", Colonne " + (colonne+1));
-
-	                    tuileCliquee.setCouleur(Color.blue);
+	                    
+	                    
 	                }
 		 		}
 		 		});
@@ -86,6 +86,9 @@ public class ZoneAnimationOupi extends JPanel implements Runnable{
 		 					break;
 		 				case KeyEvent.VK_D: // D
 		 					jeuxOupi.deplacerTroupeSelectionneeDroite();
+		 					break;
+		 				case KeyEvent.VK_R: // R
+		 					jeuxOupi.resetTroupeAct();
 		 					break;
 		 			}
 		 			repaint();
