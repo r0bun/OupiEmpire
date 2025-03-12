@@ -43,19 +43,17 @@ public class ZoneAnimationOupi extends JPanel implements Runnable{
 		 		public void mousePressed(MouseEvent e) {
 		 			int x = e.getX();
 	                int y = e.getY();
-	                
-	                int taille = (screenWidth/2)/8;
 
 	                // Convertir les coordonnées de la souris en indices de tuile
-	                int ligne = y / taille;
-	                int colonne = x / taille;
+	                int ligne = y / JeuxOupi.tailleTuile;
+	                int colonne = x / JeuxOupi.tailleTuile;
 
 	                // Vérifier si le clic est dans les limites du plateau
-	                if (ligne >= 0 && ligne < 8 && colonne >= 0 && colonne < 8) {
+	                if (ligne >= 0 && ligne < 20 && colonne >= 0 && colonne < 20) {
 	                    Tuile tuileCliquee = jeuxOupi.getPlateau().getTuile(ligne, colonne);
-	                    System.out.println("Tuile cliquée : Ligne " + ligne + ", Colonne " + colonne);
+	                    System.out.println("Tuile cliquée : Ligne " + (ligne+1) + ", Colonne " + (colonne+1));
 
-	                    
+	                    tuileCliquee.setCouleur(Color.blue);
 	                }
 		 		}
 		 	});

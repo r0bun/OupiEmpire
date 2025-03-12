@@ -32,6 +32,7 @@ public class appLaunch extends JFrame {
      * Create the frame.
      */
     public appLaunch() {
+    	setBackground(new Color(0, 0, 0));
         // Set undecorated for true fullscreen mode (removes title bar)
         //setUndecorated(true);
 
@@ -59,8 +60,9 @@ public class appLaunch extends JFrame {
 
         setBounds(0, 0, screenWidth, screenHeight);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
+        setLocationRelativeTo(null);
         
-
     }
 }
 

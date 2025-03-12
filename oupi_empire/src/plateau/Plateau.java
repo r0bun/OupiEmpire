@@ -3,7 +3,9 @@ package plateau;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class Plateau {
+import interfaces.Dessinable;
+
+public class Plateau implements Dessinable{
     private int lignes, colonnes;
     private int tailleTuile;
     private Tuile[][] tuiles; 
@@ -27,9 +29,10 @@ public class Plateau {
     }
 
     public void dessiner(Graphics2D g2d) {
+    	Graphics2D g2dPrive = (Graphics2D) g2d.create();
         for (int ligne = 0; ligne < lignes; ligne++) {
             for (int colonne = 0; colonne < colonnes; colonne++) {
-                tuiles[ligne][colonne].dessiner(g2d);
+                tuiles[ligne][colonne].dessiner(g2dPrive);
             }
         }
     }
