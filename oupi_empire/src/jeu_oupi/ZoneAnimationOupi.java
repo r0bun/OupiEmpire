@@ -4,12 +4,15 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import javax.swing.JPanel;
 
 import plateau.Tuile;
+import troupe.Troupe;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -30,7 +33,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable{
 		/**
 		 * voici la methode qui permettra de s'ajouter en tant qu'ecouteur
 		 */
-	public  void addPropertyChangeListener(PropertyChangeListener listener) {
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
 			this.pcs.addPropertyChangeListener(listener);
 	}
 
@@ -44,17 +47,48 @@ public class ZoneAnimationOupi extends JPanel implements Runnable{
 		 			int x = e.getX();
 	                int y = e.getY();
 
-	                // Convertir les coordonnées de la souris en indices de tuile
+	                // Essayer de sélectionner une troupe d'abord
+	                Troupe cliquee = jeuxOupi.getTroupeA(x, y);
+	                if (cliquee != null) {
+	                    jeuxOupi.selectionnerTroupe(cliquee);
+	                    System.out.println("Troupe sélectionnée à : (" + cliquee.getCol() + "," + cliquee.getLig() + ")");
+	                    return;
+	                }
+
+	                // Si aucune troupe n'a été cliquée, gérer le clic sur une tuile
 	                int ligne = y / JeuxOupi.tailleTuile;
 	                int colonne = x / JeuxOupi.tailleTuile;
 
 	                // Vérifier si le clic est dans les limites du plateau
-	                if (ligne >= 0 && ligne < 20 && colonne >= 0 && colonne < 20) {
+	                if (ligne >= 0 && ligne < JeuxOupi.getNbTuiles() && colonne >= 0 && colonne < JeuxOupi.getNbTuiles()) {
 	                    Tuile tuileCliquee = jeuxOupi.getPlateau().getTuile(ligne, colonne);
 	                    System.out.println("Tuile cliquée : Ligne " + (ligne+1) + ", Colonne " + (colonne+1));
 
 	                    tuileCliquee.setCouleur(Color.blue);
 	                }
+		 		}
+		 		});
+		 	
+		 	// Ajouter un écouteur de clavier pour le déplacement avec WASD
+		 	setFocusable(true);
+		 	addKeyListener(new KeyAdapter() {
+		 		@Override
+		 		public void keyPressed(KeyEvent e) {
+		 			switch (e.getKeyCode()) {
+		 				case KeyEvent.VK_W: // W 
+		 					jeuxOupi.deplacerTroupeSelectionneeHaut();
+		 					break;
+		 				case KeyEvent.VK_A: // A 
+		 					jeuxOupi.deplacerTroupeSelectionneeGauche();
+		 					break;
+		 				case KeyEvent.VK_S: // S 
+		 					jeuxOupi.deplacerTroupeSelectionneeBas();
+		 					break;
+		 				case KeyEvent.VK_D: // D
+		 					jeuxOupi.deplacerTroupeSelectionneeDroite();
+		 					break;
+		 			}
+		 			repaint();
 		 		}
 		 	});
 		        
@@ -105,9 +139,6 @@ public class ZoneAnimationOupi extends JPanel implements Runnable{
 	public void demarer() {
 		threadJeu = new Thread(this);
 		threadJeu.start();
+		requestFocus(); // Demander le focus pour garantir que les entrées du clavier fonctionnent
 	}
-
-
-	
-
 }

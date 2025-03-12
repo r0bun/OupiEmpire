@@ -15,7 +15,7 @@ public class appLaunch extends JFrame {
     private ZoneAnimationOupi zoneAnimationOupi;
 
     /**
-     * Launch the application.
+     * Lance l'application.
      */
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
@@ -29,11 +29,11 @@ public class appLaunch extends JFrame {
     }
 
     /**
-     * Create the frame.
+     * Créer le cadre.
      */
     public appLaunch() {
     	setBackground(new Color(0, 0, 0));
-        // Set undecorated for true fullscreen mode (removes title bar)
+        // Régler sans décoration pour le mode plein écran (supprime la barre de titre)
         //setUndecorated(true);
 
     	contentPane = new JPanel();
@@ -55,14 +55,13 @@ public class appLaunch extends JFrame {
         contentPane.add(zoneAnimationOupi);
         
         zoneAnimationOupi.demarer();
+        // Demander le focus pour l'entrée du clavier
+        zoneAnimationOupi.requestFocusInWindow();
         
-        
-
         setBounds(0, 0, screenWidth, screenHeight);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);
-        
     }
 }
 
