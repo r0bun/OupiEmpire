@@ -6,6 +6,14 @@ import jeu_oupi.ZoneAnimationOupi;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+/**
+ * La classe {@code appLaunch} représente la fenêtre principale de l'application pour l'animation Oupi.
+ * Cette classe étend {@link JFrame} et configure le cadre principal et le panneau de contenu pour l'application.
+ * Elle initialise le composant {@link ZoneAnimationOupi} et configure la fenêtre pour être en plein écran.
+ * 
+ * @author Badr Rifki
+ * 
+ */
 public class appLaunch extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -16,6 +24,8 @@ public class appLaunch extends JFrame {
 
     /**
      * Lance l'application.
+     * 
+     * @param args les arguments de la ligne de commande
      */
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
@@ -29,14 +39,14 @@ public class appLaunch extends JFrame {
     }
 
     /**
-     * Créer le cadre.
+     * Crée le cadre.
      */
     public appLaunch() {
-    	setBackground(new Color(0, 0, 0));
+        setBackground(new Color(0, 0, 0));
         // Régler sans décoration pour le mode plein écran (supprime la barre de titre)
         //setUndecorated(true);
 
-    	contentPane = new JPanel();
+        contentPane = new JPanel();
         contentPane.setBorder(BorderFactory.createEmptyBorder());
         contentPane.setLayout(null);
         setContentPane(contentPane);
