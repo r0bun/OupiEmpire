@@ -135,8 +135,26 @@ public class JeuxOupi implements Dessinable {
 	}
 
 	public void resetTroupeAct() {
-		copyTroupes(troupes, simTroupes);
-		troupeSelectionnee.setDistanceParcourable(troupeSelectionnee.getBakDistParc());
+	    // Sauvegarde l'index de la troupe sélectionnée
+	    int indexTroupeSelectionnee = -1;
+	    if (troupeSelectionnee != null) {
+	        for (int i = 0; i < simTroupes.size(); i++) {
+	            if (simTroupes.get(i) == troupeSelectionnee) {
+	                indexTroupeSelectionnee = i;
+	                break;
+	            }
+	        }
+	    }
+	    
+	    // Copie toutes les troupes
+	    copyTroupes(troupes, simTroupes);
+	    
+	    // Restaure la sélection si une troupe était sélectionnée
+	    if (indexTroupeSelectionnee != -1 && indexTroupeSelectionnee < simTroupes.size()) {
+	        troupeSelectionnee = simTroupes.get(indexTroupeSelectionnee);
+	        troupeSelectionnee.setSelectionne(true);
+	        troupeSelectionnee.setDistanceParcourable(troupeSelectionnee.getBakDistParc());
+	    }
 	}
 
 	
