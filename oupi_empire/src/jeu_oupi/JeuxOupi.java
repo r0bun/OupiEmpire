@@ -22,7 +22,7 @@ public class JeuxOupi implements Dessinable {
     private int screenWidth;
     //private int screenHeight;
 
-    // PLATEAU
+    // PLATEAU 
     private Plateau plateau;
     private static int nbTuiles = 20;
     public static int tailleTuile;
@@ -149,7 +149,7 @@ public class JeuxOupi implements Dessinable {
     /**
      * Sélectionne une troupe.
      * 
-     * @param troupe la troupe à sélectionner
+     * @param troupe la troupe à sélectionner 
      */
     public void selectionnerTroupe(Troupe troupe) {
         // Désélectionner la troupe précédemment sélectionnée
