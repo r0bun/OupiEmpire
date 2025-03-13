@@ -78,16 +78,20 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
             @Override
             public void keyPressed(KeyEvent e) {
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_W: // W 
+                    case KeyEvent.VK_W:
+                    case KeyEvent.VK_UP:
                         jeuxOupi.deplacerTroupeSelectionneeHaut();
                         break;
-                    case KeyEvent.VK_A: // A 
+                    case KeyEvent.VK_A: 
+                    case KeyEvent.VK_LEFT:
                         jeuxOupi.deplacerTroupeSelectionneeGauche();
                         break;
-                    case KeyEvent.VK_S: // S 
+                    case KeyEvent.VK_S:  
+                    case KeyEvent.VK_DOWN:
                         jeuxOupi.deplacerTroupeSelectionneeBas();
                         break;
-                    case KeyEvent.VK_D: // D
+                    case KeyEvent.VK_D: 
+                    case KeyEvent.VK_RIGHT:
                         jeuxOupi.deplacerTroupeSelectionneeDroite();
                         break;
                     case KeyEvent.VK_R: // R

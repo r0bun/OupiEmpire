@@ -154,6 +154,7 @@ public class JeuxOupi implements Dessinable {
     public void selectionnerTroupe(Troupe troupe) {
         // Désélectionner la troupe précédemment sélectionnée
         if (troupeSelectionnee != null) {
+        	troupeSelectionnee.setDistanceParcourable(troupeSelectionnee.getBakDistParc());
             troupeSelectionnee.setSelectionne(false);
         }
         
