@@ -97,7 +97,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
                     case KeyEvent.VK_R: // R
                         jeuxOupi.resetTroupeAct();
                         break;
-                        
+                         
                 }
                 repaint();
             }

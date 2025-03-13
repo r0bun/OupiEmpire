@@ -183,7 +183,7 @@ public class JeuxOupi implements Dessinable {
      */
     public void deplacerTroupeSelectionneeHaut() {
         if (troupeSelectionnee != null) {
-            troupeSelectionnee.deplacerHaut();
+            troupeSelectionnee.deplacerHaut(); 
         }
     }
 
