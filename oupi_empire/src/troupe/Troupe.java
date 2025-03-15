@@ -122,69 +122,85 @@ public class Troupe implements Dessinable {
 
     /**
      * Déplace la troupe vers le haut.
+     * 
+     * @param minusMov si true, diminue la distance parcourable
      */
     public void deplacerHaut(boolean minusMov) {
-        if (distanceParcourable != 0 ||minusMov == false) {
+        if (distanceParcourable > 0 || !minusMov) {
             if (lig > 0) {
                 preLig = lig;
                 lig--;
                 y = getY(lig);
+                
+                if (minusMov) {
+                    distanceParcourable--;
+                } else {
+                    distanceParcourable++;
+                }
             }
-            if(minusMov) {
-            	distanceParcourable -= 1;
-            } 
-            distanceParcourable++;
         }
     }
 
     /**
      * Déplace la troupe vers le bas.
+     * 
+     * @param minusMov si true, diminue la distance parcourable
      */
     public void deplacerBas(boolean minusMov) {
-        if (distanceParcourable != 0 ||minusMov == false) {
+        if (distanceParcourable > 0 || !minusMov) {
             if (lig < JeuxOupi.getNbTuiles() - 1) {
                 preLig = lig;
                 lig++;
                 y = getY(lig);
+                
+                if (minusMov) {
+                    distanceParcourable--;
+                } else {
+                    distanceParcourable++;
+                }
             }
-            if(minusMov) {
-            	distanceParcourable -= 1;
-            } 
-            distanceParcourable++;
         }
     }
 
     /**
      * Déplace la troupe vers la gauche.
+     * 
+     * @param minusMov si true, diminue la distance parcourable
      */
     public void deplacerGauche(boolean minusMov) {
-        if (distanceParcourable != 0 ||minusMov == false) {
+        if (distanceParcourable > 0 || !minusMov) {
             if (col > 0) {
                 preCol = col;
                 col--;
                 x = getX(col);
+                
+                if (minusMov) {
+                    distanceParcourable--;
+                } else {
+                    distanceParcourable++;
+                }
             }
-            if(minusMov) {
-            	distanceParcourable -= 1;
-            } 
-            distanceParcourable++;
         }
     }
 
     /**
      * Déplace la troupe vers la droite.
+     * 
+     * @param minusMov si true, diminue la distance parcourable
      */
     public void deplacerDroite(boolean minusMov) {
-        if (distanceParcourable != 0 ||minusMov == false) {
+        if (distanceParcourable > 0 || !minusMov) {
             if (col < JeuxOupi.getNbTuiles() - 1) {
                 preCol = col;
                 col++;
                 x = getX(col);
+                
+                if (minusMov) {
+                    distanceParcourable--;
+                } else {
+                    distanceParcourable++;
+                }
             }
-            if(minusMov) {
-            	distanceParcourable -= 1;
-            } 
-            distanceParcourable++;
         }
     }
 
