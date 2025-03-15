@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import gestion_couleur.Couleur;
 import interfaces.Dessinable;
 import plateau.Plateau;
+import plateau.Tuile;
 import troupe.Oupi;
 import troupe.Troupe;
 
@@ -26,6 +27,7 @@ public class JeuxOupi implements Dessinable {
     private Plateau plateau;
     private static int nbTuiles = 20;
     public static int tailleTuile;
+    public Tuile tuileSelectionnee;
 
     // TROUPES
     private ArrayList<Troupe> troupes = new ArrayList<>(); // liste pour annuler une decision faite par un joueur
@@ -33,6 +35,8 @@ public class JeuxOupi implements Dessinable {
     private Troupe troupeSelectionnee = null;
     private int colO = 0;
     private int ligO = 0;
+    private Direction lastDir = null;
+    private boolean minusMov= true;
 
     /**
      * Constructeur de la classe {@code JeuxOupi}.
@@ -55,7 +59,7 @@ public class JeuxOupi implements Dessinable {
      * Initialise les troupes du jeu.
      */
     public void setTroupes() {
-        troupes.add(new Oupi(0, 0));
+        troupes.add(new Oupi(10, 10));
         troupes.add(new Oupi(0, 1));
     }
 
@@ -183,7 +187,14 @@ public class JeuxOupi implements Dessinable {
      */
     public void deplacerTroupeSelectionneeHaut() {
         if (troupeSelectionnee != null) {
-            troupeSelectionnee.deplacerHaut(); 
+        	if (lastDir == Direction.DOWN) {
+            	minusMov= false;
+            }
+        	
+            troupeSelectionnee.deplacerHaut(minusMov); 
+            
+            lastDir = Direction.UP;
+            minusMov= true;
         }
     }
 
@@ -192,7 +203,14 @@ public class JeuxOupi implements Dessinable {
      */
     public void deplacerTroupeSelectionneeBas() {
         if (troupeSelectionnee != null) {
-            troupeSelectionnee.deplacerBas();
+        	if (lastDir == Direction.UP) {
+            	minusMov= false;
+            }
+        	
+            troupeSelectionnee.deplacerBas(minusMov);
+            
+            lastDir = Direction.DOWN;
+            minusMov= true;
         }
     }
 
@@ -201,7 +219,14 @@ public class JeuxOupi implements Dessinable {
      */
     public void deplacerTroupeSelectionneeGauche() {
         if (troupeSelectionnee != null) {
-            troupeSelectionnee.deplacerGauche();
+        	if (lastDir == Direction.RIGHT) {
+            	minusMov= false;
+            }
+        	
+            troupeSelectionnee.deplacerGauche(minusMov);
+            
+            lastDir = Direction.LEFT;
+            minusMov= true;
         }
     }
 
@@ -210,7 +235,14 @@ public class JeuxOupi implements Dessinable {
      */
     public void deplacerTroupeSelectionneeDroite() {
         if (troupeSelectionnee != null) {
-            troupeSelectionnee.deplacerDroite();
+        	if (lastDir == Direction.LEFT) {
+            	minusMov= false;
+            }
+        	
+            troupeSelectionnee.deplacerDroite(minusMov);
+            
+            lastDir = Direction.RIGHT;
+            minusMov= true;
         }
     }
 

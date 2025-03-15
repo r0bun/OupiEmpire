@@ -123,56 +123,68 @@ public class Troupe implements Dessinable {
     /**
      * Déplace la troupe vers le haut.
      */
-    public void deplacerHaut() {
-        if (distanceParcourable != 0) {
+    public void deplacerHaut(boolean minusMov) {
+        if (distanceParcourable != 0 ||minusMov == false) {
             if (lig > 0) {
                 preLig = lig;
                 lig--;
                 y = getY(lig);
             }
-            distanceParcourable -= 1;
+            if(minusMov) {
+            	distanceParcourable -= 1;
+            } 
+            distanceParcourable++;
         }
     }
 
     /**
      * Déplace la troupe vers le bas.
      */
-    public void deplacerBas() {
-        if (distanceParcourable != 0) {
+    public void deplacerBas(boolean minusMov) {
+        if (distanceParcourable != 0 ||minusMov == false) {
             if (lig < JeuxOupi.getNbTuiles() - 1) {
                 preLig = lig;
                 lig++;
                 y = getY(lig);
             }
-            distanceParcourable -= 1;
+            if(minusMov) {
+            	distanceParcourable -= 1;
+            } 
+            distanceParcourable++;
         }
     }
 
     /**
      * Déplace la troupe vers la gauche.
      */
-    public void deplacerGauche() {
-        if (distanceParcourable != 0) {
+    public void deplacerGauche(boolean minusMov) {
+        if (distanceParcourable != 0 ||minusMov == false) {
             if (col > 0) {
                 preCol = col;
                 col--;
                 x = getX(col);
             }
-            distanceParcourable -= 1;
+            if(minusMov) {
+            	distanceParcourable -= 1;
+            } 
+            distanceParcourable++;
         }
     }
 
     /**
      * Déplace la troupe vers la droite.
      */
-    public void deplacerDroite() {
-        if (distanceParcourable != 0) {
+    public void deplacerDroite(boolean minusMov) {
+        if (distanceParcourable != 0 ||minusMov == false) {
             if (col < JeuxOupi.getNbTuiles() - 1) {
                 preCol = col;
                 col++;
                 x = getX(col);
             }
-            distanceParcourable -= 1;
+            if(minusMov) {
+            	distanceParcourable -= 1;
+            } 
+            distanceParcourable++;
         }
     }
 
