@@ -27,12 +27,8 @@ public class Troupe implements Dessinable {
     private int bakDistParc = 0;
     private int distanceParcourable = 0;
     
-    /*
-    private int movsUp=0;
-    private int movsDown=0;
-    private int movsLeft=0;
-    private int movsRight=0;
-    */
+    // Variables pour garder la position centrale quand tuilesSelec a été créé
+    private int centreCol, centreLig;
     
     private Tuile[][] tuilesSelec;
 
@@ -50,31 +46,34 @@ public class Troupe implements Dessinable {
         preCol = col;
         preLig = lig;
         selectionne = false;
-    
-        
     }
 
     private void initialiserTuilesSelec() {
-    	int taille = 2 * bakDistParc + 1; // Zone autour de la troupe
+        int taille = 2 * bakDistParc + 1; // Zone autour de la troupe
         tuilesSelec = new Tuile[taille][taille];
+        
+        // Sauvegarde de la position centrale actuelle
+        centreCol = col;
+        centreLig = lig;
 
         for (int i = 0; i < taille; i++) {
             for (int j = 0; j < taille; j++) {
                 int ligne = lig - bakDistParc + i;
                 int colonne = col - bakDistParc + j;
 
-                if (ligne >= 0 && ligne < JeuxOupi.getNbTuiles() &&
+                // Vérifier si la position est dans le losange
+                if (Math.abs(i - bakDistParc) + Math.abs(j - bakDistParc) <= bakDistParc &&
+                    ligne >= 0 && ligne < JeuxOupi.getNbTuiles() &&
                     colonne >= 0 && colonne < JeuxOupi.getNbTuiles()) {
                     tuilesSelec[i][j] = JeuxOupi.plateau.getTuile(ligne, colonne);
                 } else {
-                    tuilesSelec[i][j] = null; // En dehors du plateau
+                    tuilesSelec[i][j] = null; // En dehors du plateau ou en dehors du losange
                 }
             }
         }
-		
-	}
+    }
 
-	/**
+    /**
      * Retourne l'image de la troupe.
      * 
      * @return l'image de la troupe
@@ -92,12 +91,12 @@ public class Troupe implements Dessinable {
         this.image = image;
     }
 
-    private int getY(int col) {
-        return col * JeuxOupi.tailleTuile;
+    private int getY(int lig) {
+        return lig * JeuxOupi.tailleTuile;
     }
 
-    private int getX(int lig) {
-        return lig * JeuxOupi.tailleTuile;
+    private int getX(int col) {
+        return col * JeuxOupi.tailleTuile;
     }
 
     /**
@@ -150,101 +149,90 @@ public class Troupe implements Dessinable {
      */
     public void setSelectionne(boolean selectionne) {
         this.selectionne = selectionne;
-        initialiserTuilesSelec();
-        printTuilesSelec();
+        if (selectionne) {
+            initialiserTuilesSelec();
+            printTuilesSelec();
+            distanceParcourable = bakDistParc; // Réinitialiser la distance parcourable
+        }
     }
 
     private void printTuilesSelec() {
-    	int taille = tuilesSelec.length;
+        int taille = tuilesSelec.length;
+        System.out.println("Tableau des tuiles sélectionnables (distance max: " + bakDistParc + "):");
         for (int i = 0; i < taille; i++) {
             for (int j = 0; j < taille; j++) {
-                int ligne = lig - bakDistParc + i;
-                int colonne = col - bakDistParc + j;
-
                 if (i == bakDistParc && j == bakDistParc) {
-                    System.out.print(" X  "); // Position de la troupe
+                    System.out.print(" [X]  "); // Position de la troupe
                 } else if (tuilesSelec[i][j] != null) {
-                    System.out.printf("(%d,%d) ", ligne, colonne); // Coordonnées réelles sur le plateau
+                    System.out.printf("(%d,%d) ", i, j); // Tuile valide
                 } else {
-                    System.out.print(" #   "); // Hors plateau
+                    System.out.print(" [#]  "); // Hors plateau
                 }
             }
             System.out.println();
         }
-	}
+    }
 
-	/**
+    /**
      * Déplace la troupe vers le haut.
-     * 
-     * @param minusMov si true, diminue la distance parcourable
      */
     public void deplacerHaut() {
-            int nouvelleLigne = lig - 1;
-            if (estDansLimites(nouvelleLigne, col)) { // Vérification avant déplacement
-                preLig = lig;
-                lig = nouvelleLigne;
-                y = getY(lig);
-            
+        int nouvelleLigne = lig - 1;
+        if (distanceParcourable > 0 && estDansLimites(nouvelleLigne, col)) {
+            preLig = lig;
+            lig = nouvelleLigne;
+            y = getY(lig);
         }
     }
 
     /**
      * Déplace la troupe vers le bas.
-     * 
-     * @param minusMov si true, diminue la distance parcourable
      */
     public void deplacerBas() {
-            int nouvelleLigne = lig + 1;
-            if (estDansLimites(nouvelleLigne, col)) {
-                preLig = lig;
-                lig = nouvelleLigne;
-                y = getY(lig);
-            
+        int nouvelleLigne = lig + 1;
+        if (distanceParcourable > 0 && estDansLimites(nouvelleLigne, col)) {
+            preLig = lig;
+            lig = nouvelleLigne;
+            y = getY(lig);
         }
     }
 
     /**
      * Déplace la troupe vers la gauche.
-     * 
-     * @param minusMov si true, diminue la distance parcourable
      */
     public void deplacerGauche() {
-    	
-            int nouvelleColonne = col - 1;
-            if (estDansLimites(lig, nouvelleColonne)) {
-                preCol = col;
-                col = nouvelleColonne;
-                x = getX(col);
-            
+        int nouvelleColonne = col - 1;
+        if (distanceParcourable > 0 && estDansLimites(lig, nouvelleColonne)) {
+            preCol = col;
+            col = nouvelleColonne;
+            x = getX(col);
         }
     }
 
     /**
      * Déplace la troupe vers la droite.
-     * 
-     * @param minusMov si true, diminue la distance parcourable
      */
     public void deplacerDroite() {
-    	
-            int nouvelleColonne = col + 1;
-            if (estDansLimites(lig, nouvelleColonne)) {
-                preCol = col;
-                col = nouvelleColonne;
-                x = getX(col);
-            
+        int nouvelleColonne = col + 1;
+        if (distanceParcourable > 0 && estDansLimites(lig, nouvelleColonne)) {
+            preCol = col;
+            col = nouvelleColonne;
+            x = getX(col);
         }
     }
 
     private boolean estDansLimites(int ligne, int colonne) {
-    	int i = ligne - (lig - bakDistParc);
-        int j = colonne - (col - bakDistParc);
-
+        // Calculer les indices dans tuilesSelec par rapport à la position centrale initiale
+        int i = ligne - (centreLig - bakDistParc);
+        int j = colonne - (centreCol - bakDistParc);
+        
+        // Vérifier si le déplacement est dans les limites du tableau et que la tuile existe
         return i >= 0 && i < tuilesSelec.length && 
                j >= 0 && j < tuilesSelec[0].length &&
-               tuilesSelec[i][j] != null; // Vérifie si la tuile est valide
-	}
+               tuilesSelec[i][j] != null;
+    }
 
-	/**
+    /**
      * Vérifie si la troupe est à la position spécifiée.
      * 
      * @param clickX la position x du clic

@@ -35,8 +35,6 @@ public class JeuxOupi implements Dessinable {
     private Troupe troupeSelectionnee = null;
     private int colO = 0;
     private int ligO = 0;
-    private Direction lastDir = null;
-    //private boolean minusMov= true;
 
     /**
      * Constructeur de la classe {@code JeuxOupi}.
@@ -171,8 +169,6 @@ public class JeuxOupi implements Dessinable {
             ligO = troupeSelectionnee.getLig();
             colO = troupeSelectionnee.getCol();
             
-            // Réinitialiser la direction précédente
-            lastDir = null;
         }
     }
 
@@ -182,7 +178,6 @@ public class JeuxOupi implements Dessinable {
     public void deplacerTroupeSelectionneeHaut() {
         if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0) {
             troupeSelectionnee.deplacerHaut();
-            lastDir = Direction.UP;
         }
     }
 
@@ -192,7 +187,6 @@ public class JeuxOupi implements Dessinable {
     public void deplacerTroupeSelectionneeBas() {
         if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0) {
             troupeSelectionnee.deplacerBas();
-            lastDir = Direction.DOWN;
         }
     }
 
@@ -202,7 +196,6 @@ public class JeuxOupi implements Dessinable {
     public void deplacerTroupeSelectionneeGauche() {
         if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0) {
             troupeSelectionnee.deplacerGauche();
-            lastDir = Direction.LEFT;
         }
     }
 
@@ -212,7 +205,6 @@ public class JeuxOupi implements Dessinable {
     public void deplacerTroupeSelectionneeDroite() {
         if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0) {
             troupeSelectionnee.deplacerDroite();
-            lastDir = Direction.RIGHT;
         }
     }
 
@@ -220,9 +212,11 @@ public class JeuxOupi implements Dessinable {
      * Réinitialise la position de la troupe sélectionnée à sa position originelle.
      */
     public void resetTroupeAct() {
-        troupeSelectionnee.setLig(ligO);
-        troupeSelectionnee.setCol(colO);
-        troupeSelectionnee.setDistanceParcourable(troupeSelectionnee.getBakDistParc());
+    	if (troupeSelectionnee != null) {
+            troupeSelectionnee.setLig(ligO);
+            troupeSelectionnee.setCol(colO);
+            troupeSelectionnee.setDistanceParcourable(troupeSelectionnee.getBakDistParc());
+        }
     }
     
     
