@@ -24,7 +24,7 @@ public class JeuxOupi implements Dessinable {
     //private int screenHeight;
 
     // PLATEAU 
-    private Plateau plateau;
+    public static Plateau plateau;
     private static int nbTuiles = 20;
     public static int tailleTuile;
     public Tuile tuileSelectionnee;
@@ -36,7 +36,7 @@ public class JeuxOupi implements Dessinable {
     private int colO = 0;
     private int ligO = 0;
     private Direction lastDir = null;
-    private boolean minusMov= true;
+    //private boolean minusMov= true;
 
     /**
      * Constructeur de la classe {@code JeuxOupi}.
@@ -181,23 +181,17 @@ public class JeuxOupi implements Dessinable {
      */
     public void deplacerTroupeSelectionneeHaut() {
         if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0) {
-            // Si on inverse la direction, ne pas décrémenter la distance
-            minusMov = (lastDir != Direction.DOWN);
-            
-            troupeSelectionnee.deplacerHaut(minusMov);
+            troupeSelectionnee.deplacerHaut();
             lastDir = Direction.UP;
         }
     }
 
-    /**
+	/**
      * Déplace la troupe sélectionnée vers le bas.
      */
     public void deplacerTroupeSelectionneeBas() {
         if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0) {
-            // Si on inverse la direction, ne pas décrémenter la distance
-            minusMov = (lastDir != Direction.UP);
-            
-            troupeSelectionnee.deplacerBas(minusMov);
+            troupeSelectionnee.deplacerBas();
             lastDir = Direction.DOWN;
         }
     }
@@ -207,10 +201,7 @@ public class JeuxOupi implements Dessinable {
      */
     public void deplacerTroupeSelectionneeGauche() {
         if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0) {
-            // Si on inverse la direction, ne pas décrémenter la distance
-            minusMov = (lastDir != Direction.RIGHT);
-            
-            troupeSelectionnee.deplacerGauche(minusMov);
+            troupeSelectionnee.deplacerGauche();
             lastDir = Direction.LEFT;
         }
     }
@@ -220,10 +211,7 @@ public class JeuxOupi implements Dessinable {
      */
     public void deplacerTroupeSelectionneeDroite() {
         if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0) {
-            // Si on inverse la direction, ne pas décrémenter la distance
-            minusMov = (lastDir != Direction.LEFT);
-            
-            troupeSelectionnee.deplacerDroite(minusMov);
+            troupeSelectionnee.deplacerDroite();
             lastDir = Direction.RIGHT;
         }
     }
@@ -236,4 +224,9 @@ public class JeuxOupi implements Dessinable {
         troupeSelectionnee.setCol(colO);
         troupeSelectionnee.setDistanceParcourable(troupeSelectionnee.getBakDistParc());
     }
+    
+    
+    public Troupe getTroupeSelectionnee() {
+		return troupeSelectionnee;
+	}
 }

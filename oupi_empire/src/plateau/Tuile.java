@@ -70,4 +70,8 @@ public class Tuile {
     public void setCouleur(Color couleur) {
         this.couleur = couleur;
     }
+    
+    public void print() {
+    	System.out.println(x+ " "+ y);
+    }
 }

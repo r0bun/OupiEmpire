@@ -69,5 +69,6 @@ public class Plateau implements Dessinable {
     public Tuile getTuile(int ligne, int colonne) {
         return tuiles[ligne][colonne];
     }
+    
 }
 

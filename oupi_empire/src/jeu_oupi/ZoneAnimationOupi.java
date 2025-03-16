@@ -100,7 +100,9 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
                          
                 }
                 repaint();
+                System.out.println(jeuxOupi.getTroupeSelectionnee().getDistanceParcourable());
             }
+            
         });
     }
 
