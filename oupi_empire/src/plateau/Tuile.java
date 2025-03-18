@@ -15,7 +15,9 @@ public class Tuile {
     private boolean occupee; // Indique si la tuile est occupée
     private Color couleur; // Couleur de la tuile
 
-    /**
+    
+
+	/**
      * Constructeur de la classe {@code Tuile}.
      * 
      * @param x la position x de la tuile
@@ -74,4 +76,5 @@ public class Tuile {
     public void print() {
     	System.out.println(x+ " "+ y);
     }
+    
 }

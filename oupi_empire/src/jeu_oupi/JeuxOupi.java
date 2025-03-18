@@ -46,11 +46,16 @@ public class JeuxOupi implements Dessinable {
         this.screenWidth = screenWidth;
         //this.screenHeight = screenHeight;
         
+        
         creeTailleTuile();
         setTroupes();
         copyTroupes(troupes, simTroupes);
         
         plateau = new Plateau(nbTuiles, nbTuiles, tailleTuile);
+        
+        setPosTroupes();
+        
+        
     }
 
     /**
@@ -59,6 +64,13 @@ public class JeuxOupi implements Dessinable {
     public void setTroupes() {
         troupes.add(new Oupi(10, 10));
         troupes.add(new Oupi(0, 1));
+    }
+    
+    // je ne peux pas mettre ca dans la methode juste au dessus pour eviter les bugs
+    public void setPosTroupes() {
+    	plateau.getTuile(10, 10).setOccupee(true);
+    	plateau.getTuile(0, 1).setOccupee(true);
+    	
     }
 
     /**
@@ -177,7 +189,11 @@ public class JeuxOupi implements Dessinable {
      */
     public void deplacerTroupeSelectionneeHaut() {
         if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0) {
+        	int col = troupeSelectionnee.getCol();
+        	int lig = troupeSelectionnee.getLig();
+        	plateau.getTuile(lig, col).setOccupee(false);
             troupeSelectionnee.deplacerHaut();
+            plateau.getTuile(troupeSelectionnee.getLig(), col).setOccupee(true);
         }
     }
 
@@ -186,7 +202,11 @@ public class JeuxOupi implements Dessinable {
      */
     public void deplacerTroupeSelectionneeBas() {
         if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0) {
+        	int col = troupeSelectionnee.getCol();
+        	int lig = troupeSelectionnee.getLig();
+        	plateau.getTuile(lig, col).setOccupee(false);
             troupeSelectionnee.deplacerBas();
+            plateau.getTuile(troupeSelectionnee.getLig(), col).setOccupee(true);
         }
     }
 
@@ -195,7 +215,11 @@ public class JeuxOupi implements Dessinable {
      */
     public void deplacerTroupeSelectionneeGauche() {
         if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0) {
+        	int col = troupeSelectionnee.getCol();
+        	int lig = troupeSelectionnee.getLig();
+        	plateau.getTuile(lig, col).setOccupee(false);
             troupeSelectionnee.deplacerGauche();
+            plateau.getTuile(lig, troupeSelectionnee.getCol()).setOccupee(true);
         }
     }
 
@@ -204,7 +228,11 @@ public class JeuxOupi implements Dessinable {
      */
     public void deplacerTroupeSelectionneeDroite() {
         if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0) {
+        	int col = troupeSelectionnee.getCol();
+        	int lig = troupeSelectionnee.getLig();
+        	plateau.getTuile(lig, col).setOccupee(false);
             troupeSelectionnee.deplacerDroite();
+            plateau.getTuile(lig, troupeSelectionnee.getCol()).setOccupee(true);
         }
     }
 

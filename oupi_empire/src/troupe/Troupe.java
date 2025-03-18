@@ -23,6 +23,7 @@ public class Troupe implements Dessinable {
     private int x, y;
     private int col, lig, preCol, preLig;
     private boolean selectionne;
+    public boolean remplie;
     
     private int bakDistParc = 0;
     private int distanceParcourable = 0;
@@ -60,20 +61,24 @@ public class Troupe implements Dessinable {
             for (int j = 0; j < taille; j++) {
                 int ligne = lig - bakDistParc + i;
                 int colonne = col - bakDistParc + j;
-
+                
                 // Vérifier si la position est dans le losange
                 if (Math.abs(i - bakDistParc) + Math.abs(j - bakDistParc) <= bakDistParc &&
                     ligne >= 0 && ligne < JeuxOupi.getNbTuiles() &&
                     colonne >= 0 && colonne < JeuxOupi.getNbTuiles()) {
-                    tuilesSelec[i][j] = JeuxOupi.plateau.getTuile(ligne, colonne);
+                	if(JeuxOupi.plateau.getTuile(ligne, colonne).estOccupee()) {
+                		tuilesSelec[i][j] = null;
+                	}else {
+                		tuilesSelec[i][j] = JeuxOupi.plateau.getTuile(ligne, colonne);
+                	}
                 } else {
                     tuilesSelec[i][j] = null; // En dehors du plateau ou en dehors du losange
                 }
+                
             }
         }
     }
-
-    /**
+	/**
      * Retourne l'image de la troupe.
      * 
      * @return l'image de la troupe
