@@ -56,7 +56,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
                 Troupe cliquee = jeuxOupi.getTroupeA(x, y);
                 if (cliquee != null) {
                     jeuxOupi.selectionnerTroupe(cliquee);
-                    System.out.println("Troupe sélectionnée à : (" + cliquee.getCol() + "," + cliquee.getLig() + ")");
+                    System.out.println("Troupe sélectionnée à : (" + cliquee.getLig() + "," + cliquee.getCol() + ")");
                     return;
                 }
 

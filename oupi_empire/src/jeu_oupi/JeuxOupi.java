@@ -63,13 +63,13 @@ public class JeuxOupi implements Dessinable {
      */
     public void setTroupes() {
         troupes.add(new Oupi(10, 10));
-        troupes.add(new Oupi(0, 1));
+        troupes.add(new Oupi(1, 0));
     }
     
     // je ne peux pas mettre ca dans la methode juste au dessus pour eviter les bugs
     public void setPosTroupes() {
     	plateau.getTuile(10, 10).setOccupee(true);
-    	plateau.getTuile(0, 1).setOccupee(true);
+    	plateau.getTuile(1, 0).setOccupee(true);
     	
     }
 
