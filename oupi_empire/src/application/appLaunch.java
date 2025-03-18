@@ -41,7 +41,7 @@ public class appLaunch extends JFrame {
     /**
      * Crée le cadre.
      */
-    public appLaunch() {
+    public appLaunch() { 
         setBackground(new Color(0, 0, 0));
         // Régler sans décoration pour le mode plein écran (supprime la barre de titre)
         //setUndecorated(true);

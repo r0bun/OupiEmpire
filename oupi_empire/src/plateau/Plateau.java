@@ -44,7 +44,7 @@ public class Plateau implements Dessinable {
 		for (int ligne = 0; ligne < lignes; ligne++) {
 			for (int colonne = 0; colonne < colonnes; colonne++) {
 				// Alterner les couleurs pour un effet damier
-				Color couleur = (ligne + colonne) % 2 == 0 ? Color.LIGHT_GRAY : Color.DARK_GRAY;
+				Color couleur = (ligne + colonne) % 2 == 0 ? Color.PINK: Color.DARK_GRAY;
 				tuiles[ligne][colonne] = new Sable(colonne * tailleTuile, ligne * tailleTuile, tailleTuile, couleur);
 			}
 		}

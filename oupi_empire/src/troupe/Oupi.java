@@ -19,5 +19,5 @@ public class Oupi extends Troupe {
 		this.setBakDistParc(5);
 		image = getImage("/troupes/oupi_processed");
 	}
-
+ 
 }

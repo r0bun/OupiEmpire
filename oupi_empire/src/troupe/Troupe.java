@@ -70,7 +70,7 @@ public class Troupe implements Dessinable {
                 		tuilesSelec[i][j] = null;
                 	}else {
                 		tuilesSelec[i][j] = JeuxOupi.plateau.getTuile(ligne, colonne);
-                	}
+                	} 
                 } else {
                     tuilesSelec[i][j] = null; // En dehors du plateau ou en dehors du losange
                 }

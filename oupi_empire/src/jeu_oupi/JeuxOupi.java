@@ -192,7 +192,7 @@ public class JeuxOupi implements Dessinable {
         	int col = troupeSelectionnee.getCol();
         	int lig = troupeSelectionnee.getLig();
         	plateau.getTuile(lig, col).setOccupee(false);
-            troupeSelectionnee.deplacerHaut();
+            troupeSelectionnee.deplacerHaut(); 
             plateau.getTuile(troupeSelectionnee.getLig(), col).setOccupee(true);
         }
     }
