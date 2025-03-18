@@ -2,6 +2,12 @@ package plateau;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 /**
  * La classe {@code Tuile} représente une tuile sur le plateau de jeu.
@@ -9,11 +15,13 @@ import java.awt.Graphics2D;
  * 
  * @author Badr Rifki
  */
-public class Tuile {
-    private int x, y; // Position de la tuile sur le plateau
-    private int taille; // Taille de la tuile
-    private boolean occupee; // Indique si la tuile est occupée
-    private Color couleur; // Couleur de la tuile
+public abstract class Tuile {
+	protected int x, y; // Position de la tuile sur le plateau
+    protected int taille; // Taille de la tuile
+    protected boolean occupee; // Indique si la tuile est occupée
+    protected Color couleur; // Couleur de la tuile
+    protected BufferedImage texture;
+    protected TerrainObstacle obstacle;
 
     
 
@@ -38,13 +46,53 @@ public class Tuile {
      * 
      * @param g2d l'objet {@link Graphics2D} utilisé pour dessiner
      */
+//    public void dessiner(Graphics2D g2d) {
+//        Graphics2D g2dPrive = (Graphics2D) g2d.create();
+//        g2dPrive.setColor(couleur);
+//        //g2dPrive.fillRect(x, y, taille, taille);
+//        g2dPrive.setColor(Color.BLACK); // Contour de la tuile
+//        g2dPrive.drawImage(texture, null, x, y);
+//        //g2dPrive.drawRect(x, y, taille, taille);
+//    }
+    
     public void dessiner(Graphics2D g2d) {
+        if (texture == null) {
+            // Dessiner un rectangle de couleur si pas de texture
+            Graphics2D g2dPrive = (Graphics2D) g2d.create();
+            g2dPrive.setColor(couleur);
+            g2dPrive.fillRect(x, y, taille, taille);
+            g2dPrive.setColor(Color.BLACK);
+            g2dPrive.drawRect(x, y, taille, taille);
+            g2dPrive.dispose();
+            return;
+        }
+        
+        // Créer une copie locale du contexte graphique
         Graphics2D g2dPrive = (Graphics2D) g2d.create();
-        g2dPrive.setColor(couleur);
-        g2dPrive.fillRect(x, y, taille, taille);
-        g2dPrive.setColor(Color.BLACK); // Contour de la tuile
-        g2dPrive.drawRect(x, y, taille, taille);
+        
+        // Définir la forme dans laquelle l'image sera confinée
+        Shape shape = new Rectangle(x, y, taille, taille);
+        
+        // Sauvegarder le clip actuel
+        Shape oldClip = g2dPrive.getClip();
+        
+        try {
+            // Appliquer la forme comme zone de clipping
+            g2dPrive.clip(shape);
+            
+            // Dessiner l'image dans la zone de clipping
+            g2dPrive.drawImage(texture, x, y, taille, taille, null);
+            
+            // Dessiner le contour de la forme si nécessaire
+            g2dPrive.setClip(oldClip);
+            g2dPrive.setColor(Color.DARK_GRAY);
+            g2dPrive.draw(shape);
+        } finally {
+            // Restaurer le clip original et libérer les ressources
+            g2dPrive.dispose();
+        }
     }
+
 
     /**
      * Vérifie si la tuile est occupée.
@@ -77,4 +125,15 @@ public class Tuile {
     	System.out.println(x+ " "+ y);
     }
     
+
+    protected void setTexture(String imagePath) {
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(getClass().getResourceAsStream(imagePath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        texture = image;
+    }
+
 }
