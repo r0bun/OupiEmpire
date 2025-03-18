@@ -19,6 +19,7 @@ public abstract class Tuile {
 	protected int x, y; // Position de la tuile sur le plateau
     protected int taille; // Taille de la tuile
     protected boolean occupee; // Indique si la tuile est occupée
+    protected boolean posDep;
     protected Color couleur; // Couleur de la tuile
     protected BufferedImage texture;
     protected TerrainObstacle obstacle;
@@ -39,6 +40,7 @@ public abstract class Tuile {
         this.taille = taille;
         this.couleur = couleur;
         this.occupee = false;
+        this.posDep = false;
     }
 
     /**
@@ -56,7 +58,7 @@ public abstract class Tuile {
 //    }
     
     public void dessiner(Graphics2D g2d) {
-        if (texture == null) {
+        if (texture == null|| occupee||posDep) {
             // Dessiner un rectangle de couleur si pas de texture
             Graphics2D g2dPrive = (Graphics2D) g2d.create();
             g2dPrive.setColor(couleur);
@@ -111,8 +113,17 @@ public abstract class Tuile {
     public void setOccupee(boolean occupee) {
         this.occupee = occupee;
     }
+    
 
-    /**
+    public boolean isPosDep() {
+		return posDep;
+	}
+
+	public void setPosDep(boolean posDep) {
+		this.posDep = posDep;
+	}
+
+	/**
      * Définit la couleur de la tuile.
      * 
      * @param couleur la nouvelle couleur de la tuile

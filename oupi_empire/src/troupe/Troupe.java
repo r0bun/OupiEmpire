@@ -32,6 +32,8 @@ public class Troupe implements Dessinable {
     private int centreCol, centreLig;
     
     private Tuile[][] tuilesSelec;
+    
+    private int attaque,defense,vitesse,endurance;
 
     /**
      * Constructeur de la classe {@code Troupe}.
@@ -39,7 +41,7 @@ public class Troupe implements Dessinable {
      * @param col la colonne initiale de la troupe
      * @param lig la ligne initiale de la troupe
      */
-    public Troupe(int col, int lig) {
+    public Troupe(int lig, int col) {
         this.col = col;
         this.lig = lig;
         x = getX(col);
@@ -56,6 +58,7 @@ public class Troupe implements Dessinable {
         // Sauvegarde de la position centrale actuelle
         centreCol = col;
         centreLig = lig;
+       
 
         for (int i = 0; i < taille; i++) {
             for (int j = 0; j < taille; j++) {
@@ -324,4 +327,12 @@ public class Troupe implements Dessinable {
         this.lig = lig;
         y = getY(lig);
     }
+
+	public void deselec() {
+		selectionne = false;
+	}
+	
+	public void attaquer(Troupe troupeEnem) {
+		// a implementer
+	}
 }
