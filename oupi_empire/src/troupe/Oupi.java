@@ -12,6 +12,7 @@ public class Oupi extends Troupe {
 	 * 
 	 * @param col colone de la troupe
 	 * @param lig ligne de la troupe
+	 * @param equipe l'equipe a laquelle appartient la troupe
 	 */
 	public Oupi(int col, int lig, int equipe) {
 		super(col, lig);

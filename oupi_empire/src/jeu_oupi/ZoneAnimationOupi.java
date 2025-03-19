@@ -124,7 +124,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		this.pcs.addPropertyChangeListener(listener);
 	}
-
+	
 	/**
 	 * Méthode exécutée par le thread de jeu pour gérer l'animation.
 	 */

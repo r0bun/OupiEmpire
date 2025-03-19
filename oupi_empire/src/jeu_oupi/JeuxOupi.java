@@ -1,5 +1,6 @@
 package jeu_oupi;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
@@ -15,7 +16,7 @@ import troupe.Troupe;
  * Elle implémente l'interface {@link Dessinable} pour permettre le dessin du plateau et des troupes.
  * 
  * @author Badr Rifki
- * 
+ * @author Loic Simard
  */
 public class JeuxOupi implements Dessinable {
     
@@ -62,14 +63,14 @@ public class JeuxOupi implements Dessinable {
      * Initialise les troupes du jeu.
      */
     public void setTroupes() {
-        troupes.add(new Oupi(10, 10, 0));
-        troupes.add(new Oupi(0, 1, 1));
+        troupes.add(new Oupi(10, 10, 1));
+        troupes.add(new Oupi(1, 0, 1));
     }
     
     // je ne peux pas mettre ca dans la methode juste au dessus pour eviter les bugs
     public void setPosTroupes() {
     	plateau.getTuile(10, 10).setOccupee(true);
-    	plateau.getTuile(0, 1).setOccupee(true);
+    	plateau.getTuile(1, 0).setOccupee(true);
     	
     }
 
@@ -168,8 +169,7 @@ public class JeuxOupi implements Dessinable {
     public void selectionnerTroupe(Troupe troupe) {
         // Désélectionner la troupe précédemment sélectionnée
         if (troupeSelectionnee != null) {
-            troupeSelectionnee.setDistanceParcourable(troupeSelectionnee.getBakDistParc());
-            troupeSelectionnee.setSelectionne(false);
+            deselectionnerTroupe(troupeSelectionnee);
         }
         
         // Sélectionner la nouvelle troupe
@@ -181,7 +181,18 @@ public class JeuxOupi implements Dessinable {
             ligO = troupeSelectionnee.getLig();
             colO = troupeSelectionnee.getCol();
             
+            plateau.getTuile(ligO, colO).setPosDep(true);
+            plateau.getTuile(ligO, colO).setCouleur(Color.CYAN);
+            
         }
+    }
+    
+    public void deselectionnerTroupe(Troupe troupe) {
+    	troupeSelectionnee.deselec();
+    	troupeSelectionnee = null;
+    	
+    	plateau.getTuile(ligO, colO).setPosDep(false);
+        plateau.getTuile(ligO, colO).setCouleur(Color.RED);
     }
 
     /**
@@ -241,9 +252,18 @@ public class JeuxOupi implements Dessinable {
      */
     public void resetTroupeAct() {
     	if (troupeSelectionnee != null) {
+    		int col = troupeSelectionnee.getCol();
+        	int lig = troupeSelectionnee.getLig();
+        	plateau.getTuile(lig, col).setOccupee(false);
+        	
             troupeSelectionnee.setLig(ligO);
             troupeSelectionnee.setCol(colO);
-            troupeSelectionnee.setDistanceParcourable(troupeSelectionnee.getBakDistParc());
+            
+            int col2 = troupeSelectionnee.getCol();
+        	int lig2 = troupeSelectionnee.getLig();
+        	plateau.getTuile(lig2, col2).setOccupee(true);
+        	
+        	deselectionnerTroupe(troupeSelectionnee);
         }
     }
     

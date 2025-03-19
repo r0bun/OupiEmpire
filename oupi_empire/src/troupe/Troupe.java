@@ -18,24 +18,26 @@ import plateau.Tuile;
  * troupe.
  * 
  * @author Badr Rifki
+ * @author Loic Simard
  */
 public class Troupe implements Dessinable {
-
-	protected BufferedImage image;
-	private int x, y;
-	private int col, lig, preCol, preLig;
-	private boolean selectionne;
-	public boolean remplie;
-
-	private int bakDistParc = 0;
-	private int distanceParcourable = 0;
-
-	// Variables pour garder la position centrale quand tuilesSelec a été créé
-	private int centreCol, centreLig;
-
-	private Tuile[][] tuilesSelec;
-
-	private int equipe;
+    protected BufferedImage image;
+    private int x, y;
+    private int col, lig, preCol, preLig;
+    private boolean selectionne;
+    public boolean remplie;
+    
+    private int bakDistParc = 0;
+    private int distanceParcourable = 0;
+    
+    // Variables pour garder la position centrale quand tuilesSelec a été créé
+    private int centreCol, centreLig;
+    
+    private Tuile[][] tuilesSelec;
+    
+    private int attaque,defense,vitesse,endurance;
+    
+    private int equipe;
 
 	private static int equipeActuelle = 0;
 
@@ -373,4 +375,12 @@ public class Troupe implements Dessinable {
 	 * 
 	 * return zoneDeplacement; }
 	 */
+
+	public void deselec() {
+		selectionne = false;
+	}
+	
+	public void attaquer(Troupe troupeEnem) {
+		// a implementer
+	}
 }
