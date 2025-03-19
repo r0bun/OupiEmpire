@@ -13,10 +13,11 @@ public class Oupi extends Troupe {
 	 * @param col colone de la troupe
 	 * @param lig ligne de la troupe
 	 */
-	public Oupi(int col, int lig) {
+	public Oupi(int col, int lig, int equipe) {
 		super(col, lig);
 		this.setDistanceParcourable(5);
 		this.setBakDistParc(5);
+		this.setEquipe(equipe);
 		image = getImage("/troupes/oupi_processed");
 	}
  

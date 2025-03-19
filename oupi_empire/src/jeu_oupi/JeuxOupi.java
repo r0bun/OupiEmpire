@@ -62,8 +62,8 @@ public class JeuxOupi implements Dessinable {
      * Initialise les troupes du jeu.
      */
     public void setTroupes() {
-        troupes.add(new Oupi(10, 10));
-        troupes.add(new Oupi(0, 1));
+        troupes.add(new Oupi(10, 10, 0));
+        troupes.add(new Oupi(0, 1, 1));
     }
     
     // je ne peux pas mettre ca dans la methode juste au dessus pour eviter les bugs
