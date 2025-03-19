@@ -72,7 +72,6 @@ public class appLaunch extends JFrame {
 
 		zoneAnimationOupi = new ZoneAnimationOupi(screenWidth, screenHeight);
 		zoneAnimationOupi.setBounds(50, 30, (int) (screenWidth / 2), (int) (screenWidth / 2));
-		// zoneAnimationOupi.setEnabled(false);
 		contentPane.add(zoneAnimationOupi);
 
 		btnStart = new JButton("Commencer partie");
