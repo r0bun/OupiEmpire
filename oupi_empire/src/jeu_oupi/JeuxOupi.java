@@ -16,7 +16,7 @@ import troupe.Troupe;
  * Elle implémente l'interface {@link Dessinable} pour permettre le dessin du plateau et des troupes.
  * 
  * @author Badr Rifki
- * 
+ * @author Loic Simard
  */
 public class JeuxOupi implements Dessinable {
     
@@ -63,8 +63,8 @@ public class JeuxOupi implements Dessinable {
      * Initialise les troupes du jeu.
      */
     public void setTroupes() {
-        troupes.add(new Oupi(10, 10));
-        troupes.add(new Oupi(1, 0));
+        troupes.add(new Oupi(10, 10, 1));
+        troupes.add(new Oupi(1, 0, 1));
     }
     
     // je ne peux pas mettre ca dans la methode juste au dessus pour eviter les bugs

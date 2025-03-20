@@ -8,6 +8,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.lang.Thread.State;
 
 import javax.swing.JPanel;
 
@@ -18,156 +19,206 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
- * La classe {@code ZoneAnimationOupi} représente la zone d'animation pour le jeu Oupi.
- * Elle étend {@link JPanel} et implémente {@link Runnable} pour gérer l'animation du jeu.
+ * La classe {@code ZoneAnimationOupi} représente la zone d'animation pour le
+ * jeu Oupi. Elle étend {@link JPanel} et implémente {@link Runnable} pour gérer
+ * l'animation du jeu.
  * 
  * @author Badr Rifki
  * 
  */
 public class ZoneAnimationOupi extends JPanel implements Runnable {
 
-    private static final long serialVersionUID = 1L;
-    
-    private JeuxOupi jeuxOupi;
-    
-    final int FPS = 27;
+	private static final long serialVersionUID = 1L;
 
-    Thread threadJeu;
-    
-    // Ajouter le support pour lancer des événements de type PropertyChange
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private JeuxOupi jeuxOupi;
 
-    /**
-     * Constructeur de la classe {@code ZoneAnimationOupi}.
-     * 
-     * @param screenWidth la largeur de l'écran
-     * @param screenHeight la hauteur de l'écran
-     */
-    public ZoneAnimationOupi(int screenWidth, int screenHeight) {
-        jeuxOupi = new JeuxOupi(screenWidth, screenHeight);
-        
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                int x = e.getX();
-                int y = e.getY();
+	final int FPS = 27;
 
-                // Essayer de sélectionner une troupe d'abord
-                Troupe cliquee = jeuxOupi.getTroupeA(x, y);
-                if (cliquee != null) {
-                    jeuxOupi.selectionnerTroupe(cliquee);
-                    System.out.println("Troupe sélectionnée à : (" + cliquee.getLig() + "," + cliquee.getCol() + ")");
-                    return;
-                }
+	Thread threadJeu;
 
-                // Si aucune troupe n'a été cliquée, gérer le clic sur une tuile
-                int ligne = y / JeuxOupi.tailleTuile;
-                int colonne = x / JeuxOupi.tailleTuile;
+	private boolean enCours;
 
-                // Vérifier si le clic est dans les limites du plateau
-                if (ligne >= 0 && ligne < JeuxOupi.getNbTuiles() && colonne >= 0 && colonne < JeuxOupi.getNbTuiles()) {
-                    Tuile tuileCliquee = jeuxOupi.getPlateau().getTuile(ligne, colonne);
-                    System.out.println("Tuile cliquée : Ligne " + (ligne + 1) + ", Colonne " + (colonne + 1));
-                }
-            }
-        });
-        
-        // Ajouter un écouteur de clavier pour le déplacement avec WASD
-        setFocusable(true);
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_W:
-                    case KeyEvent.VK_UP:
-                        jeuxOupi.deplacerTroupeSelectionneeHaut();
-                        break;
-                    case KeyEvent.VK_A: 
-                    case KeyEvent.VK_LEFT:
-                        jeuxOupi.deplacerTroupeSelectionneeGauche();
-                        break;
-                    case KeyEvent.VK_S:  
-                    case KeyEvent.VK_DOWN:
-                        jeuxOupi.deplacerTroupeSelectionneeBas();
-                        break;
-                    case KeyEvent.VK_D: 
-                    case KeyEvent.VK_RIGHT:
-                        jeuxOupi.deplacerTroupeSelectionneeDroite();
-                        break;
-                    case KeyEvent.VK_R: // R
-                        jeuxOupi.resetTroupeAct();
-                        break;
-                    case KeyEvent.VK_C:
-                    	jeuxOupi.comfirm();
-                    
-                         
-                }
-                repaint();
-            }
-            
-        });
-    }
+	private int joueurActuel = 0;
 
-    /**
-     * Méthode pour ajouter un écouteur de changement de propriété.
-     * 
-     * @param listener l'écouteur de changement de propriété
-     */
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.addPropertyChangeListener(listener);
-    }
+	// Ajouter le support pour lancer des événements de type PropertyChange
+	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-    /**
-     * Méthode exécutée par le thread de jeu pour gérer l'animation.
-     */
-    @Override
-    public void run() {
-        double intervaleDessin = 1000000000 / FPS;
-        double delta = 0;
-        long tempsAv = System.nanoTime();
-        long tempsAct;
-        
-        while (threadJeu != null) {
-            tempsAct = System.nanoTime();
-            
-            delta += (tempsAct - tempsAv) / intervaleDessin;
-            tempsAv = tempsAct;
-            
-            if (delta >= 1) {
-                miseAJour();
-                repaint();
-                delta--;
-            }
-        }
-    }
+	/**
+	 * Constructeur de la classe {@code ZoneAnimationOupi}.
+	 * 
+	 * @param screenWidth  la largeur de l'écran
+	 * @param screenHeight la hauteur de l'écran
+	 */
+	public ZoneAnimationOupi(int screenWidth, int screenHeight) {
+		jeuxOupi = new JeuxOupi(screenWidth, screenHeight);
 
-    /**
-     * Dessine le panneau.
-     * 
-     * @param g l'objet {@link Graphics} utilisé pour dessiner
-     */
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        
-        jeuxOupi.dessiner(g2d);
-    }
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				int x = e.getX();
+				int y = e.getY();
 
-    /**
-     * Met à jour l'état du jeu.
-     */
-    public void miseAJour() {
-        // Implémenter la logique de mise à jour du jeu ici
-    }
+				// Essayer de sélectionner une troupe d'abord
+				Troupe cliquee = jeuxOupi.getTroupeA(x, y);
+				if (cliquee != null) {
+					jeuxOupi.selectionnerTroupe(cliquee);
+					System.out.println("Troupe sélectionnée à : (" + cliquee.getCol() + "," + cliquee.getLig() + ")");
+					return;
+				}
 
-    /**
-     * Démarre le thread de jeu.
-     */
-    public void demarer() {
-        threadJeu = new Thread(this);
-        threadJeu.start();
-        requestFocus(); // Demander le focus pour garantir que les entrées du clavier fonctionnent
-    }
+				// Si aucune troupe n'a été cliquée, gérer le clic sur une tuile
+				int ligne = y / JeuxOupi.tailleTuile;
+				int colonne = x / JeuxOupi.tailleTuile;
+
+				// Vérifier si le clic est dans les limites du plateau
+				if (ligne >= 0 && ligne < JeuxOupi.getNbTuiles() && colonne >= 0 && colonne < JeuxOupi.getNbTuiles()) {
+					Tuile tuileCliquee = jeuxOupi.getPlateau().getTuile(ligne, colonne);
+					System.out.println("Tuile cliquée : Ligne " + (ligne + 1) + ", Colonne " + (colonne + 1));
+				}
+			}
+		});
+
+		// Ajouter un écouteur de clavier pour le déplacement avec WASD
+		setFocusable(true);
+		addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				Troupe troupe = jeuxOupi.getTroupeSelectionnee();
+				if (troupe != null) {
+					if (troupe.getEquipe() == joueurActuel) {
+						switch (e.getKeyCode()) {
+						case KeyEvent.VK_W:
+						case KeyEvent.VK_UP:
+							jeuxOupi.deplacerTroupeSelectionneeHaut();
+							break;
+						case KeyEvent.VK_A:
+						case KeyEvent.VK_LEFT:
+							jeuxOupi.deplacerTroupeSelectionneeGauche();
+							break;
+						case KeyEvent.VK_S:
+						case KeyEvent.VK_DOWN:
+							jeuxOupi.deplacerTroupeSelectionneeBas();
+							break;
+						case KeyEvent.VK_D:
+						case KeyEvent.VK_RIGHT:
+							jeuxOupi.deplacerTroupeSelectionneeDroite();
+							break;
+						case KeyEvent.VK_R: // R
+							jeuxOupi.resetTroupeAct();
+							break;
+
+						}
+					}
+				}
+				repaint();
+			}
+
+		});
+	}
+
+	/**
+	 * Méthode pour ajouter un écouteur de changement de propriété.
+	 * 
+	 * @param listener l'écouteur de changement de propriété
+	 */
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		this.pcs.addPropertyChangeListener(listener);
+	}
+	
+	/**
+	 * Méthode exécutée par le thread de jeu pour gérer l'animation.
+	 */
+	@Override
+	public void run() {
+		double intervaleDessin = 1000000000 / FPS;
+		double delta = 0;
+		long tempsAv = System.nanoTime();
+		long tempsAct;
+
+		while (!threadJeu.isInterrupted()) {
+			tempsAct = System.nanoTime();
+
+			delta += (tempsAct - tempsAv) / intervaleDessin;
+			tempsAv = tempsAct;
+
+			if (delta >= 1) {
+				miseAJour();
+				repaint();
+				delta--;
+			}
+		}
+	}
+
+	/**
+	 * Dessine le panneau.
+	 * 
+	 * @param g l'objet {@link Graphics} utilisé pour dessiner
+	 */
+	@Override
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		jeuxOupi.dessiner(g2d);
+	}
+
+	/**
+	 * Met à jour l'état du jeu.
+	 */
+	public void miseAJour() {
+		// Implémenter la logique de mise à jour du jeu ici
+	}
+
+	/**
+	 * Démarre le thread de jeu.
+	 */
+	public void demarrer() {
+		threadJeu = new Thread(this);
+		threadJeu.start();
+		enCours = true;
+		requestFocus(); // Demander le focus pour garantir que les entrées du clavier fonctionnent
+	}
+
+	/**
+	 * Gagne la partie
+	 * 
+	 * @return une string contenant le resultat victoire si le thread a ete
+	 *         interrompu correctement
+	 */
+	public String win() {
+		threadJeu.interrupt();
+		if (enCours) {
+			enCours = false;
+			return "win";
+		}
+		return null;
+	}
+
+	/**
+	 * Perds la partie
+	 * 
+	 * @return une string contenant le resultat defaite si le thread a ete
+	 *         interrompu correctement
+	 */
+	public String lose() {
+		threadJeu.interrupt();
+		if (enCours) {
+			enCours = false;
+			return "lose";
+		}
+		return null;
+	}
+
+	/**
+	 * Change le joueur qui agit
+	 */
+	public void toggleJoueur() {
+		if (joueurActuel == 0) {
+			joueurActuel = 1;
+		} else {
+			joueurActuel = 0;
+		}
+		Troupe.toggleEquipeActuelle();
+	}
 }
