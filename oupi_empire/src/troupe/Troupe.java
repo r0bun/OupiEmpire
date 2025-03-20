@@ -35,7 +35,7 @@ public class Troupe implements Dessinable {
     
     private Tuile[][] tuilesSelec;
     
-    private int attaque,defense,vitesse,endurance;
+    protected int HP,attaque,defense,vitesse,endurance;
     
     private int equipe;
 
@@ -59,7 +59,7 @@ public class Troupe implements Dessinable {
 	 * @param col la colonne initiale de la troupe
 	 * @param lig la ligne initiale de la troupe
 	 */
-	public Troupe(int col, int lig) {
+	public Troupe(int lig, int col) {
 		this.col = col;
 		this.lig = lig;
 		x = getX(col);
@@ -67,6 +67,12 @@ public class Troupe implements Dessinable {
 		preCol = col;
 		preLig = lig;
 		selectionne = false;
+		
+		HP= 100;
+		attaque= 20;
+		defense= 10;
+		vitesse=20;
+		endurance=30;
 	}
 
 	private void initialiserTuilesSelec() {
@@ -258,6 +264,11 @@ public class Troupe implements Dessinable {
 			x = getX(col);
 		}
 	}
+	
+	public void confirmerMouv() {
+		selectionne = false;
+		
+	}
 
 	private boolean estDansLimites(int ligne, int colonne) {
 		// Calculer les indices dans tuilesSelec par rapport à la position centrale
@@ -383,4 +394,6 @@ public class Troupe implements Dessinable {
 	public void attaquer(Troupe troupeEnem) {
 		// a implementer
 	}
+
+	
 }

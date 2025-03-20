@@ -268,7 +268,7 @@ public class JeuxOupi implements Dessinable {
     }
     
     public void comfirm() {
-		troupeSelectionnee.confirmerMouv();
+    	deselectionnerTroupe(troupeSelectionnee);
 	}
     
     public Troupe getTroupeSelectionnee() {
