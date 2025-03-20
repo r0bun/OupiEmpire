@@ -45,7 +45,7 @@ public class Plateau implements Dessinable {
 			for (int colonne = 0; colonne < colonnes; colonne++) {
 				
 				Color couleur = Color.RED;
-				tuiles[ligne][colonne] = new Sable(colonne * tailleTuile, ligne * tailleTuile, tailleTuile, couleur);
+				tuiles[ligne][colonne] = new Sable(colonne * tailleTuile, ligne * tailleTuile, tailleTuile, couleur,ligne,colonne);
 			}
 		}
 	}

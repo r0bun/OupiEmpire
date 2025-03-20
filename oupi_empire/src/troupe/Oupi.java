@@ -18,6 +18,8 @@ public class Oupi extends Troupe {
 		this.setDistanceParcourable(5);
 		this.setBakDistParc(5);
 		image = getImage("/troupes/oupi_processed");
+		
+		HP=150;
 	}
  
 }

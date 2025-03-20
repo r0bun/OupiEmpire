@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -31,9 +32,11 @@ public class Troupe implements Dessinable {
     // Variables pour garder la position centrale quand tuilesSelec a été créé
     private int centreCol, centreLig;
     
+    private boolean enDeplacement;
     private Tuile[][] tuilesSelec;
     
-    private int attaque,defense,vitesse,endurance;
+    
+    protected int HP,attaque,defense,vitesse,endurance;
 
     /**
      * Constructeur de la classe {@code Troupe}.
@@ -49,9 +52,17 @@ public class Troupe implements Dessinable {
         preCol = col;
         preLig = lig;
         selectionne = false;
+        
+        HP= 100;
+        attaque= 20;
+        defense=20;
+        vitesse=20;
+        endurance= 20;
     }
 
-    private void initialiserTuilesSelec() {
+   
+
+	private void initialiserTuilesSelec() {
         int taille = 2 * bakDistParc + 1; // Zone autour de la troupe
         tuilesSelec = new Tuile[taille][taille];
         
@@ -137,10 +148,9 @@ public class Troupe implements Dessinable {
             g2dPrive.setColor(Color.GREEN);
             g2dPrive.drawRect(x, y, JeuxOupi.tailleTuile, JeuxOupi.tailleTuile);
         }
-        
         g2dPrive.drawImage(image, x, y, JeuxOupi.tailleTuile, JeuxOupi.tailleTuile, null);
     }
-
+    
     /**
      * Vérifie si la troupe est sélectionnée.
      * 
@@ -227,6 +237,10 @@ public class Troupe implements Dessinable {
             col = nouvelleColonne;
             x = getX(col);
         }
+    }
+    
+    public void confirmerMouv() {
+    	// a implem
     }
 
     private boolean estDansLimites(int ligne, int colonne) {

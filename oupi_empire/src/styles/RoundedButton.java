@@ -5,6 +5,9 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * @author Badr Rifki
+ */
 public class RoundedButton extends JButton {
 
     private static final long serialVersionUID = 1L;

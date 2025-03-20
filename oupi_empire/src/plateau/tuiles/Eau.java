@@ -6,8 +6,8 @@ import plateau.Tuile;
 
 public class Eau extends Tuile{
 
-	public Eau(int x, int y, int taille, Color couleur) {
-		super(x, y, taille, couleur);
+	public Eau(int x, int y, int taille, Color couleur,int lig,int col) {
+		super(x, y, taille, couleur,lig,col);
 		setTexture("/tuiles/eau.png");
 	}
 

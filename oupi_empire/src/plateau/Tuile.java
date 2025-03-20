@@ -23,6 +23,8 @@ public abstract class Tuile {
     protected Color couleur; // Couleur de la tuile
     protected BufferedImage texture;
     protected TerrainObstacle obstacle;
+    
+    protected int lig,col;
 
     
 
@@ -34,13 +36,15 @@ public abstract class Tuile {
      * @param taille la taille de la tuile
      * @param couleur la couleur de la tuile
      */
-    public Tuile(int x, int y, int taille, Color couleur) {
+    public Tuile(int x, int y, int taille, Color couleur,int lig, int col) {
         this.x = x;
         this.y = y;
         this.taille = taille;
         this.couleur = couleur;
         this.occupee = false;
         this.posDep = false;
+        this.lig= lig;
+        this.col=col;
     }
 
     /**
@@ -146,5 +150,15 @@ public abstract class Tuile {
         }
         texture = image;
     }
+
+	public int getLig() {
+		return lig;
+	}
+
+	public int getCol() {
+		return col;
+	}
+    
+    
 
 }
