@@ -1,13 +1,13 @@
 package plateau;
 
+import interfaces.Dessinable;
+import tuiles.*;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-
-import interfaces.Dessinable;
-import temp.*;
 
 /**
  * La classe {@code Plateau} représente le plateau de jeu composé de tuiles.
@@ -105,8 +105,8 @@ public class Plateau implements Dessinable {
                         case 'H':
                             tuiles[ligne][colonne] = new Herbe(x, y, tailleTuile, Color.GREEN, ligne, colonne);
                             break;
-                        case 'M':
-                            tuiles[ligne][colonne] = new Sable(x, y, tailleTuile, Color.GRAY, ligne, colonne);
+                        case 'G':
+                            tuiles[ligne][colonne] = new Gravier(x, y, tailleTuile, Color.GRAY, ligne, colonne);
                             break;
                         default:
                             tuiles[ligne][colonne] = new Sable(x, y, tailleTuile, Color.RED, ligne, colonne);

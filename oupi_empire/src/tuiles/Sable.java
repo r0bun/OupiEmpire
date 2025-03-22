@@ -1,4 +1,4 @@
-package temp;
+package tuiles;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
