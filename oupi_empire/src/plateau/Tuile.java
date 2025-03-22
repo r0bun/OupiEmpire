@@ -23,7 +23,8 @@ public abstract class Tuile {
     protected Color couleur; // Couleur de la tuile
     protected BufferedImage texture;
     protected TerrainObstacle obstacle;
-    
+    protected String nomTuile; //Utilise pour trouver le fichier image
+    protected final String PATH_TUILE = "/tuilesTexture/";
     protected int lig,col;
 
     

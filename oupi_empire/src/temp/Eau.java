@@ -1,4 +1,4 @@
-package plateau.tuiles;
+package temp;
 
 import java.awt.Color;
 
@@ -8,7 +8,8 @@ public class Eau extends Tuile{
 
 	public Eau(int x, int y, int taille, Color couleur,int lig,int col) {
 		super(x, y, taille, couleur,lig,col);
-		setTexture("/tuiles/eau.png");
+		nomTuile = "eau";
+		setTexture(PATH_TUILE + nomTuile + ".png");
 	}
 
 }

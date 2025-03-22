@@ -5,5 +5,5 @@
  * 
  */
 module oupi_empire {
-	requires java.desktop;
+    requires java.desktop;
 }

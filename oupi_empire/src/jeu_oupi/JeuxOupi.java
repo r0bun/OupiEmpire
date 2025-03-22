@@ -53,8 +53,10 @@ public class JeuxOupi implements Dessinable {
         copyTroupes(troupes, simTroupes);
         
         plateau = new Plateau(nbTuiles, nbTuiles, tailleTuile);
+        plateau = new Plateau(1,1,1);
+        plateau.loadPlateau("res/cartes/map.txt"); //J'arrive pas a utiliser 
         
-        setPosTroupes();
+        tailleTuile = plateau.getTailleTuile();
         
         
     }
@@ -96,7 +98,7 @@ public class JeuxOupi implements Dessinable {
     public void dessiner(Graphics2D g2d) {
         Graphics2D g2dPrive = (Graphics2D) g2d.create();
         plateau.dessiner(g2dPrive);
-        
+        System.out.println(tailleTuile);
         for (Troupe p : simTroupes) {
             p.dessiner(g2dPrive);
         }

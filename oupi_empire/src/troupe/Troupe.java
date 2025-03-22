@@ -156,7 +156,7 @@ public class Troupe implements Dessinable {
 		Graphics2D g2dPrive = (Graphics2D) g2d.create();
 		
 		Color couleur = new Color(0,0,0);
-
+		
 		// Dessiner un contour si la troupe est sélectionnée
 		if (equipe == equipeActuelle) {
 			couleur = Color.GREEN;
@@ -167,7 +167,7 @@ public class Troupe implements Dessinable {
 		
 		if (selectionne) {
 			g2dPrive.drawRect(x, y, JeuxOupi.tailleTuile, JeuxOupi.tailleTuile);
-
+			
 			// TODO g2dPrive.draw(zoneDeplacement);
 		}
 		// g2dPrive.setColor(new Color(0,0,255,50));
