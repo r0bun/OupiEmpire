@@ -1,14 +1,11 @@
 package troupe;
 
+import interfaces.Dessinable;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
-
-import interfaces.Dessinable;
 import jeu_oupi.JeuxOupi;
 import plateau.Tuile;
 
@@ -392,8 +389,52 @@ public class Troupe implements Dessinable {
 	}
 	
 	public void attaquer(Troupe troupeEnem) {
-		// a implementer
+		// Vérifier que les troupes sont d'équipes différentes
+		if (this.equipe == troupeEnem.getEquipe()) {
+			System.out.println("⚠️ Impossible d'attaquer une troupe alliée!");
+			return;
+		}
+		
+		// Calcul des dégâts infligés (formule simple inspirée de Fire Emblem)
+		int degats = Math.max(1, this.attaque - troupeEnem.defense / 2);
+		
+		// Application des dégâts
+		troupeEnem.HP = Math.max(0, troupeEnem.HP - degats);
+		
+		System.out.println("🗡️ " + this.getClass().getSimpleName() + " attaque et inflige " + degats + " points de dégâts!");
+		System.out.println("   " + troupeEnem.getClass().getSimpleName() + " a maintenant " + troupeEnem.HP + " HP.");
+		
+		// Vérifier si la troupe ennemie est vaincue
+		if (troupeEnem.HP <= 0) {
+			System.out.println("💀 " + troupeEnem.getClass().getSimpleName() + " a été vaincu!");
+			// Ici on pourrait ajouter une logique pour retirer la troupe du jeu
+		} else {
+			// Contre-attaque si la troupe ennemie est encore en vie
+			// La vitesse détermine si une contre-attaque est possible (comme dans Fire Emblem)
+			if (troupeEnem.vitesse >= this.vitesse - 5) {
+				int degatsContre = Math.max(1, troupeEnem.attaque - this.defense / 2);
+				this.HP = Math.max(0, this.HP - degatsContre);
+				
+				System.out.println("⚔️ " + troupeEnem.getClass().getSimpleName() + " contre-attaque et inflige " + degatsContre + " points de dégâts!");
+				System.out.println("   " + this.getClass().getSimpleName() + " a maintenant " + this.HP + " HP.");
+				
+				// Vérifier si l'attaquant est vaincu par la contre-attaque
+				if (this.HP <= 0) {
+					System.out.println("💀 " + this.getClass().getSimpleName() + " a été vaincu!");
+					// Ici on pourrait ajouter une logique pour retirer la troupe du jeu
+				}
+			} else {
+				System.out.println("🛡️ " + troupeEnem.getClass().getSimpleName() + " est trop lent pour contre-attaquer.");
+			}
+		}
+		
+		// Réduction de l'endurance après l'attaque
+		this.endurance = Math.max(0, this.endurance - 5);
+		System.out.println("⚡ Endurance de " + this.getClass().getSimpleName() + " réduite à " + this.endurance);
 	}
 
+	public int getHP() {
+		return HP;
+	}
 	
 }

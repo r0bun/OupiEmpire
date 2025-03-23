@@ -28,6 +28,7 @@ public class appLaunch extends JFrame {
 
 	private JLabel lblEtat;
 
+	
 	/**
 	 * Lance l'application.
 	 * 

@@ -1,11 +1,9 @@
 package jeu_oupi;
 
+import interfaces.Dessinable;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-
-import gestion_couleur.Couleur;
-import interfaces.Dessinable;
 import plateau.Plateau;
 import plateau.Tuile;
 import troupe.Oupi;
@@ -66,7 +64,7 @@ public class JeuxOupi implements Dessinable {
      */
     public void setTroupes() {
         troupes.add(new Oupi(10, 10, 1));
-        troupes.add(new Oupi(1, 0, 1));
+        troupes.add(new Oupi(1, 0, 0));
     }
     
     // je ne peux pas mettre ca dans la methode juste au dessus pour eviter les bugs
@@ -98,7 +96,6 @@ public class JeuxOupi implements Dessinable {
     public void dessiner(Graphics2D g2d) {
         Graphics2D g2dPrive = (Graphics2D) g2d.create();
         plateau.dessiner(g2dPrive);
-        System.out.println(tailleTuile);
         for (Troupe p : simTroupes) {
             p.dessiner(g2dPrive);
         }
@@ -272,6 +269,64 @@ public class JeuxOupi implements Dessinable {
     public void comfirm() {
     	deselectionnerTroupe(troupeSelectionnee);
 	}
+    
+    /**
+     * Fait attaquer une troupe ciblée par la troupe actuellement sélectionnée.
+     * 
+     * @param troupeCible la troupe à attaquer
+     * @return true si l'attaque a été effectuée avec succès, false sinon
+     */
+    public boolean attaquerTroupe(Troupe troupeCible) {
+        if (troupeSelectionnee == null || troupeCible == null) {
+            System.out.println("⚠️ Échec de l'attaque: Aucune troupe sélectionnée ou cible invalide.");
+            return false;
+        }
+        
+        if (troupeSelectionnee == troupeCible) {
+            System.out.println("⚠️ Échec de l'attaque: Une troupe ne peut pas s'attaquer elle-même.");
+            return false;
+        }
+        
+        if (troupeSelectionnee.getEquipe() == troupeCible.getEquipe()) {
+            System.out.println("⚠️ Échec de l'attaque: Impossible d'attaquer une troupe alliée.");
+            return false;
+        }
+        
+        // Calculer la distance entre les troupes (distance Manhattan)
+        int distance = Math.abs(troupeSelectionnee.getCol() - troupeCible.getCol()) + 
+                       Math.abs(troupeSelectionnee.getLig() - troupeCible.getLig());
+        
+        // Vérifier si la cible est à portée d'attaque (distance 1 pour attaque corps à corps)
+        if (distance > 1) {
+            System.out.println("⚠️ Échec de l'attaque: La cible est trop éloignée (distance " + distance + ")");
+            return false;
+        }
+        
+        System.out.println("🗡️ Attaque initiée par " + troupeSelectionnee.getClass().getSimpleName() + 
+                          " contre " + troupeCible.getClass().getSimpleName());
+        
+        // Appel de la méthode d'attaque de la troupe
+        troupeSelectionnee.attaquer(troupeCible);
+        
+        // Vérifier si la troupe cible est morte (HP <= 0)
+        if (troupeCible.getHP() <= 0) {
+            System.out.println("💀 " + troupeCible.getClass().getSimpleName() + " a été vaincu!");
+            // On pourrait ajouter ici la logique pour retirer la troupe du jeu
+            simTroupes.remove(troupeCible);
+            troupes.remove(troupeCible);
+        }
+        
+        // Vérifier si l'attaquant est mort suite à une contre-attaque
+        if (troupeSelectionnee.getHP() <= 0) {
+            System.out.println("💀 " + troupeSelectionnee.getClass().getSimpleName() + " a été vaincu!");
+            // On pourrait ajouter ici la logique pour retirer la troupe du jeu
+            simTroupes.remove(troupeSelectionnee);
+            troupes.remove(troupeSelectionnee);
+            troupeSelectionnee = null;
+        }
+        
+        return true;
+    }
     
     public Troupe getTroupeSelectionnee() {
 		return troupeSelectionnee;

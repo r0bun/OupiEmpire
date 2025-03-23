@@ -55,6 +55,9 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
     private int dragStartX;
     private int dragStartY;
     private boolean isDragging = false;
+    
+    // Attack mode state
+    private boolean modeAttaque = false;
 
 	// Ajouter le support pour lancer des événements de type PropertyChange
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
@@ -77,6 +80,25 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 				// Apply inverse zoom to get the actual game coordinates
                 int gameX = (int)((e.getX() - translateX) / zoomFactor);
                 int gameY = (int)((e.getY() - translateY) / zoomFactor);
+
+                // En mode attaque, essayer de sélectionner une troupe à attaquer
+                if (modeAttaque && jeuxOupi.getTroupeSelectionnee() != null) {
+                    Troupe troupeCible = jeuxOupi.getTroupeA(gameX, gameY);
+                    if (troupeCible != null) {
+                        System.out.println("⚔️ Tentative d'attaque sur " + troupeCible.getClass().getSimpleName());
+                        // Attaquer la troupe ciblée
+                        boolean attaqueReussie = jeuxOupi.attaquerTroupe(troupeCible);
+                        if (attaqueReussie) {
+                            System.out.println("✅ Attaque réussie!");
+                        }
+                        // Désactiver le mode attaque après une tentative
+                        modeAttaque = false;
+                        return;
+                    } else {
+                        System.out.println("❌ Pas de troupe à attaquer ici! Cliquez sur une troupe ennemie.");
+                        return;
+                    }
+                }
 
 				// Essayer de sélectionner une troupe d'abord
 				Troupe cliquee = jeuxOupi.getTroupeA(gameX, gameY);
@@ -181,15 +203,41 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 							break;
 						case KeyEvent.VK_C:
 							jeuxOupi.comfirm();
-
+							break;
+						case KeyEvent.VK_F: // F pour "Fire" ou attaquer
+						case KeyEvent.VK_X: // X pour attaquer (comme dans Fire Emblem)
+							activerModeAttaque();
+							break;
 						}
+					} else {
+						System.out.println("⚠️ Cette troupe appartient à l'autre équipe.");
 					}
+				} else if (e.getKeyCode() == KeyEvent.VK_F || e.getKeyCode() == KeyEvent.VK_X) {
+					System.out.println("⚠️ Sélectionnez d'abord une troupe pour attaquer.");
 				}
 				repaint();
 			}
 
 		});
 	}
+    
+    /**
+     * Active le mode attaque, permettant de sélectionner une troupe à attaquer.
+     */
+    private void activerModeAttaque() {
+        if (jeuxOupi.getTroupeSelectionnee() != null) {
+            modeAttaque = !modeAttaque; // Toggle attack mode
+            if (modeAttaque) {
+                System.out.println("🔴 MODE ATTAQUE ACTIVÉ! Cliquez sur une troupe ennemie à attaquer.");
+                System.out.println("   - L'ennemi doit être adjacent (distance 1)");
+                System.out.println("   - Appuyez sur F ou X à nouveau pour annuler");
+            } else {
+                System.out.println("🟢 Mode attaque désactivé.");
+            }
+        } else {
+            System.out.println("⚠️ Veuillez d'abord sélectionner une troupe pour attaquer.");
+        }
+    }
 
 	/**
 	 * Méthode pour ajouter un écouteur de changement de propriété.

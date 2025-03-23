@@ -13,6 +13,8 @@ public class MainMenu extends JFrame {
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
 
+    private appLaunch affichierFrame = new appLaunch();
+    
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             try {
@@ -81,6 +83,8 @@ public class MainMenu extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("Bouton 'Jouer' cliqué !");
+                affichierFrame.setVisible(true);
+				dispose();
             }
         });
 
