@@ -3,7 +3,10 @@ package application;
 import java.awt.*;
 import javax.swing.*;
 import jeu_oupi.ZoneAnimationOupi;
+import ecrans_jeu.*;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.awt.event.ActionEvent;
 
 /**
@@ -24,6 +27,8 @@ public class appLaunch extends JFrame {
 
 	private ZoneAnimationOupi zoneAnimationOupi, minimap;
 
+	private Debut ecranDebut;
+	
 	private JButton btnStart, btnToggle, btnWin, btnLose;
 
 	private JLabel lblEtat;
@@ -70,10 +75,35 @@ public class appLaunch extends JFrame {
 		/*minimap = new ZoneAnimationOupi(screenWidth/5, screenHeight/5);
 		minimap.setBounds(1020, 331, 482, 485);
 		contentPane.add(minimap);*/
-
+		
+		ecranDebut = new Debut(screenWidth, screenHeight);
+		ecranDebut.setBounds(50, 30, (int) (screenWidth / 2), (int) (screenHeight*0.725));
+		contentPane.add(ecranDebut);
+		
 		zoneAnimationOupi = new ZoneAnimationOupi(screenWidth, screenHeight);
-		zoneAnimationOupi.setBounds(50, 30, (int) (screenWidth / 2), (int) (screenWidth / 2));
+		zoneAnimationOupi.setBounds(50, 30, (int) (screenWidth / 2), (int) (screenHeight*0.725));
+		zoneAnimationOupi.setVisible(false);
 		contentPane.add(zoneAnimationOupi);
+
+		ecranDebut.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				if(evt.getPropertyName().equals("Start")) {
+					ecranDebut.setVisible(false);
+					zoneAnimationOupi.setVisible(true);
+					zoneAnimationOupi.demarrer();
+				}
+			}
+		});
+		
+		zoneAnimationOupi.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				if(evt.getPropertyName().equals("Fin")) {
+					ecranDebut.setVisible(false);
+					zoneAnimationOupi.setVisible(true);
+					zoneAnimationOupi.demarrer();
+				}
+			}
+		});
 
 		btnStart = new JButton("Commencer partie");
 		btnStart.addActionListener(new ActionListener() {

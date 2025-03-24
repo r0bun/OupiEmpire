@@ -198,7 +198,7 @@ public class JeuxOupi implements Dessinable {
      * Déplace la troupe sélectionnée vers le haut.
      */
     public void deplacerTroupeSelectionneeHaut() {
-        if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0) {
+        if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0 && !troupeSelectionnee.isEpuisee()) {
         	int col = troupeSelectionnee.getCol();
         	int lig = troupeSelectionnee.getLig();
         	plateau.getTuile(lig, col).setOccupee(false);
@@ -211,7 +211,7 @@ public class JeuxOupi implements Dessinable {
      * Déplace la troupe sélectionnée vers le bas.
      */
     public void deplacerTroupeSelectionneeBas() {
-        if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0) {
+        if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0 && !troupeSelectionnee.isEpuisee()) {
         	int col = troupeSelectionnee.getCol();
         	int lig = troupeSelectionnee.getLig();
         	plateau.getTuile(lig, col).setOccupee(false);
@@ -224,7 +224,7 @@ public class JeuxOupi implements Dessinable {
      * Déplace la troupe sélectionnée vers la gauche.
      */
     public void deplacerTroupeSelectionneeGauche() {
-        if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0) {
+        if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0 && !troupeSelectionnee.isEpuisee()) {
         	int col = troupeSelectionnee.getCol();
         	int lig = troupeSelectionnee.getLig();
         	plateau.getTuile(lig, col).setOccupee(false);
@@ -237,7 +237,7 @@ public class JeuxOupi implements Dessinable {
      * Déplace la troupe sélectionnée vers la droite.
      */
     public void deplacerTroupeSelectionneeDroite() {
-        if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0) {
+        if (troupeSelectionnee != null && troupeSelectionnee.getDistanceParcourable() >= 0 && !troupeSelectionnee.isEpuisee()) {
         	int col = troupeSelectionnee.getCol();
         	int lig = troupeSelectionnee.getLig();
         	plateau.getTuile(lig, col).setOccupee(false);
@@ -266,7 +266,8 @@ public class JeuxOupi implements Dessinable {
         }
     }
     
-    public void comfirm() {
+    public void confirm() {
+    	troupeSelectionnee.setEpuisee(true);
     	deselectionnerTroupe(troupeSelectionnee);
 	}
     
@@ -330,6 +331,25 @@ public class JeuxOupi implements Dessinable {
     
     public Troupe getTroupeSelectionnee() {
 		return troupeSelectionnee;
+	}
+
+	public ArrayList<Troupe> getTroupes() {
+		return troupes;
+	}
+	
+	public ArrayList<Troupe> getTroupePlayer(int player){
+		ArrayList<Troupe> troupesP = new ArrayList<>();
+		for(int i = 0; i < troupes.size();i++) {
+			if(troupesP.get(i).getEquipe()==player) {
+				troupesP.add(troupes.get(i));
+			}
+		}
+		
+		return troupesP;
+	}
+
+	public void setTroupes(ArrayList<Troupe> troupes) {
+		this.troupes = troupes;
 	}
 
 	

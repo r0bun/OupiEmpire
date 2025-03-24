@@ -10,102 +10,102 @@ import styles.RoundedButton;
 
 public class MainMenu extends JFrame {
 
-    private static final long serialVersionUID = 1L;
-    private JPanel contentPane;
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
 
-    private appLaunch affichierFrame = new appLaunch();
-    
-    public static void main(String[] args) {
-        EventQueue.invokeLater(() -> {
-            try {
-                MainMenu frame = new MainMenu();
-                frame.setVisible(true);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
+	private appLaunch affichierFrame = new appLaunch();
 
-    public MainMenu() {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setResizable(false);
-        setLocationRelativeTo(null);
+	public static void main(String[] args) {
+		EventQueue.invokeLater(() -> {
+			try {
+				MainMenu frame = new MainMenu();
+				frame.setVisible(true);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
 
-        // Obtenir la taille de l'écran
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice gd = ge.getDefaultScreenDevice();
-        DisplayMode dm = gd.getDisplayMode();
-        int screenWidth = dm.getWidth();
-        int screenHeight = dm.getHeight();
+	public MainMenu() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setExtendedState(JFrame.MAXIMIZED_BOTH);
+		setResizable(false);
+		setLocationRelativeTo(null);
 
-        // Création du LayeredPane pour gérer les couches (background + contenu)
-        JLayeredPane layeredPane = new JLayeredPane();
-        layeredPane.setPreferredSize(new Dimension(screenWidth, screenHeight));
-        setContentPane(layeredPane);
+		// Obtenir la taille de l'écran
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice gd = ge.getDefaultScreenDevice();
+		DisplayMode dm = gd.getDisplayMode();
+		int screenWidth = dm.getWidth();
+		int screenHeight = dm.getHeight();
 
-        // Charger le GIF et le redimensionner
-        ImageIcon gifIcon = new ImageIcon(getClass().getResource("/bak/mainMenue.gif"));
-        Image gifImage = gifIcon.getImage().getScaledInstance(screenWidth, screenHeight, Image.SCALE_DEFAULT);
-        ImageIcon scaledGif = new ImageIcon(gifImage);
+		// Création du LayeredPane pour gérer les couches (background + contenu)
+		JLayeredPane layeredPane = new JLayeredPane();
+		layeredPane.setPreferredSize(new Dimension(screenWidth, screenHeight));
+		setContentPane(layeredPane);
 
-        // Ajouter le GIF en arrière-plan
-        JLabel backgroundLabel = new JLabel(scaledGif);
-        backgroundLabel.setBounds(0, 0, screenWidth, screenHeight);
-        layeredPane.add(backgroundLabel, JLayeredPane.DEFAULT_LAYER);
+		// Charger le GIF et le redimensionner
+		ImageIcon gifIcon = new ImageIcon(getClass().getResource("/bak/mainMenue.gif"));
+		Image gifImage = gifIcon.getImage().getScaledInstance(screenWidth, screenHeight, Image.SCALE_DEFAULT);
+		ImageIcon scaledGif = new ImageIcon(gifImage);
 
-        // Panel pour ajouter des boutons et éléments interactifs
-        contentPane = new JPanel();
-        contentPane.setOpaque(false);
-        contentPane.setBounds(0, 0, screenWidth, screenHeight);
-        layeredPane.add(contentPane, JLayeredPane.PALETTE_LAYER);
-        contentPane.setLayout(null);
+		// Ajouter le GIF en arrière-plan
+		JLabel backgroundLabel = new JLabel(scaledGif);
+		backgroundLabel.setBounds(0, 0, screenWidth, screenHeight);
+		layeredPane.add(backgroundLabel, JLayeredPane.DEFAULT_LAYER);
 
-        // Création des boutons arrondis et transparents
-        JButton playButton = new RoundedButton("Jouer", 30);
-        JButton settingsButton = new RoundedButton("Options", 30);
-        JButton exitButton = new RoundedButton("Quitter", 30);
+		// Panel pour ajouter des boutons et éléments interactifs
+		contentPane = new JPanel();
+		contentPane.setOpaque(false);
+		contentPane.setBounds(0, 0, screenWidth, screenHeight);
+		layeredPane.add(contentPane, JLayeredPane.PALETTE_LAYER);
+		contentPane.setLayout(null);
 
-        // Positionner les boutons au centre de l'écran
-        int buttonWidth = 200;
-        int buttonHeight = 50;
-        int buttonSpacing = 20;
+		// Création des boutons arrondis et transparents
+		JButton playButton = new RoundedButton("Jouer", 30);
+		JButton settingsButton = new RoundedButton("Options", 30);
+		JButton exitButton = new RoundedButton("Quitter", 30);
 
-        int centerX = screenWidth / 2 - buttonWidth / 2;
-        int centerY = screenHeight / 2 - buttonHeight / 2;
+		// Positionner les boutons au centre de l'écran
+		int buttonWidth = 200;
+		int buttonHeight = 50;
+		int buttonSpacing = 20;
 
-        playButton.setBounds(centerX, centerY - (buttonHeight + buttonSpacing), buttonWidth, buttonHeight);
-        settingsButton.setBounds(centerX, centerY, buttonWidth, buttonHeight);
-        exitButton.setBounds(centerX, centerY + (buttonHeight + buttonSpacing), buttonWidth, buttonHeight);
-        
-     // Ajout d'un MouseListener à chaque bouton
-        playButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("Bouton 'Jouer' cliqué !");
-                affichierFrame.setVisible(true);
+		int centerX = screenWidth / 2 - buttonWidth / 2;
+		int centerY = screenHeight / 2 - buttonHeight / 2;
+
+		playButton.setBounds(centerX, centerY - (buttonHeight + buttonSpacing), buttonWidth, buttonHeight);
+		settingsButton.setBounds(centerX, centerY, buttonWidth, buttonHeight);
+		exitButton.setBounds(centerX, centerY + (buttonHeight + buttonSpacing), buttonWidth, buttonHeight);
+
+		// Ajout d'un MouseListener à chaque bouton
+		playButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				System.out.println("Bouton 'Jouer' cliqué !");
+				affichierFrame.setVisible(true);
 				dispose();
-            }
-        });
+			}
+		});
 
-        settingsButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("Bouton 'Options' cliqué !");
-            }
-        });
+		settingsButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				System.out.println("Bouton 'Options' cliqué !");
+			}
+		});
 
-        exitButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("Bouton 'Quitter' cliqué !");
-            }
-        });
+		exitButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				System.out.println("EXIT");
+				System.exit(0);
+			}
+		});
 
-        // Ajouter les boutons au panel
-        contentPane.add(playButton);
-        contentPane.add(settingsButton);
-        contentPane.add(exitButton);
-    }
+		// Ajouter les boutons au panel
+		contentPane.add(playButton);
+		contentPane.add(settingsButton);
+		contentPane.add(exitButton);
+	}
 }
-

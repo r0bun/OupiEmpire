@@ -55,7 +55,7 @@ public abstract class Tuile {
             // Dessiner un rectangle de couleur si pas de texture
             Graphics2D g2dPrive = (Graphics2D) g2d.create();
             g2dPrive.setColor(couleur);
-            g2dPrive.fillRect(x, y, taille, taille);
+            g2dPrive.fillRect(x, y, taille, taille); //TODO
             g2dPrive.setColor(Color.BLACK);
             g2dPrive.drawRect(x, y, taille, taille);
             g2dPrive.dispose();

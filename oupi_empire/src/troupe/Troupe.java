@@ -24,6 +24,9 @@ public class Troupe implements Dessinable {
     private boolean selectionne;
     public boolean remplie;
     
+    private boolean epuisee;
+    private int equipe;
+        
     private int bakDistParc = 0;
     private int distanceParcourable = 0;
     
@@ -34,8 +37,6 @@ public class Troupe implements Dessinable {
     
     protected int HP,attaque,defense,vitesse,endurance;
     
-    private int equipe;
-
 	private static int equipeActuelle = 0;
 
 	/**
@@ -162,7 +163,7 @@ public class Troupe implements Dessinable {
 		}
 		g2dPrive.setColor(couleur);
 		
-		if (selectionne) {
+		if (selectionne && !epuisee) {
 			g2dPrive.drawRect(x, y, JeuxOupi.tailleTuile, JeuxOupi.tailleTuile);
 			
 			// TODO g2dPrive.draw(zoneDeplacement);
@@ -436,5 +437,12 @@ public class Troupe implements Dessinable {
 	public int getHP() {
 		return HP;
 	}
-	
+
+	public boolean isEpuisee() {
+		return epuisee;
+	}
+
+	public void setEpuisee(boolean epuisee) {
+		this.epuisee = epuisee;
+	}
 }
