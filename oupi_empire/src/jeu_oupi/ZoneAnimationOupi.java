@@ -320,6 +320,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	 * Démarre le thread de jeu.
 	 */
 	public void demarrer() {
+		System.out.println("start");
 		threadJeu = new Thread(this);
 		threadJeu.start();
 		enCours = true;
@@ -379,13 +380,17 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	 * Regardes si toutes les {@link Troupe} de l'utilisateur sont epuisees
 	 */
 	public void checkFinTour(){
+		System.out.println("check fin");
 		ArrayList<Troupe> troupes = jeuxOupi.getTroupes();
 		int nbActionnable = 0;
 		
 		for(int i = 0; i < troupes.size(); i++) {
-			nbActionnable+=1;
+			if(!troupes.get(i).isEpuisee() && troupes.get(i).getEquipe() == joueurActuel) {
+				nbActionnable+=1;
+			}
 		}
 		
+		System.out.println(nbActionnable);
 		if(nbActionnable == 0) {
 			toggleJoueur();
 		}
