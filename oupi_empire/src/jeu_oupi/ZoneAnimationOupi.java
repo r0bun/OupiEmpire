@@ -77,7 +77,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 					dragStartX = e.getX();
 					dragStartY = e.getY();
 
-					// Apply inverse zoom to get the actual game coordinates
+					// Applique le zoom inverse pour obtenir les coordonnees du jeu
 					int gameX = (int) ((e.getX() - translateX) / zoomFactor);
 					int gameY = (int) ((e.getY() - translateY) / zoomFactor);
 
@@ -104,10 +104,11 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 
 					// Essayer de sélectionner une troupe d'abord
 					Troupe cliquee = jeuxOupi.getTroupeA(gameX, gameY);
-					if (cliquee != null) {
+					if (cliquee != null && jeuxOupi.getTroupeSelectionnee() == null) {
 						jeuxOupi.selectionnerTroupe(cliquee);
 						System.out
 								.println("Troupe sélectionnée à : (" + cliquee.getCol() + "," + cliquee.getLig() + ")");
+						pcs.firePropertyChange("troupe", "a", jeuxOupi.getTroupeSelectionnee());
 						return;
 					}
 
@@ -337,6 +338,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		threadJeu.interrupt();
 		if (enCours) {
 			enCours = false;
+			pcs.firePropertyChange("Fin", 10, 0);
 			return "win";
 		}
 		return null;
@@ -352,6 +354,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		threadJeu.interrupt();
 		if (enCours) {
 			enCours = false;
+			pcs.firePropertyChange("Fin", 10, 1);
 			return "lose";
 		}
 		return null;

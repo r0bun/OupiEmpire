@@ -445,4 +445,40 @@ public class Troupe implements Dessinable {
 	public void setEpuisee(boolean epuisee) {
 		this.epuisee = epuisee;
 	}
+
+	public int getAttaque() {
+		return attaque;
+	}
+
+	public void setAttaque(int attaque) {
+		this.attaque = attaque;
+	}
+
+	public int getDefense() {
+		return defense;
+	}
+
+	public void setDefense(int defense) {
+		this.defense = defense;
+	}
+
+	public int getVitesse() {
+		return vitesse;
+	}
+
+	public void setVitesse(int vitesse) {
+		this.vitesse = vitesse;
+	}
+
+	public int getEndurance() {
+		return endurance;
+	}
+
+	public void setEndurance(int endurance) {
+		this.endurance = endurance;
+	}
+
+	public void setHP(int hP) {
+		HP = hP;
+	}
 }

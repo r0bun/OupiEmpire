@@ -3,6 +3,7 @@ package application;
 import java.awt.*;
 import javax.swing.*;
 import jeu_oupi.ZoneAnimationOupi;
+import troupe.Troupe;
 import ecrans_jeu.*;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -28,6 +29,8 @@ public class appLaunch extends JFrame {
 	private ZoneAnimationOupi zoneAnimationOupi, minimap;
 
 	private Debut ecranDebut;
+	
+	private Stats stats;
 	
 	private JButton btnStart, btnToggle, btnWin, btnLose;
 
@@ -84,6 +87,10 @@ public class appLaunch extends JFrame {
 		zoneAnimationOupi.setBounds(50, 30, (int) (screenWidth / 2), (int) (screenHeight*0.725));
 		zoneAnimationOupi.setVisible(false);
 		contentPane.add(zoneAnimationOupi);
+		
+		stats = new Stats(screenWidth, screenHeight);
+		stats.setBounds((int) (screenWidth / 2), 30, (int) (screenWidth - 50), (int) (screenHeight*0.725));
+		contentPane.add(stats);
 
 		ecranDebut.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -98,14 +105,18 @@ public class appLaunch extends JFrame {
 		zoneAnimationOupi.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				if(evt.getPropertyName().equals("Fin")) {
-					ecranDebut.setVisible(false);
-					zoneAnimationOupi.setVisible(true);
+					ecranDebut.setVisible(true);
+					zoneAnimationOupi.setVisible(false);
 					zoneAnimationOupi.demarrer();
+				}
+				
+				if(evt.getPropertyName().equals("troupe")) {
+					stats.updateTroupe((Troupe) evt.getNewValue());
 				}
 			}
 		});
 
-		btnStart = new JButton("Commencer partie");
+		/*btnStart = new JButton("Commencer partie");
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Partie start");
@@ -152,7 +163,7 @@ public class appLaunch extends JFrame {
 			}
 		});
 		btnLose.setBounds(1049, 248, 200, 60);
-		contentPane.add(btnLose);
+		contentPane.add(btnLose);*/
 
 		lblEtat = new JLabel("");
 		lblEtat.setHorizontalAlignment(SwingConstants.CENTER);

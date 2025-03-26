@@ -14,7 +14,7 @@ import java.beans.PropertyChangeSupport;
 import javax.swing.JPanel;
 
 /**
- * TODO
+ * Ecran de debut de jeu, pour empecher l'interraction avec le jeu avant le commencement
  * 
  * @author Loic Simard
  */
@@ -44,6 +44,12 @@ public class Debut extends JPanel {
         }
     }*/
 
+	/**
+	 * Constructeur de l'ecran affiche avant la partie
+	 * 
+	 * @param screenWidth La largeur de l'ecran
+	 * @param screenHeight La hauteur de l'ecran
+	 */
 	public Debut(int screenWidth, int screenHeight) {
 		this.screenWidth = screenWidth;
 		this.screenHeight = screenHeight;
