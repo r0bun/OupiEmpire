@@ -89,7 +89,7 @@ public class appLaunch extends JFrame {
 		contentPane.add(zoneAnimationOupi);
 		
 		stats = new Stats(screenWidth, screenHeight);
-		stats.setBounds((int) (screenWidth / 2), 30, (int) (screenWidth - 50), (int) (screenHeight*0.725));
+		stats.setBounds((int) (6*screenWidth/11) , 30, (int) (screenWidth/4), (int) (screenHeight*0.725));
 		contentPane.add(stats);
 
 		ecranDebut.addPropertyChangeListener(new PropertyChangeListener() {

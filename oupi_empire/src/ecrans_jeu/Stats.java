@@ -16,7 +16,7 @@ public class Stats extends JPanel{
 	
 	private int screenWidth, screenHeight;
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private Troupe troupe = new Troupe(0,0);
+	private Troupe troupe;
 
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
@@ -38,15 +38,17 @@ public class Stats extends JPanel{
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		g2d.setColor(Color.BLACK);
-		g2d.setFont(new Font("Franklin Gothic Book", Font.PLAIN, 50));
-		g2d.drawString(troupe.getClass().toString(), 100, (int)screenHeight/20);
-		g2d.setFont(new Font("Franklin Gothic Book", Font.PLAIN, 20));
-		g2d.drawString("HP: "+troupe.getHP(), 100, (int)2*screenHeight/20);
-		g2d.drawString("Attaque: "+troupe.getAttaque(), 100, (int) (3*screenHeight/20));
-		g2d.drawString("Defense: "+troupe.getDefense(), 100, (int) (4*screenHeight/20));
-		g2d.drawString("Vitesse: "+troupe.getVitesse(), 100, (int) (5*screenHeight/20));
-		g2d.drawString("Endurance: "+troupe.getEndurance(), 100, (int) (6*screenHeight/20));
+		if(troupe != null) {
+			g2d.setColor(Color.BLACK);
+			g2d.setFont(new Font("Franklin Gothic Book", Font.PLAIN, 50));
+			g2d.drawString(troupe.getClass().toString(), 10, (int)screenHeight/20);
+			g2d.setFont(new Font("Franklin Gothic Book", Font.PLAIN, 20));
+			g2d.drawString("HP: "+troupe.getHP(), 10, (int)2*screenHeight/20);
+			g2d.drawString("Attaque: "+troupe.getAttaque(), 10, (int) (3*screenHeight/20));
+			g2d.drawString("Defense: "+troupe.getDefense(), 10, (int) (4*screenHeight/20));
+			g2d.drawString("Vitesse: "+troupe.getVitesse(), 10, (int) (5*screenHeight/20));
+			g2d.drawString("Endurance: "+troupe.getEndurance(), 10, (int) (6*screenHeight/20));
+		}
 	}
 	
 	public void updateTroupe(Troupe newTroupe) {

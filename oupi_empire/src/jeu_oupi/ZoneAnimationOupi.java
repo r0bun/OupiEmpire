@@ -108,8 +108,13 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 						jeuxOupi.selectionnerTroupe(cliquee);
 						System.out
 								.println("Troupe sélectionnée à : (" + cliquee.getCol() + "," + cliquee.getLig() + ")");
-						pcs.firePropertyChange("troupe", "a", jeuxOupi.getTroupeSelectionnee());
+						pcs.firePropertyChange("troupe", "", jeuxOupi.getTroupeSelectionnee());
 						return;
+					}
+					
+					if(cliquee == null && jeuxOupi.getTroupeSelectionnee() != null) {
+						pcs.firePropertyChange("troupe", "", null);
+						jeuxOupi.deselectionnerTroupe(cliquee);
 					}
 
 					// Si aucune troupe n'a été cliquée, gérer le clic sur une tuile
@@ -209,7 +214,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 							break;
 						case KeyEvent.VK_C:
 							jeuxOupi.confirm();
-							
+							pcs.firePropertyChange("troupe", "", null);
 							checkFinTour();
 							break;
 						case KeyEvent.VK_F: // F pour "Fire" ou attaquer
