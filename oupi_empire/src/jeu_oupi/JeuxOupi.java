@@ -23,9 +23,9 @@ public class JeuxOupi implements Dessinable {
     //private int screenHeight;
 
     // PLATEAU 
-    public static Plateau plateau;
-    private static int nbTuiles = 20;
-    public static int tailleTuile;
+    public Plateau plateau; // Non-statique maintenant
+    private int nbTuiles = 20; // Non-statique maintenant
+    public int tailleTuile; // Non-statique maintenant
     public Tuile tuileSelectionnee;
 
     // TROUPES
@@ -51,27 +51,38 @@ public class JeuxOupi implements Dessinable {
         copyTroupes(troupes, simTroupes);
         
         plateau = new Plateau(nbTuiles, nbTuiles, tailleTuile);
-        plateau = new Plateau(1,1,1);
-        plateau.loadPlateau("res/cartes/map.txt"); //J'arrive pas a utiliser 
+        plateau = new Plateau(1, 1, 1);
+        plateau.loadPlateau("res/cartes/map.txt");
         
         tailleTuile = plateau.getTailleTuile();
         
-        
+        // Initialiser les positions des troupes
+        setPosTroupes();
     }
 
     /**
      * Initialise les troupes du jeu.
      */
     public void setTroupes() {
-        troupes.add(new Oupi(10, 10, 1));
-        troupes.add(new Oupi(1, 0, 0));
+        troupes.add(new Oupi(5, 5, 1, this));
+        troupes.add(new Oupi(1, 0, 0, this));
     }
     
-    // je ne peux pas mettre ca dans la methode juste au dessus pour eviter les bugs
+    /**
+     * Initialise les positions des troupes sur le plateau
+     */
     public void setPosTroupes() {
-    	plateau.getTuile(10, 10).setOccupee(true);
-    	plateau.getTuile(1, 0).setOccupee(true);
-    	
+        // S'assurer que les tuiles correspondantes sont marquées comme occupées
+        for (Troupe troupe : troupes) {
+            int lig = troupe.getLig();
+            int col = troupe.getCol();
+            if (lig >= 0 && lig < nbTuiles && col >= 0 && col < nbTuiles) {
+                plateau.getTuile(lig, col).setOccupee(true);
+            } 
+            // Forcer la mise à jour des positions en pixels
+            troupe.setCol(col); 
+            troupe.setLig(lig);
+        }
     }
 
     /**
@@ -123,8 +134,17 @@ public class JeuxOupi implements Dessinable {
      * 
      * @return le nombre de tuiles
      */
-    public static int getNbTuiles() {
+    public int getNbTuiles() {
         return nbTuiles;
+    }
+
+    /**
+     * Retourne la taille d'une tuile.
+     * 
+     * @return la taille d'une tuile en pixels
+     */
+    public int getTailleTuile() {
+        return tailleTuile;
     }
 
     /**
@@ -182,7 +202,6 @@ public class JeuxOupi implements Dessinable {
             
             plateau.getTuile(ligO, colO).setPosDep(true);
             plateau.getTuile(ligO, colO).setCouleur(Color.CYAN);
-            
         }
     }
     
@@ -340,7 +359,7 @@ public class JeuxOupi implements Dessinable {
 	public ArrayList<Troupe> getTroupePlayer(int player){
 		ArrayList<Troupe> troupesP = new ArrayList<>();
 		for(int i = 0; i < troupes.size();i++) {
-			if(troupesP.get(i).getEquipe()==player) {
+			if(troupes.get(i).getEquipe()==player) {
 				troupesP.add(troupes.get(i));
 			}
 		}
@@ -351,6 +370,4 @@ public class JeuxOupi implements Dessinable {
 	public void setTroupes(ArrayList<Troupe> troupes) {
 		this.troupes = troupes;
 	}
-
-	
 }

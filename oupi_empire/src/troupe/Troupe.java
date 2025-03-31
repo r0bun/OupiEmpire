@@ -38,6 +38,9 @@ public class Troupe implements Dessinable {
     protected int HP,attaque,defense,vitesse,endurance;
     
 	private static int equipeActuelle = 0;
+	
+	// Référence à l'instance de JeuxOupi
+	private JeuxOupi jeu;
 
 	/**
 	 * 
@@ -54,14 +57,16 @@ public class Troupe implements Dessinable {
 	/**
 	 * Constructeur de la classe {@code Troupe}.
 	 * 
-	 * @param col la colonne initiale de la troupe
 	 * @param lig la ligne initiale de la troupe
+	 * @param col la colonne initiale de la troupe
+	 * @param jeu l'instance du jeu à laquelle appartient cette troupe
 	 */
-	public Troupe(int lig, int col) {
+	public Troupe(int lig, int col, JeuxOupi jeu) {
 		this.col = col;
 		this.lig = lig;
-		x = getX(col);
-		y = getY(lig);
+		this.jeu = jeu;
+		// Calculer la position en pixels basée sur la taille de tuile
+		updatePosition();
 		preCol = col;
 		preLig = lig;
 		selectionne = false;
@@ -71,6 +76,14 @@ public class Troupe implements Dessinable {
 		defense= 10;
 		vitesse=20;
 		endurance=30;
+	}
+	
+	/**
+	 * Met à jour la position en pixels basée sur les coordonnées de la grille
+	 */
+	private void updatePosition() {
+		x = getX(col);
+		y = getY(lig);
 	}
 
 	private void initialiserTuilesSelec() {
@@ -88,16 +101,15 @@ public class Troupe implements Dessinable {
 
 				// Vérifier si la position est dans le losange
 				if (Math.abs(i - bakDistParc) + Math.abs(j - bakDistParc) <= bakDistParc && ligne >= 0
-						&& ligne < JeuxOupi.getNbTuiles() && colonne >= 0 && colonne < JeuxOupi.getNbTuiles()) {
-					if (JeuxOupi.plateau.getTuile(ligne, colonne).estOccupee()) {
+						&& ligne < jeu.getNbTuiles() && colonne >= 0 && colonne < jeu.getNbTuiles()) {
+					if (jeu.getPlateau().getTuile(ligne, colonne).estOccupee()) {
 						tuilesSelec[i][j] = null;
 					} else {
-						tuilesSelec[i][j] = JeuxOupi.plateau.getTuile(ligne, colonne);
+						tuilesSelec[i][j] = jeu.getPlateau().getTuile(ligne, colonne);
 					}
 				} else {
 					tuilesSelec[i][j] = null; // En dehors du plateau ou en dehors du losange
 				}
-
 			}
 		}
 	}
@@ -121,11 +133,11 @@ public class Troupe implements Dessinable {
 	}
 
 	private int getY(int lig) {
-		return lig * JeuxOupi.tailleTuile;
+		return lig * jeu.getTailleTuile();
 	}
 
 	private int getX(int col) {
-		return col * JeuxOupi.tailleTuile;
+		return col * jeu.getTailleTuile();
 	}
 
 	/**
@@ -164,15 +176,14 @@ public class Troupe implements Dessinable {
 		g2dPrive.setColor(couleur);
 		
 		if (selectionne && !epuisee) {
-			g2dPrive.drawRect(x, y, JeuxOupi.tailleTuile, JeuxOupi.tailleTuile);
-			
-			// TODO g2dPrive.draw(zoneDeplacement);
+			g2dPrive.drawRect(x, y, jeu.getTailleTuile(), jeu.getTailleTuile());
 		}
+		
 		// g2dPrive.setColor(new Color(0,0,255,50));
 		couleur = new Color(couleur.getRed(), couleur.getGreen(), couleur.getBlue(), 50);
 		g2dPrive.setColor(couleur);
-		g2dPrive.fillRect(x, y, JeuxOupi.tailleTuile, JeuxOupi.tailleTuile);
-		g2dPrive.drawImage(image, x, y, JeuxOupi.tailleTuile, JeuxOupi.tailleTuile, null);
+		g2dPrive.fillRect(x, y, jeu.getTailleTuile(), jeu.getTailleTuile());
+		g2dPrive.drawImage(image, x, y, jeu.getTailleTuile(), jeu.getTailleTuile(), null);
 	}
 
 	/**
@@ -265,7 +276,6 @@ public class Troupe implements Dessinable {
 	
 	public void confirmerMouv() {
 		selectionne = false;
-		
 	}
 
 	private boolean estDansLimites(int ligne, int colonne) {
@@ -290,8 +300,8 @@ public class Troupe implements Dessinable {
 	public boolean estA(int clickX, int clickY) {
 		int troupeX = x;
 		int troupeY = y;
-		return clickX >= troupeX && clickX < troupeX + JeuxOupi.tailleTuile && clickY >= troupeY
-				&& clickY < troupeY + JeuxOupi.tailleTuile;
+		return clickX >= troupeX && clickX < troupeX + jeu.getTailleTuile() && clickY >= troupeY
+				&& clickY < troupeY + jeu.getTailleTuile();
 	}
 
 	/**
@@ -378,12 +388,6 @@ public class Troupe implements Dessinable {
 			equipeActuelle = 0;
 		}
 	}
-	/*
-	 * TODO private Path2D.Double creerZoneDeplacement(){ Path2D.Double
-	 * zoneDeplacement = null; zoneDeplacement.moveTo(tuileSelec, y);
-	 * 
-	 * return zoneDeplacement; }
-	 */
 
 	public void deselec() {
 		selectionne = false;
@@ -480,5 +484,14 @@ public class Troupe implements Dessinable {
 
 	public void setHP(int hP) {
 		HP = hP;
+	}
+	
+	/**
+	 * Obtient l'instance du jeu associée à cette troupe
+	 * 
+	 * @return l'instance de JeuxOupi
+	 */
+	public JeuxOupi getJeu() {
+		return jeu;
 	}
 }

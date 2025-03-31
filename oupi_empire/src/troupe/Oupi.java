@@ -1,5 +1,7 @@
 package troupe;
 
+import jeu_oupi.JeuxOupi;
+
 /**
  * Troupe Oupi
  * 
@@ -13,9 +15,10 @@ public class Oupi extends Troupe {
 	 * @param col colone de la troupe
 	 * @param lig ligne de la troupe
 	 * @param equipe l'equipe a laquelle appartient la troupe
+	 * @param jeu l'instance du jeu associée à cette troupe
 	 */
-	public Oupi(int col, int lig, int equipe) {
-		super(col, lig);
+	public Oupi(int col, int lig, int equipe, JeuxOupi jeu) {
+		super(col, lig, jeu);
 		this.setDistanceParcourable(5);
 		this.setBakDistParc(5);
 		this.setEquipe(equipe);
@@ -23,5 +26,4 @@ public class Oupi extends Troupe {
 		
 		HP=150;
 	}
- 
 }
