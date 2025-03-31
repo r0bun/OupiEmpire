@@ -111,11 +111,6 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 						pcs.firePropertyChange("troupe", "", jeuxOupi.getTroupeSelectionnee());
 						return;
 					}
-					
-					if(cliquee == null && jeuxOupi.getTroupeSelectionnee() != null) {
-						pcs.firePropertyChange("troupe", "", null);
-						jeuxOupi.deselectionnerTroupe(cliquee);
-					}
 
 					// Si aucune troupe n'a été cliquée, gérer le clic sur une tuile
 					int ligne = gameY / JeuxOupi.tailleTuile;
@@ -135,6 +130,19 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				isDragging = false;
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+
+				int gameX = (int) ((e.getX() - translateX) / zoomFactor);
+				int gameY = (int) ((e.getY() - translateY) / zoomFactor);
+				Troupe cliquee = jeuxOupi.getTroupeA(gameX, gameY);
+				
+				if(cliquee == null && jeuxOupi.getTroupeSelectionnee() != null) {
+					pcs.firePropertyChange("troupe", "", null);
+					jeuxOupi.deselectionnerTroupe(cliquee);
+				}
 			}
 		});
 
