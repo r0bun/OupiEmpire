@@ -35,6 +35,13 @@ public class appLaunch extends JFrame {
 	private JButton btnStart, btnToggle, btnWin, btnLose;
 
 	private JLabel lblEtat;
+	
+	// Pour suivre l'équipe actuelle (0 ou 1)
+	private int equipeActuelle = 0;
+	
+	// Couleurs pour chaque équipe
+	private final Color COULEUR_EQUIPE_0 = new Color(230, 255, 230); // Vert pâle
+	private final Color COULEUR_EQUIPE_1 = new Color(255, 230, 230); // Rouge pâle
 
 	
 	/**
@@ -64,6 +71,7 @@ public class appLaunch extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(BorderFactory.createEmptyBorder());
 		contentPane.setLayout(null);
+		contentPane.setBackground(COULEUR_EQUIPE_0); // Couleur initiale pour l'équipe 0
 		setContentPane(contentPane);
 
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -113,10 +121,25 @@ public class appLaunch extends JFrame {
 				if(evt.getPropertyName().equals("troupe")) {
 					stats.updateTroupe((Troupe) evt.getNewValue());
 				}
+				
+				// Détection du changement d'équipe
+				if(evt.getPropertyName().equals("equipeActuelle")) {
+					int nouvelleEquipe = (int) evt.getNewValue();
+					equipeActuelle = nouvelleEquipe;
+					updateBackgroundColor();
+				}
 			}
 		});
 
-		/*btnStart = new JButton("Commencer partie");
+		// Calcul de la position pour les boutons sous la zone d'animation
+		int buttonY = 30 + (int)(screenHeight*0.725) + 20; // 20px de marge après la zone d'animation
+		int buttonWidth = 200;
+		int buttonHeight = 50;
+		int buttonSpacing = 20;
+		int buttonsStartX = 50; // Même X que la zone d'animation
+
+		// Bouton Commencer partie
+		btnStart = new JButton("Commencer partie");
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Partie start");
@@ -125,20 +148,25 @@ public class appLaunch extends JFrame {
 				zoneAnimationOupi.requestFocusInWindow();
 			}
 		});
-		btnStart.setBounds(1049, 30, 200, 60);
+		btnStart.setBounds(buttonsStartX, buttonY, buttonWidth, buttonHeight);
 		contentPane.add(btnStart);
 
+		// Bouton Toggle team
 		btnToggle = new JButton("Toggle team");
 		btnToggle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Changement joueur");
 				zoneAnimationOupi.toggleJoueur();
+				// Changer la couleur de fond quand on change d'équipe
+				equipeActuelle = (equipeActuelle == 0) ? 1 : 0;
+				updateBackgroundColor();
 				zoneAnimationOupi.requestFocusInWindow();
 			}
 		});
-		btnToggle.setBounds(1049, 108, 200, 60);
+		btnToggle.setBounds(buttonsStartX + buttonWidth + buttonSpacing, buttonY, buttonWidth, buttonHeight);
 		contentPane.add(btnToggle);
 
+		// Bouton Gagner partie
 		btnWin = new JButton("Gagner partie");
 		btnWin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -149,9 +177,10 @@ public class appLaunch extends JFrame {
 				}
 			}
 		});
-		btnWin.setBounds(1049, 178, 200, 60);
+		btnWin.setBounds(buttonsStartX + (buttonWidth + buttonSpacing) * 2, buttonY, buttonWidth, buttonHeight);
 		contentPane.add(btnWin);
 
+		// Bouton Perdre partie
 		btnLose = new JButton("Perdre partie");
 		btnLose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -162,17 +191,29 @@ public class appLaunch extends JFrame {
 				}
 			}
 		});
-		btnLose.setBounds(1049, 248, 200, 60);
-		contentPane.add(btnLose);*/
+		btnLose.setBounds(buttonsStartX + (buttonWidth + buttonSpacing) * 3, buttonY, buttonWidth, buttonHeight);
+		contentPane.add(btnLose);
 
 		lblEtat = new JLabel("");
 		lblEtat.setHorizontalAlignment(SwingConstants.CENTER);
-		lblEtat.setBounds(1049, 318, 200, 60);
+		lblEtat.setBounds(buttonsStartX, buttonY + buttonHeight + 10, buttonWidth * 2, 30);
 		contentPane.add(lblEtat);
 
 		setBounds(0, 0, screenWidth, screenHeight);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 		setLocationRelativeTo(null);
+	}
+	
+	/**
+	 * Met à jour la couleur d'arrière-plan en fonction de l'équipe actuelle
+	 */
+	private void updateBackgroundColor() {
+		if (equipeActuelle == 0) {
+			contentPane.setBackground(COULEUR_EQUIPE_0);
+		} else {
+			contentPane.setBackground(COULEUR_EQUIPE_1);
+		}
+		contentPane.repaint();
 	}
 }

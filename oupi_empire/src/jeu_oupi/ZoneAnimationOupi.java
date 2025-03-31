@@ -113,12 +113,12 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 					}
 
 					// Si aucune troupe n'a été cliquée, gérer le clic sur une tuile
-					int ligne = gameY / JeuxOupi.tailleTuile;
-					int colonne = gameX / JeuxOupi.tailleTuile;
+					int ligne = gameY / jeuxOupi.getTailleTuile();
+					int colonne = gameX /  jeuxOupi.getTailleTuile();
 
 					// Vérifier si le clic est dans les limites du plateau
-					if (ligne >= 0 && ligne < JeuxOupi.getNbTuiles() && colonne >= 0
-							&& colonne < JeuxOupi.getNbTuiles()) {
+					if (ligne >= 0 && ligne <  jeuxOupi.getTailleTuile() && colonne >= 0
+							&& colonne <  jeuxOupi.getTailleTuile()) {
 						Tuile tuileCliquee = jeuxOupi.getPlateau().getTuile(ligne, colonne);
 						System.out.println("Tuile cliquée : Ligne " + (ligne + 1) + ", Colonne " + (colonne + 1));
 					}
@@ -390,6 +390,9 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		}
 		
 		Troupe.toggleEquipeActuelle();
+		
+		// Notification du changement d'équipe
+		pcs.firePropertyChange("equipeActuelle", -1, joueurActuel);
 	}
 	
 	/**
