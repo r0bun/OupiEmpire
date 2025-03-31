@@ -1,7 +1,6 @@
 package jeu_oupi;
 
 import interfaces.Dessinable;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import plateau.Plateau;
@@ -65,6 +64,7 @@ public class JeuxOupi implements Dessinable {
      */
     public void setTroupes() {
         troupes.add(new Oupi(5, 5, 1, this));
+        troupes.add(new Oupi(4, 5, 1, this));
         troupes.add(new Oupi(1, 0, 0, this));
     }
     
@@ -200,17 +200,20 @@ public class JeuxOupi implements Dessinable {
             ligO = troupeSelectionnee.getLig();
             colO = troupeSelectionnee.getCol();
             
+            // Marquer comme position de départ sans changer la couleur
             plateau.getTuile(ligO, colO).setPosDep(true);
-            plateau.getTuile(ligO, colO).setCouleur(Color.CYAN);
         }
     }
     
     public void deselectionnerTroupe(Troupe troupe) {
-    	troupeSelectionnee.deselec();
-    	troupeSelectionnee = null;
-    	
-    	plateau.getTuile(ligO, colO).setPosDep(false);
-        plateau.getTuile(ligO, colO).setCouleur(Color.RED);
+        if (troupeSelectionnee != null) {
+            troupeSelectionnee.deselec();
+            
+            // Réinitialiser le marquage de la position de départ
+            plateau.getTuile(ligO, colO).setPosDep(false);
+            
+            troupeSelectionnee = null;
+        }
     }
 
     /**
@@ -369,5 +372,10 @@ public class JeuxOupi implements Dessinable {
 
 	public void setTroupes(ArrayList<Troupe> troupes) {
 		this.troupes = troupes;
+	}
+
+	public void deselectionnerTroupeAct() {
+		deselectionnerTroupe(troupeSelectionnee);
+		
 	}
 }

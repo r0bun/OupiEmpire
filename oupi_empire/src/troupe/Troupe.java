@@ -102,15 +102,36 @@ public class Troupe implements Dessinable {
 				// Vérifier si la position est dans le losange
 				if (Math.abs(i - bakDistParc) + Math.abs(j - bakDistParc) <= bakDistParc && ligne >= 0
 						&& ligne < jeu.getNbTuiles() && colonne >= 0 && colonne < jeu.getNbTuiles()) {
-					if (jeu.getPlateau().getTuile(ligne, colonne).estOccupee()) {
+					Tuile tuile = jeu.getPlateau().getTuile(ligne, colonne);
+					if (tuile.estOccupee() && !(ligne == lig && colonne == col)) {
 						tuilesSelec[i][j] = null;
 					} else {
-						tuilesSelec[i][j] = jeu.getPlateau().getTuile(ligne, colonne);
+						tuilesSelec[i][j] = tuile;
+						// Marquer la tuile comme accessible pour le rendu visuel
+						tuile.setAccessible(true);
 					}
 				} else {
 					tuilesSelec[i][j] = null; // En dehors du plateau ou en dehors du losange
 				}
 			}
+		}
+	}
+	
+	/**
+	 * Efface le marquage d'accessibilité de toutes les tuiles
+	 */
+	private void effacerZoneAccessible() {
+		if (tuilesSelec != null) {
+			int taille = tuilesSelec.length;
+			for (int i = 0; i < taille; i++) {
+				for (int j = 0; j < tuilesSelec[0].length; j++) {
+					if (tuilesSelec[i][j] != null) {
+						tuilesSelec[i][j].setAccessible(false);
+					}
+				}
+			 }
+			// Pour s'assurer que les références sont libérées correctement
+			tuilesSelec = null;
 		}
 	}
 
@@ -206,6 +227,8 @@ public class Troupe implements Dessinable {
 			initialiserTuilesSelec();
 			printTuilesSelec();
 			distanceParcourable = bakDistParc; // Réinitialiser la distance parcourable
+		} else {
+			effacerZoneAccessible();
 		}
 	}
 
@@ -391,6 +414,7 @@ public class Troupe implements Dessinable {
 
 	public void deselec() {
 		selectionne = false;
+		effacerZoneAccessible();
 	}
 	
 	public void attaquer(Troupe troupeEnem) {

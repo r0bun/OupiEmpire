@@ -1,6 +1,8 @@
 package plateau;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -19,6 +21,7 @@ public abstract class Tuile {
     protected int taille; // Taille de la tuile
     protected boolean occupee; // Indique si la tuile est occupée
     protected boolean posDep;
+    protected boolean accessible; // Indique si la tuile est accessible par la troupe sélectionnée
     protected Color couleur; // Couleur de la tuile
     protected BufferedImage texture;
     protected TerrainObstacle obstacle;
@@ -41,6 +44,7 @@ public abstract class Tuile {
         this.couleur = couleur;
         this.occupee = false;
         this.posDep = false;
+        this.accessible = false;
         this.lig = lig;
         this.col = col;
     }
@@ -51,17 +55,6 @@ public abstract class Tuile {
      * @param g2d l'objet {@link Graphics2D} utilisé pour dessiner
      */
     public void dessiner(Graphics2D g2d) {
-        if (texture == null || occupee || posDep) {
-            // Dessiner un rectangle de couleur si pas de texture
-            Graphics2D g2dPrive = (Graphics2D) g2d.create();
-            g2dPrive.setColor(couleur);
-            g2dPrive.fillRect(x, y, taille, taille); //TODO
-            g2dPrive.setColor(Color.BLACK);
-            g2dPrive.drawRect(x, y, taille, taille);
-            g2dPrive.dispose();
-            return;
-        }
-
         // Créer une copie locale du contexte graphique
         Graphics2D g2dPrive = (Graphics2D) g2d.create();
 
@@ -75,15 +68,46 @@ public abstract class Tuile {
             // Appliquer la forme comme zone de clipping
             g2dPrive.clip(shape);
 
-            // Dessiner l'image dans la zone de clipping
-            g2dPrive.drawImage(texture, x, y, taille, taille, null);
+            // Dessiner l'image de fond (texture) dans tous les cas
+            if (texture != null) {
+                g2dPrive.drawImage(texture, x, y, taille, taille, null);
+            } else {
+                // Si pas de texture, utiliser la couleur de fond
+                g2dPrive.setColor(couleur);
+                g2dPrive.fillRect(x, y, taille, taille);
+            }
+            
+            // Si la tuile est accessible par la troupe sélectionnée
+            if (accessible) {
+                // Sauvegarder le composite original
+                Composite originalComposite = g2dPrive.getComposite();
+                
+                // Appliquer un effet de surbrillance (vert clair semi-transparent)
+                g2dPrive.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
+                g2dPrive.setColor(new Color(100, 255, 100)); // Vert clair
+                g2dPrive.fillRect(x, y, taille, taille);
+                
+                // Restaurer le composite original
+                g2dPrive.setComposite(originalComposite);
+            }
 
-            // Dessiner le contour de la forme si nécessaire
+            // Si la tuile est la position de départ d'une troupe sélectionnée
+            if (posDep) {
+                // Ajouter une bordure cyan pour indiquer la position de départ
+                g2dPrive.setColor(new Color(0, 255, 255, 100)); // Cyan semi-transparent
+                g2dPrive.setStroke(new java.awt.BasicStroke(3));
+                g2dPrive.drawRect(x + 2, y + 2, taille - 4, taille - 4);
+            }
+
+            // Restaurer le clip original
             g2dPrive.setClip(oldClip);
+            
+            // Dessiner le contour de la tuile
             g2dPrive.setColor(Color.DARK_GRAY);
             g2dPrive.draw(shape);
+            
         } finally {
-            // Restaurer le clip original et libérer les ressources
+            // Libérer les ressources
             g2dPrive.dispose();
         }
     }
@@ -112,6 +136,24 @@ public abstract class Tuile {
 
     public void setPosDep(boolean posDep) {
         this.posDep = posDep;
+    }
+    
+    /**
+     * Vérifie si la tuile est accessible par la troupe sélectionnée.
+     *
+     * @return {@code true} si la tuile est accessible, {@code false} sinon
+     */
+    public boolean isAccessible() {
+        return accessible;
+    }
+
+    /**
+     * Définit si la tuile est accessible par la troupe sélectionnée.
+     *
+     * @param accessible l'état d'accessibilité de la tuile
+     */
+    public void setAccessible(boolean accessible) {
+        this.accessible = accessible;
     }
 
     /**

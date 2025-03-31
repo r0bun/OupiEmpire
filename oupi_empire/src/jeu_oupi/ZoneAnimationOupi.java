@@ -91,6 +91,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 							if (attaqueReussie) {
 								System.out.println("✅ Attaque réussie!");
 								jeuxOupi.getTroupeSelectionnee().setEpuisee(true);
+								jeuxOupi.deselectionnerTroupeAct();
 								checkFinTour();
 							}
 							// Désactiver le mode attaque après une tentative
@@ -190,6 +191,18 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				Troupe troupe = jeuxOupi.getTroupeSelectionnee();
+				
+				// Si la touche Escape est pressée et qu'une troupe est sélectionnée
+				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					if (troupe != null) {
+						System.out.println("📋 Désélection de la troupe avec touche Echap");
+						pcs.firePropertyChange("troupe", "", null);
+						jeuxOupi.deselectionnerTroupe(troupe);
+						modeAttaque = false;  // Désactiver le mode attaque si actif
+					}
+					return;
+				}
+				
 				if (troupe != null) {
 					if (troupe.getEquipe() == joueurActuel) {
 						switch (e.getKeyCode()) {
@@ -224,6 +237,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 						}
 					} else {
 						System.out.println("⚠️ Cette troupe appartient à l'autre équipe.");
+						System.out.println("ℹ️ Appuyez sur la touche ECHAP pour la désélectionner.");
 					}
 				} else if (e.getKeyCode() == KeyEvent.VK_F || e.getKeyCode() == KeyEvent.VK_X) {
 					System.out.println("⚠️ Sélectionnez d'abord une troupe pour attaquer.");
@@ -239,11 +253,19 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	 */
 	private void activerModeAttaque() {
 		if (jeuxOupi.getTroupeSelectionnee() != null) {
+			Troupe troupe = jeuxOupi.getTroupeSelectionnee();
+			if (troupe.getEquipe() != joueurActuel) {
+				System.out.println("⚠️ Impossible d'attaquer avec une troupe ennemie.");
+				System.out.println("ℹ️ Appuyez sur la touche ECHAP pour désélectionner cette troupe.");
+				return;
+			}
+			
 			modeAttaque = !modeAttaque; // Toggle attack mode
 			if (modeAttaque) {
 				System.out.println("🔴 MODE ATTAQUE ACTIVÉ! Cliquez sur une troupe ennemie à attaquer.");
 				System.out.println("   - L'ennemi doit être adjacent (distance 1)");
 				System.out.println("   - Appuyez sur F ou X à nouveau pour annuler");
+				System.out.println("   - Appuyez sur ECHAP pour désélectionner la troupe");
 			} else {
 				System.out.println("🟢 Mode attaque désactivé.");
 			}
@@ -369,6 +391,13 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	 * Change le joueur qui agit
 	 */
 	public void toggleJoueur() {
+		// Désélectionner la troupe actuelle si elle existe
+		if (jeuxOupi.getTroupeSelectionnee() != null) {
+			Troupe troupe = jeuxOupi.getTroupeSelectionnee();
+			pcs.firePropertyChange("troupe", "", null);
+			jeuxOupi.deselectionnerTroupe(troupe);
+		}
+		
 		ArrayList<Troupe> troupes = jeuxOupi.getTroupes();
 		
 		if (joueurActuel == 0) {
@@ -376,6 +405,8 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		} else {
 			joueurActuel = 0;
 		}
+		
+		System.out.println("\n🔄 Changement de joueur - C'est maintenant au tour de l'équipe " + joueurActuel);
 		
 		for(int i = 0; i < troupes.size(); i++) {
 			troupes.get(i).setEpuisee(false);
