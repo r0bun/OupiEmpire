@@ -5,6 +5,9 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import plateau.Plateau;
 import plateau.Tuile;
+import troupe.Electricien;
+import troupe.Genial;
+import troupe.Lobotomisateur;
 import troupe.Oupi;
 import troupe.Troupe;
 
@@ -63,9 +66,13 @@ public class JeuxOupi implements Dessinable {
      * Initialise les troupes du jeu.
      */
     public void setTroupes() {
-        troupes.add(new Oupi(5, 5, 1, this));
-        troupes.add(new Oupi(4, 5, 1, this));
-        troupes.add(new Oupi(1, 0, 0, this));
+        // Équipe 0 (joueur 1)
+        troupes.add(new Oupi(1, 1, 0, this));
+        troupes.add(new Lobotomisateur(3, 1, 0, this));
+        
+        // Équipe 1 (joueur 2)
+        troupes.add(new Genial(15, 15, 1, this));
+        troupes.add(new Electricien(17, 15, 1, this));
     }
     
     /**
@@ -294,6 +301,27 @@ public class JeuxOupi implements Dessinable {
 	}
     
     /**
+     * Gère la mort d'une troupe en libérant sa tuile et en effaçant les tuiles accessibles.
+     * 
+     * @param troupe La troupe qui meurt
+     */
+    private void gererMortTroupe(Troupe troupe) {
+        if (troupe != null) {
+            // Libérer la tuile occupée
+            int lig = troupe.getLig();
+            int col = troupe.getCol();
+            plateau.getTuile(lig, col).setOccupee(false);
+
+            // Effacer les tuiles accessibles
+            troupe.deselec();
+
+            // Retirer la troupe des listes
+            troupes.remove(troupe);
+            simTroupes.remove(troupe);
+        }
+    }
+
+    /**
      * Fait attaquer une troupe ciblée par la troupe actuellement sélectionnée.
      * 
      * @param troupeCible la troupe à attaquer
@@ -319,9 +347,10 @@ public class JeuxOupi implements Dessinable {
         int distance = Math.abs(troupeSelectionnee.getCol() - troupeCible.getCol()) + 
                        Math.abs(troupeSelectionnee.getLig() - troupeCible.getLig());
         
-        // Vérifier si la cible est à portée d'attaque (distance 1 pour attaque corps à corps)
-        if (distance > 1) {
-            System.out.println("⚠️ Échec de l'attaque: La cible est trop éloignée (distance " + distance + ")");
+        // Vérifier si la cible est à portée d'attaque selon la distance d'attaque de la troupe
+        if (distance > troupeSelectionnee.getDistanceAttaque()) {
+            System.out.println("⚠️ Échec de l'attaque: La cible est trop éloignée (distance " + distance + 
+                              ", portée maximale " + troupeSelectionnee.getDistanceAttaque() + ")");
             return false;
         }
         
@@ -334,17 +363,13 @@ public class JeuxOupi implements Dessinable {
         // Vérifier si la troupe cible est morte (HP <= 0)
         if (troupeCible.getHP() <= 0) {
             System.out.println("💀 " + troupeCible.getClass().getSimpleName() + " a été vaincu!");
-            // On pourrait ajouter ici la logique pour retirer la troupe du jeu
-            simTroupes.remove(troupeCible);
-            troupes.remove(troupeCible);
+            gererMortTroupe(troupeCible);
         }
         
         // Vérifier si l'attaquant est mort suite à une contre-attaque
         if (troupeSelectionnee.getHP() <= 0) {
             System.out.println("💀 " + troupeSelectionnee.getClass().getSimpleName() + " a été vaincu!");
-            // On pourrait ajouter ici la logique pour retirer la troupe du jeu
-            simTroupes.remove(troupeSelectionnee);
-            troupes.remove(troupeSelectionnee);
+            gererMortTroupe(troupeSelectionnee);
             troupeSelectionnee = null;
         }
         

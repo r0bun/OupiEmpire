@@ -22,7 +22,10 @@ public class Oupi extends Troupe {
 		this.setDistanceParcourable(5);
 		this.setBakDistParc(5);
 		this.setEquipe(equipe);
-		image = getImage("/troupes/oupi_processed");
+		image = getImage("/troupes/oupi.jpg");
+		
+		// Corps à corps (distance d'attaque de 1, valeur par défaut)
+		this.setDistanceAttaque(1);
 		
 		HP=150;
 	}

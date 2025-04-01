@@ -37,6 +37,9 @@ public class Troupe implements Dessinable {
     
     protected int HP,attaque,defense,vitesse,endurance;
     
+    // Distance d'attaque (1 = corps à corps par défaut)
+    protected int distanceAttaque = 1;
+    
 	private static int equipeActuelle = 0;
 	
 	// Référence à l'instance de JeuxOupi
@@ -76,6 +79,7 @@ public class Troupe implements Dessinable {
 		defense= 10;
 		vitesse=20;
 		endurance=30;
+        distanceAttaque = 1; // Distance d'attaque par défaut (corps à corps)
 	}
 	
 	/**
@@ -124,7 +128,7 @@ public class Troupe implements Dessinable {
 		if (tuilesSelec != null) {
 			int taille = tuilesSelec.length;
 			for (int i = 0; i < taille; i++) {
-				for (int j = 0; j < tuilesSelec[0].length; j++) {
+				for (int j = 0; j < taille; j++) {
 					if (tuilesSelec[i][j] != null) {
 						tuilesSelec[i][j].setAccessible(false);
 					}
@@ -170,7 +174,7 @@ public class Troupe implements Dessinable {
 	protected BufferedImage getImage(String imagePath) {
 		BufferedImage image = null;
 		try {
-			image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".jpg"));
+			image = ImageIO.read(getClass().getResourceAsStream(imagePath));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -415,6 +419,8 @@ public class Troupe implements Dessinable {
 	public void deselec() {
 		selectionne = false;
 		effacerZoneAccessible();
+		// Libérer les références pour éviter les fuites mémoire
+		tuilesSelec = null;
 	}
 	
 	public void attaquer(Troupe troupeEnem) {
@@ -424,6 +430,15 @@ public class Troupe implements Dessinable {
 			return;
 		}
 		
+        // Calcul de la distance entre les troupes
+        int distance = Math.abs(this.getCol() - troupeEnem.getCol()) + Math.abs(this.getLig() - troupeEnem.getLig());
+        
+        // Vérifier que la troupe est à portée d'attaque
+        if (distance > distanceAttaque) {
+            System.out.println("⚠️ Cible hors de portée! Distance maximale d'attaque: " + distanceAttaque);
+            return;
+        }
+        
 		// Calcul des dégâts infligés (formule simple inspirée de Fire Emblem)
 		int degats = Math.max(1, this.attaque - troupeEnem.defense / 2);
 		
@@ -517,5 +532,23 @@ public class Troupe implements Dessinable {
 	 */
 	public JeuxOupi getJeu() {
 		return jeu;
+	}
+	
+	/**
+	 * Obtient la distance d'attaque de la troupe
+	 * 
+	 * @return la distance d'attaque
+	 */
+	public int getDistanceAttaque() {
+		return distanceAttaque;
+	}
+	
+	/**
+	 * Définit la distance d'attaque de la troupe
+	 * 
+	 * @param distanceAttaque la nouvelle distance d'attaque
+	 */
+	public void setDistanceAttaque(int distanceAttaque) {
+		this.distanceAttaque = distanceAttaque;
 	}
 }
