@@ -143,6 +143,9 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 				if (cliquee == null && jeuxOupi.getTroupeSelectionnee() != null) {
 					pcs.firePropertyChange("troupe", "", null);
 					jeuxOupi.deselectionnerTroupe(cliquee);
+				} else if(!cliquee.equals(jeuxOupi.getTroupeSelectionnee())) {
+					pcs.firePropertyChange("troupe", "", cliquee);
+					jeuxOupi.selectionnerTroupe(cliquee);
 				}
 			}
 		});
