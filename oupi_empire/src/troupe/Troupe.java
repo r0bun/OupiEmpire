@@ -18,27 +18,27 @@ import plateau.Tuile;
  * @author Loic Simard
  */
 public class Troupe implements Dessinable {
-    protected BufferedImage image;
-    private int x, y;
-    private int col, lig, preCol, preLig;
-    private boolean selectionne;
-    public boolean remplie;
-    
-    private boolean epuisee;
-    private int equipe;
-        
-    private int bakDistParc = 0;
-    private int distanceParcourable = 0;
-    
-    // Variables pour garder la position centrale quand tuilesSelec a été créé
-    private int centreCol, centreLig;
-    
-    private Tuile[][] tuilesSelec;
-    
-    protected int HP,attaque,defense,vitesse,endurance;
-    
+	protected BufferedImage image;
+	private int x, y;
+	private int col, lig, preCol, preLig;
+	private boolean selectionne;
+	public boolean remplie;
+
+	private boolean epuisee;
+	private int equipe;
+
+	private int bakDistParc = 0;
+	private int distanceParcourable = 0;
+
+	// Variables pour garder la position centrale quand tuilesSelec a été créé
+	private int centreCol, centreLig;
+
+	private Tuile[][] tuilesSelec;
+
+	protected int HP, attaque, defense, vitesse, endurance;
+
 	private static int equipeActuelle = 0;
-	
+
 	// Référence à l'instance de JeuxOupi
 	private JeuxOupi jeu;
 
@@ -70,14 +70,14 @@ public class Troupe implements Dessinable {
 		preCol = col;
 		preLig = lig;
 		selectionne = false;
-		
-		HP= 100;
-		attaque= 20;
-		defense= 10;
-		vitesse=20;
-		endurance=30;
+
+		HP = 100;
+		attaque = 20;
+		defense = 10;
+		vitesse = 20;
+		endurance = 30;
 	}
-	
+
 	/**
 	 * Met à jour la position en pixels basée sur les coordonnées de la grille
 	 */
@@ -164,9 +164,9 @@ public class Troupe implements Dessinable {
 	@Override
 	public void dessiner(Graphics2D g2d) {
 		Graphics2D g2dPrive = (Graphics2D) g2d.create();
-		
-		Color couleur = new Color(0,0,0);
-		
+
+		Color couleur = new Color(0, 0, 0);
+
 		// Dessiner un contour si la troupe est sélectionnée
 		if (equipe == equipeActuelle) {
 			couleur = Color.GREEN;
@@ -174,11 +174,11 @@ public class Troupe implements Dessinable {
 			couleur = Color.RED;
 		}
 		g2dPrive.setColor(couleur);
-		
+
 		if (selectionne && !epuisee) {
 			g2dPrive.drawRect(x, y, jeu.getTailleTuile(), jeu.getTailleTuile());
 		}
-		
+
 		// g2dPrive.setColor(new Color(0,0,255,50));
 		couleur = new Color(couleur.getRed(), couleur.getGreen(), couleur.getBlue(), 50);
 		g2dPrive.setColor(couleur);
@@ -273,7 +273,7 @@ public class Troupe implements Dessinable {
 			x = getX(col);
 		}
 	}
-	
+
 	public void confirmerMouv() {
 		selectionne = false;
 	}
@@ -392,47 +392,51 @@ public class Troupe implements Dessinable {
 	public void deselec() {
 		selectionne = false;
 	}
-	
+
 	public void attaquer(Troupe troupeEnem) {
 		// Vérifier que les troupes sont d'équipes différentes
 		if (this.equipe == troupeEnem.getEquipe()) {
 			System.out.println("⚠️ Impossible d'attaquer une troupe alliée!");
 			return;
 		}
-		
+
 		// Calcul des dégâts infligés (formule simple inspirée de Fire Emblem)
 		int degats = Math.max(1, this.attaque - troupeEnem.defense / 2);
-		
+
 		// Application des dégâts
 		troupeEnem.HP = Math.max(0, troupeEnem.HP - degats);
-		
-		System.out.println("🗡️ " + this.getClass().getSimpleName() + " attaque et inflige " + degats + " points de dégâts!");
+
+		System.out.println(
+				"🗡️ " + this.getClass().getSimpleName() + " attaque et inflige " + degats + " points de dégâts!");
 		System.out.println("   " + troupeEnem.getClass().getSimpleName() + " a maintenant " + troupeEnem.HP + " HP.");
-		
+
 		// Vérifier si la troupe ennemie est vaincue
 		if (troupeEnem.HP <= 0) {
 			System.out.println("💀 " + troupeEnem.getClass().getSimpleName() + " a été vaincu!");
 			// Ici on pourrait ajouter une logique pour retirer la troupe du jeu
 		} else {
 			// Contre-attaque si la troupe ennemie est encore en vie
-			// La vitesse détermine si une contre-attaque est possible (comme dans Fire Emblem)
+			// La vitesse détermine si une contre-attaque est possible (comme dans Fire
+			// Emblem)
 			if (troupeEnem.vitesse >= this.vitesse - 5) {
 				int degatsContre = Math.max(1, troupeEnem.attaque - this.defense / 2);
 				this.HP = Math.max(0, this.HP - degatsContre);
-				
-				System.out.println("⚔️ " + troupeEnem.getClass().getSimpleName() + " contre-attaque et inflige " + degatsContre + " points de dégâts!");
+
+				System.out.println("⚔️ " + troupeEnem.getClass().getSimpleName() + " contre-attaque et inflige "
+						+ degatsContre + " points de dégâts!");
 				System.out.println("   " + this.getClass().getSimpleName() + " a maintenant " + this.HP + " HP.");
-				
+
 				// Vérifier si l'attaquant est vaincu par la contre-attaque
 				if (this.HP <= 0) {
 					System.out.println("💀 " + this.getClass().getSimpleName() + " a été vaincu!");
 					// Ici on pourrait ajouter une logique pour retirer la troupe du jeu
 				}
 			} else {
-				System.out.println("🛡️ " + troupeEnem.getClass().getSimpleName() + " est trop lent pour contre-attaquer.");
+				System.out.println(
+						"🛡️ " + troupeEnem.getClass().getSimpleName() + " est trop lent pour contre-attaquer.");
 			}
 		}
-		
+
 		// Réduction de l'endurance après l'attaque
 		this.endurance = Math.max(0, this.endurance - 5);
 		System.out.println("⚡ Endurance de " + this.getClass().getSimpleName() + " réduite à " + this.endurance);
@@ -485,7 +489,7 @@ public class Troupe implements Dessinable {
 	public void setHP(int hP) {
 		HP = hP;
 	}
-	
+
 	/**
 	 * Obtient l'instance du jeu associée à cette troupe
 	 * 

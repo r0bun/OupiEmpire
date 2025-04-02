@@ -32,6 +32,8 @@ public class appLaunch extends JFrame {
 	
 	private Stats stats;
 	
+	private Fin fin;
+	
 	private JButton btnStart, btnToggle, btnWin, btnLose;
 
 	private JLabel lblEtat;
@@ -99,6 +101,11 @@ public class appLaunch extends JFrame {
 		stats = new Stats(screenWidth, screenHeight);
 		stats.setBounds((int) (6*screenWidth/11) , 30, (int) (screenWidth/4), (int) (screenHeight*0.725));
 		contentPane.add(stats);
+		
+		fin = new Fin(screenWidth, screenHeight);
+		fin.setBounds(50, 30, (int) (screenWidth / 2), (int) (screenHeight*0.725));
+		fin.setVisible(false);
+		contentPane.add(fin);
 
 		ecranDebut.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -113,9 +120,8 @@ public class appLaunch extends JFrame {
 		zoneAnimationOupi.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				if(evt.getPropertyName().equals("Fin")) {
-					ecranDebut.setVisible(true);
+					fin.setVisible(true);
 					zoneAnimationOupi.setVisible(false);
-					zoneAnimationOupi.demarrer();
 				}
 				
 				if(evt.getPropertyName().equals("troupe")) {
