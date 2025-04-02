@@ -1,6 +1,7 @@
 package troupe;
 
 import interfaces.Dessinable;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -45,6 +46,10 @@ public class Troupe implements Dessinable {
 
 	// Référence à l'instance de JeuxOupi
 	private JeuxOupi jeu;
+
+    // Variables pour l'animation de sautillement
+    private int bounceSize = 0;
+    private boolean bounceGrowing = true;
 
 	/**
 	 * 
@@ -183,7 +188,7 @@ public class Troupe implements Dessinable {
 	}
 
 	/**
-	 * Dessine la troupe.
+	 * Dessine la troupe avec une animation de sautillement.
 	 * 
 	 * @param g2d l'objet {@link Graphics2D} utilisé pour dessiner
 	 */
@@ -191,14 +196,19 @@ public class Troupe implements Dessinable {
 	public void dessiner(Graphics2D g2d) {
 		Graphics2D g2dPrive = (Graphics2D) g2d.create();
 
+
 		Color couleur = new Color(0, 0, 0);
 
 		// Dessiner un contour si la troupe est sélectionnée
 		if (equipe == equipeActuelle) {
 			couleur = Color.GREEN;
 		} else {
-			couleur = Color.RED;
+			bounceSize -= 2;
+			if (bounceSize <= 0) { // Taille minimale de la réduction
+				bounceGrowing = true;
+			}
 		}
+
 		g2dPrive.setColor(couleur);
 
 		if (selectionne && !epuisee) {
