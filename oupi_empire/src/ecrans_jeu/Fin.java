@@ -52,7 +52,7 @@ public class Fin extends JPanel{
 
 		g2d.setColor(Color.BLACK);
 		g2d.setFont(new Font("Franklin Gothic Book", Font.PLAIN, 50));
-		g2d.drawString("Cliquez pour commencer la partie", 100, (int) screenHeight/3);
+		g2d.drawString("Fin partie", 100, (int) screenHeight/3);
 	}
 	
 	

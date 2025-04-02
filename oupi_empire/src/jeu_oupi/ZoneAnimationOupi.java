@@ -115,11 +115,11 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 
 					// Si aucune troupe n'a été cliquée, gérer le clic sur une tuile
 					int ligne = gameY / jeuxOupi.getTailleTuile();
-					int colonne = gameX /  jeuxOupi.getTailleTuile();
+					int colonne = gameX / jeuxOupi.getTailleTuile();
 
 					// Vérifier si le clic est dans les limites du plateau
-					if (ligne >= 0 && ligne <  jeuxOupi.getTailleTuile() && colonne >= 0
-							&& colonne <  jeuxOupi.getTailleTuile()) {
+					if (ligne >= 0 && ligne < jeuxOupi.getTailleTuile() && colonne >= 0
+							&& colonne < jeuxOupi.getTailleTuile()) {
 						Tuile tuileCliquee = jeuxOupi.getPlateau().getTuile(ligne, colonne);
 						System.out.println("Tuile cliquée : Ligne " + (ligne + 1) + ", Colonne " + (colonne + 1));
 					}
@@ -132,15 +132,15 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 			public void mouseReleased(MouseEvent e) {
 				isDragging = false;
 			}
-			
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 
 				int gameX = (int) ((e.getX() - translateX) / zoomFactor);
 				int gameY = (int) ((e.getY() - translateY) / zoomFactor);
 				Troupe cliquee = jeuxOupi.getTroupeA(gameX, gameY);
-				
-				if(cliquee == null && jeuxOupi.getTroupeSelectionnee() != null) {
+
+				if (cliquee == null && jeuxOupi.getTroupeSelectionnee() != null) {
 					pcs.firePropertyChange("troupe", "", null);
 					jeuxOupi.deselectionnerTroupe(cliquee);
 				}
@@ -407,60 +407,69 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		}
 		
 		ArrayList<Troupe> troupes = jeuxOupi.getTroupes();
-		
+
 		if (joueurActuel == 0) {
 			joueurActuel = 1;
 		} else {
 			joueurActuel = 0;
 		}
-		
 		System.out.println("\n🔄 Changement de joueur - C'est maintenant au tour de l'équipe " + joueurActuel);
 		
 		for(int i = 0; i < troupes.size(); i++) {
 			troupes.get(i).setEpuisee(false);
 		}
-		
+
 		Troupe.toggleEquipeActuelle();
-		
+
 		// Notification du changement d'équipe
 		pcs.firePropertyChange("equipeActuelle", -1, joueurActuel);
 	}
-	
+
 	/**
 	 * Regardes si toutes les {@link Troupe} de l'utilisateur sont epuisees
 	 */
-	public void checkFinTour(){
+	public void checkFinTour() {
 		System.out.println("check fin");
 		ArrayList<Troupe> troupes = jeuxOupi.getTroupes();
 		int nbActionnable = 0;
-		
-		for(int i = 0; i < troupes.size(); i++) {
-			if(!troupes.get(i).isEpuisee() && troupes.get(i).getEquipe() == joueurActuel) {
-				nbActionnable+=1;
+
+		checkFinPartie();
+
+		for (int i = 0; i < troupes.size(); i++) {
+			if (!troupes.get(i).isEpuisee() && troupes.get(i).getEquipe() == joueurActuel) {
+				nbActionnable += 1;
 			}
 		}
-		
+
 		System.out.println(nbActionnable);
-		if(nbActionnable == 0) {
+		if (nbActionnable == 0) {
 			toggleJoueur();
 		}
 	}
-	
+
+	/**
+	 * Regardes si l'armee d'un des joueurs est vide, si c'est le cas, la partie est
+	 * terminee donc soit gagnee ou perdue
+	 */
 	public void checkFinPartie() {
 		ArrayList<Troupe> troupes = jeuxOupi.getTroupes();
 		int nbEq1 = 0, nbEq2 = 0;
-		
-		for(int i = 0; i < troupes.size(); i++) {
-			if(troupes.get(i).getEquipe() == 0) {
+
+		for (int i = 0; i < troupes.size(); i++) {
+			if (troupes.get(i).getEquipe() == 0) {
 				nbEq1 += 1;
 			} else {
 				nbEq2 += 1;
 			}
 		}
-		
-		if(nbEq1 == 0) {
+
+		if (nbEq1 == 0 && nbEq2 == 0) {
+			pcs.firePropertyChange("Fin", 10, -1);
+		}
+
+		if (nbEq1 == 0) {
 			pcs.firePropertyChange("Fin", 10, 0);
-		} else {
+		} else if (nbEq2 == 0) {
 			pcs.firePropertyChange("Fin", 10, 1);
 		}
 	}
