@@ -18,25 +18,27 @@ import plateau.Tuile;
  * @author Loic Simard
  */
 public class Troupe implements Dessinable {
-	protected BufferedImage image;
-	private int x, y;
-	private int col, lig, preCol, preLig;
-	private boolean selectionne;
-	public boolean remplie;
-
-	private boolean epuisee;
-	private int equipe;
-
-	private int bakDistParc = 0;
-	private int distanceParcourable = 0;
-
-	// Variables pour garder la position centrale quand tuilesSelec a été créé
-	private int centreCol, centreLig;
-
-	private Tuile[][] tuilesSelec;
-
-	protected int HP, attaque, defense, vitesse, endurance;
-
+    protected BufferedImage image;
+    private int x, y;
+    private int col, lig, preCol, preLig;
+    private boolean selectionne;
+    public boolean remplie;
+    
+    private boolean epuisee;
+    private int equipe;
+        
+    private int bakDistParc = 0;
+    private int distanceParcourable = 0;
+    
+    // Variables pour garder la position centrale quand tuilesSelec a été créé
+    private int centreCol, centreLig;
+    
+    private Tuile[][] tuilesSelec;
+    
+    protected int HP,attaque,defense,vitesse,endurance;
+    
+    // Distance d'attaque (1 = corps à corps par défaut)
+    protected int distanceAttaque = 1;
 	private static int equipeActuelle = 0;
 
 	// Référence à l'instance de JeuxOupi
@@ -70,12 +72,13 @@ public class Troupe implements Dessinable {
 		preCol = col;
 		preLig = lig;
 		selectionne = false;
-
-		HP = 100;
-		attaque = 20;
-		defense = 10;
-		vitesse = 20;
-		endurance = 30;
+		
+		HP= 100;
+		attaque= 20;
+		defense= 10;
+		vitesse=20;
+		endurance=30;
+        distanceAttaque = 1; // Distance d'attaque par défaut (corps à corps)
 	}
 
 	/**
@@ -102,15 +105,36 @@ public class Troupe implements Dessinable {
 				// Vérifier si la position est dans le losange
 				if (Math.abs(i - bakDistParc) + Math.abs(j - bakDistParc) <= bakDistParc && ligne >= 0
 						&& ligne < jeu.getNbTuiles() && colonne >= 0 && colonne < jeu.getNbTuiles()) {
-					if (jeu.getPlateau().getTuile(ligne, colonne).estOccupee()) {
+					Tuile tuile = jeu.getPlateau().getTuile(ligne, colonne);
+					if (tuile.estOccupee() && !(ligne == lig && colonne == col)) {
 						tuilesSelec[i][j] = null;
 					} else {
-						tuilesSelec[i][j] = jeu.getPlateau().getTuile(ligne, colonne);
+						tuilesSelec[i][j] = tuile;
+						// Marquer la tuile comme accessible pour le rendu visuel
+						tuile.setAccessible(true);
 					}
 				} else {
 					tuilesSelec[i][j] = null; // En dehors du plateau ou en dehors du losange
 				}
 			}
+		}
+	}
+	
+	/**
+	 * Efface le marquage d'accessibilité de toutes les tuiles
+	 */
+	private void effacerZoneAccessible() {
+		if (tuilesSelec != null) {
+			int taille = tuilesSelec.length;
+			for (int i = 0; i < taille; i++) {
+				for (int j = 0; j < taille; j++) {
+					if (tuilesSelec[i][j] != null) {
+						tuilesSelec[i][j].setAccessible(false);
+					}
+				}
+			 }
+			// Pour s'assurer que les références sont libérées correctement
+			tuilesSelec = null;
 		}
 	}
 
@@ -149,7 +173,7 @@ public class Troupe implements Dessinable {
 	protected BufferedImage getImage(String imagePath) {
 		BufferedImage image = null;
 		try {
-			image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".jpg"));
+			image = ImageIO.read(getClass().getResourceAsStream(imagePath));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -206,6 +230,8 @@ public class Troupe implements Dessinable {
 			initialiserTuilesSelec();
 			printTuilesSelec();
 			distanceParcourable = bakDistParc; // Réinitialiser la distance parcourable
+		} else {
+			effacerZoneAccessible();
 		}
 	}
 
@@ -391,6 +417,9 @@ public class Troupe implements Dessinable {
 
 	public void deselec() {
 		selectionne = false;
+		effacerZoneAccessible();
+		// Libérer les références pour éviter les fuites mémoire
+		tuilesSelec = null;
 	}
 
 	public void attaquer(Troupe troupeEnem) {
@@ -399,7 +428,16 @@ public class Troupe implements Dessinable {
 			System.out.println("⚠️ Impossible d'attaquer une troupe alliée!");
 			return;
 		}
-
+		
+        // Calcul de la distance entre les troupes
+        int distance = Math.abs(this.getCol() - troupeEnem.getCol()) + Math.abs(this.getLig() - troupeEnem.getLig());
+        
+        // Vérifier que la troupe est à portée d'attaque
+        if (distance > distanceAttaque) {
+            System.out.println("⚠️ Cible hors de portée! Distance maximale d'attaque: " + distanceAttaque);
+            return;
+        }
+        
 		// Calcul des dégâts infligés (formule simple inspirée de Fire Emblem)
 		int degats = Math.max(1, this.attaque - troupeEnem.defense / 2);
 
@@ -497,5 +535,23 @@ public class Troupe implements Dessinable {
 	 */
 	public JeuxOupi getJeu() {
 		return jeu;
+	}
+	
+	/**
+	 * Obtient la distance d'attaque de la troupe
+	 * 
+	 * @return la distance d'attaque
+	 */
+	public int getDistanceAttaque() {
+		return distanceAttaque;
+	}
+	
+	/**
+	 * Définit la distance d'attaque de la troupe
+	 * 
+	 * @param distanceAttaque la nouvelle distance d'attaque
+	 */
+	public void setDistanceAttaque(int distanceAttaque) {
+		this.distanceAttaque = distanceAttaque;
 	}
 }
