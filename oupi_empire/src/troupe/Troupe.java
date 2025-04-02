@@ -1,7 +1,6 @@
 package troupe;
 
 import interfaces.Dessinable;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -44,6 +43,10 @@ public class Troupe implements Dessinable {
 	
 	// Référence à l'instance de JeuxOupi
 	private JeuxOupi jeu;
+
+    // Variables pour l'animation de sautillement
+    private int bounceSize = 0;
+    private boolean bounceGrowing = true;
 
 	/**
 	 * 
@@ -182,33 +185,39 @@ public class Troupe implements Dessinable {
 	}
 
 	/**
-	 * Dessine la troupe.
+	 * Dessine la troupe avec une animation de sautillement.
 	 * 
 	 * @param g2d l'objet {@link Graphics2D} utilisé pour dessiner
 	 */
 	@Override
 	public void dessiner(Graphics2D g2d) {
 		Graphics2D g2dPrive = (Graphics2D) g2d.create();
-		
-		Color couleur = new Color(0,0,0);
-		
-		// Dessiner un contour si la troupe est sélectionnée
-		if (equipe == equipeActuelle) {
-			couleur = Color.GREEN;
+
+		// Calculer la taille dynamique pour l'animation
+		int dynamicSize = jeu.getTailleTuile() + bounceSize;
+		int offset = (jeu.getTailleTuile() - dynamicSize) / 2;
+
+		// Dessiner l'image de la troupe avec la taille dynamique
+		g2dPrive.drawImage(image, x + offset, y + offset, dynamicSize, dynamicSize, null);
+
+		g2dPrive.dispose();
+	}
+
+	/**
+	 * Met à jour l'animation de sautillement.
+	 */
+	public void updateBounceAnimation() {
+		if (bounceGrowing) {
+			bounceSize += 2;
+			if (bounceSize >= 10) { // Taille maximale de l'agrandissement
+				bounceGrowing = false;
+			}
 		} else {
-			couleur = Color.RED;
+			bounceSize -= 2;
+			if (bounceSize <= 0) { // Taille minimale de la réduction
+				bounceGrowing = true;
+			}
 		}
-		g2dPrive.setColor(couleur);
-		
-		if (selectionne && !epuisee) {
-			g2dPrive.drawRect(x, y, jeu.getTailleTuile(), jeu.getTailleTuile());
-		}
-		
-		// g2dPrive.setColor(new Color(0,0,255,50));
-		couleur = new Color(couleur.getRed(), couleur.getGreen(), couleur.getBlue(), 50);
-		g2dPrive.setColor(couleur);
-		g2dPrive.fillRect(x, y, jeu.getTailleTuile(), jeu.getTailleTuile());
-		g2dPrive.drawImage(image, x, y, jeu.getTailleTuile(), jeu.getTailleTuile(), null);
 	}
 
 	/**
