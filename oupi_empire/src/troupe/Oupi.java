@@ -28,5 +28,7 @@ public class Oupi extends Troupe {
 		this.setDistanceAttaque(1);
 		
 		HP=150;
+		
+		id = 0;
 	}
 }

@@ -33,5 +33,7 @@ public class Electricien extends Troupe {
         defense = 8;
         vitesse = 18;
         endurance = 25;
+        
+        id = 1;
     }
 }

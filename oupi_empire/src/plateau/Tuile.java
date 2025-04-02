@@ -165,8 +165,8 @@ public abstract class Tuile {
         this.couleur = couleur;
     }
 
-    public void print() {
-        System.out.println(x + " " + y);
+    public String toString() {
+        return x + " " + y+" "+occupee;
     }
 
     protected void setTexture(String imagePath) {

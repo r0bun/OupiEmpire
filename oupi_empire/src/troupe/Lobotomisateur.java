@@ -33,5 +33,7 @@ public class Lobotomisateur extends Troupe {
         defense = 5;
         vitesse = 25;
         endurance = 20;
+        
+        id = 3;
     }
 }

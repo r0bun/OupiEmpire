@@ -8,11 +8,7 @@ import java.util.ArrayList;
 import interfaces.Dessinable;
 import plateau.Plateau;
 import plateau.Tuile;
-import troupe.Electricien;
-import troupe.Genial;
-import troupe.Lobotomisateur;
-import troupe.Oupi;
-import troupe.Troupe;
+import troupe.*;
 
 /**
  * La classe {@code JeuxOupi} représente le jeu Oupi, gérant le plateau de jeu
@@ -66,6 +62,30 @@ public class JeuxOupi implements Dessinable {
         setPosTroupes();
     }
 
+    /**
+     * Ajoutes une nouvelle troupe a la liste de troupes sur le plateau
+     * 
+     * @param troupe La troupe a ajouter
+     */
+    public void addTroupe(Troupe troupe) {
+    	troupes.add(troupe);
+    	simTroupes.add(troupe);
+    }
+    
+    /**
+     * Retire une troupe de la liste de troupes sur le plateau
+     * 
+     * @param troupe La troupe a retirer
+     * @return L'identifiant de la troupe retiree
+     */
+	public int delTroupe(Troupe troupe) {
+		int index = troupes.indexOf(troupe);
+		troupes.remove(index);
+		simTroupes.remove(index);
+		deselectionnerTroupeAct();
+		return troupe.getId();
+	}
+    
     /**
      * Initialise les troupes du jeu.
      */

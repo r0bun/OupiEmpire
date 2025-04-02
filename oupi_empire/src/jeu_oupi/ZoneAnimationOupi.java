@@ -18,6 +18,10 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 
 import plateau.Tuile;
+import troupe.Electricien;
+import troupe.Genial;
+import troupe.Lobotomisateur;
+import troupe.Oupi;
 import troupe.Troupe;
 
 /**
@@ -58,6 +62,11 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	// Attack mode state
 	private boolean modeAttaque = false;
 
+	private boolean placer = true;
+	private Troupe troupePlacer;
+	private int[] troupesDispo = { 2, 1, 0, 2 };
+	private int type = 0;
+
 	// Ajouter le support pour lancer des événements de type PropertyChange
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
@@ -70,6 +79,8 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	public ZoneAnimationOupi(int screenWidth, int screenHeight) {
 		jeuxOupi = new JeuxOupi(screenWidth, screenHeight);
 
+		troupePlacer = new Oupi(0, 0, 0, jeuxOupi);
+		pcs.firePropertyChange("troupes restantes",0,troupesDispo);
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -81,38 +92,30 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 					int gameX = (int) ((e.getX() - translateX) / zoomFactor);
 					int gameY = (int) ((e.getY() - translateY) / zoomFactor);
 
-					// En mode attaque, essayer de sélectionner une troupe à attaquer
-					if (modeAttaque && jeuxOupi.getTroupeSelectionnee() != null) {
-						Troupe troupeCible = jeuxOupi.getTroupeA(gameX, gameY);
-						if (troupeCible != null) {
-							System.out.println("⚔️ Tentative d'attaque sur " + troupeCible.getClass().getSimpleName());
-							// Attaquer la troupe ciblée
-							boolean attaqueReussie = jeuxOupi.attaquerTroupe(troupeCible);
-							if (attaqueReussie) {
-								System.out.println("✅ Attaque réussie!");
-								jeuxOupi.getTroupeSelectionnee().setEpuisee(true);
-								jeuxOupi.deselectionnerTroupeAct();
-								checkFinTour();
+					if (!placer) {
+						// En mode attaque, essayer de sélectionner une troupe à attaquer
+						if (modeAttaque && jeuxOupi.getTroupeSelectionnee() != null) {
+							Troupe troupeCible = jeuxOupi.getTroupeA(gameX, gameY);
+							if (troupeCible != null) {
+								System.out.println(
+										"⚔️ Tentative d'attaque sur " + troupeCible.getClass().getSimpleName());
+								// Attaquer la troupe ciblée
+								boolean attaqueReussie = jeuxOupi.attaquerTroupe(troupeCible);
+								if (attaqueReussie) {
+									System.out.println("✅ Attaque réussie!");
+									jeuxOupi.getTroupeSelectionnee().setEpuisee(true);
+									jeuxOupi.deselectionnerTroupeAct();
+									checkFinTour();
+								}
+								// Désactiver le mode attaque après une tentative
+								modeAttaque = false;
+								return;
+							} else {
+								System.out.println("❌ Pas de troupe à attaquer ici! Cliquez sur une troupe ennemie.");
+								return;
 							}
-							// Désactiver le mode attaque après une tentative
-							modeAttaque = false;
-							return;
-						} else {
-							System.out.println("❌ Pas de troupe à attaquer ici! Cliquez sur une troupe ennemie.");
-							return;
 						}
 					}
-
-					// Essayer de sélectionner une troupe d'abord
-					Troupe cliquee = jeuxOupi.getTroupeA(gameX, gameY);
-					if (cliquee != null && jeuxOupi.getTroupeSelectionnee() == null) {
-						jeuxOupi.selectionnerTroupe(cliquee);
-						System.out
-								.println("Troupe sélectionnée à : (" + cliquee.getCol() + "," + cliquee.getLig() + ")");
-						pcs.firePropertyChange("troupe", "", jeuxOupi.getTroupeSelectionnee());
-						return;
-					}
-
 					// Si aucune troupe n'a été cliquée, gérer le clic sur une tuile
 					int ligne = gameY / jeuxOupi.getTailleTuile();
 					int colonne = gameX / jeuxOupi.getTailleTuile();
@@ -120,8 +123,34 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 					// Vérifier si le clic est dans les limites du plateau
 					if (ligne >= 0 && ligne < jeuxOupi.getTailleTuile() && colonne >= 0
 							&& colonne < jeuxOupi.getTailleTuile()) {
+						
 						Tuile tuileCliquee = jeuxOupi.getPlateau().getTuile(ligne, colonne);
 						System.out.println("Tuile cliquée : Ligne " + (ligne + 1) + ", Colonne " + (colonne + 1));
+						System.out.println(troupesDispo[type]);
+						
+						if (placer) {
+							if (troupesDispo[type] > 0) {
+								if (!tuileCliquee.estOccupee()) {
+									
+									nouvelleTroupe(type);
+									troupePlacer.setCol(colonne);
+									troupePlacer.setLig(ligne);
+									
+									tuileCliquee.setOccupee(true);
+									troupesDispo[type]--;
+									System.out.println("Il vous reste "+ troupesDispo[type]+ " troupes de ce type");
+									pcs.firePropertyChange("troupes restantes",0,troupesDispo);
+									jeuxOupi.addTroupe(troupePlacer);
+									System.out.println("Troupe placee");
+									
+									repaint();
+								} else {
+									System.out.println("Tuile occupee");
+								}
+							} else {
+								System.out.println("Vous n'avez plus de " + type);
+							}
+						}
 					}
 
 					isDragging = true;
@@ -143,7 +172,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 				if (cliquee == null && jeuxOupi.getTroupeSelectionnee() != null) {
 					pcs.firePropertyChange("troupe", "", null);
 					jeuxOupi.deselectionnerTroupe(cliquee);
-				} else if(!cliquee.equals(jeuxOupi.getTroupeSelectionnee())) {
+				} else if (cliquee != null && !cliquee.equals(jeuxOupi.getTroupeSelectionnee())) {
 					pcs.firePropertyChange("troupe", "", cliquee);
 					jeuxOupi.selectionnerTroupe(cliquee);
 				}
@@ -202,19 +231,30 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				Troupe troupe = jeuxOupi.getTroupeSelectionnee();
-				
+
 				// Si la touche Escape est pressée et qu'une troupe est sélectionnée
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					if (troupe != null) {
 						System.out.println("📋 Désélection de la troupe avec touche Echap");
 						pcs.firePropertyChange("troupe", "", null);
 						jeuxOupi.deselectionnerTroupe(troupe);
-						modeAttaque = false;  // Désactiver le mode attaque si actif
+						modeAttaque = false; // Désactiver le mode attaque si actif
 					}
 					return;
 				}
-				
-				if (troupe != null) {
+
+				if (e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+					if (placer) {
+						int id = jeuxOupi.delTroupe(troupe);
+						Tuile tuileCliquee = jeuxOupi.getPlateau().getTuile(troupe.getLig(), troupe.getCol());
+						tuileCliquee.setOccupee(false);
+						troupesDispo[id]++;
+						System.out.println("Troupes de ce type dispo : " + troupesDispo[id]);
+						pcs.firePropertyChange("troupes restantes",0,troupesDispo);
+					}
+				}
+
+				if (troupe != null && !placer) {
 					if (troupe.getEquipe() == joueurActuel) {
 						switch (e.getKeyCode()) {
 						case KeyEvent.VK_W:
@@ -270,7 +310,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 				System.out.println("ℹ️ Appuyez sur la touche ECHAP pour désélectionner cette troupe.");
 				return;
 			}
-			
+
 			modeAttaque = !modeAttaque; // Toggle attack mode
 			if (modeAttaque) {
 				System.out.println("🔴 MODE ATTAQUE ACTIVÉ! Cliquez sur une troupe ennemie à attaquer.");
@@ -408,7 +448,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 			pcs.firePropertyChange("troupe", "", null);
 			jeuxOupi.deselectionnerTroupe(troupe);
 		}
-		
+
 		ArrayList<Troupe> troupes = jeuxOupi.getTroupes();
 
 		if (joueurActuel == 0) {
@@ -417,8 +457,8 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 			joueurActuel = 0;
 		}
 		System.out.println("\n🔄 Changement de joueur - C'est maintenant au tour de l'équipe " + joueurActuel);
-		
-		for(int i = 0; i < troupes.size(); i++) {
+
+		for (int i = 0; i < troupes.size(); i++) {
 			troupes.get(i).setEpuisee(false);
 		}
 
@@ -474,6 +514,50 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 			pcs.firePropertyChange("Fin", 10, 0);
 		} else if (nbEq2 == 0) {
 			pcs.firePropertyChange("Fin", 10, 1);
+		}
+	}
+
+	/**
+	 * Change le mode de jeu pour permettre de placer les unitees
+	 */
+	public void finirPlacer() {
+		placer = false;
+		System.out.println("Mode placement = " + placer);
+		requestFocus();
+	}
+
+	/**
+	 * Change le type de troupe qui sera ajoute
+	 * 
+	 * @param type Le nouveau type de troupe
+	 */
+	public void changerType(int type) {
+		this.type = type;
+	}
+
+	/**
+	 * Cree une nouvelle troupe du type fournit
+	 * 
+	 * @param type Le type de la nouvelle troupe
+	 */
+	public void nouvelleTroupe(int type) {
+		switch (type) {
+		case 0:
+			troupePlacer = new Oupi(0, 0, 0, jeuxOupi);
+			System.out.println("Type change Oupi " + type);
+			break;
+		case 1:
+			troupePlacer = new Electricien(0, 0, 0, jeuxOupi);
+			System.out.println("Type change Elec " + type);
+			break;
+		case 2:
+			troupePlacer = new Genial(0, 0, 0, jeuxOupi);
+			System.out.println("Type change Genial " + type);
+			break;
+		case 3:
+			troupePlacer = new Lobotomisateur(0, 0, 0, jeuxOupi);
+			System.out.println("Type change Lobo " + type);
+			break;
 		}
 	}
 }

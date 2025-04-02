@@ -33,5 +33,7 @@ public class Genial extends Troupe {
         defense = 15;
         vitesse = 15;
         endurance = 40;
+        
+        id = 2;
     }
 }

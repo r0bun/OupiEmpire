@@ -38,6 +38,12 @@ public class appLaunch extends JFrame {
 
 	private JLabel lblEtat;
 	
+	private JRadioButton rdbtnOupi, rdbtnLobo, rdbtnElec, rdbtnGenial;
+	
+	private final ButtonGroup buttonGroupTroupe = new ButtonGroup();
+	
+	private JLabel lblOupi, lblElec, lblGenial, lblLobo;
+	
 	// Pour suivre l'équipe actuelle (0 ou 1)
 	private int equipeActuelle = 0;
 	
@@ -107,36 +113,6 @@ public class appLaunch extends JFrame {
 		fin.setVisible(false);
 		contentPane.add(fin);
 
-		ecranDebut.addPropertyChangeListener(new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent evt) {
-				if(evt.getPropertyName().equals("Start")) {
-					ecranDebut.setVisible(false);
-					zoneAnimationOupi.setVisible(true);
-					zoneAnimationOupi.demarrer();
-				}
-			}
-		});
-		
-		zoneAnimationOupi.addPropertyChangeListener(new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent evt) {
-				if(evt.getPropertyName().equals("Fin")) {
-					fin.setVisible(true);
-					zoneAnimationOupi.setVisible(false);
-				}
-				
-				if(evt.getPropertyName().equals("troupe")) {
-					stats.updateTroupe((Troupe) evt.getNewValue());
-				}
-				
-				// Détection du changement d'équipe
-				if(evt.getPropertyName().equals("equipeActuelle")) {
-					int nouvelleEquipe = (int) evt.getNewValue();
-					equipeActuelle = nouvelleEquipe;
-					updateBackgroundColor();
-				}
-			}
-		});
-
 		// Calcul de la position pour les boutons sous la zone d'animation
 		int buttonY = 30 + (int)(screenHeight*0.725) + 20; // 20px de marge après la zone d'animation
 		int buttonWidth = 200;
@@ -204,11 +180,115 @@ public class appLaunch extends JFrame {
 		lblEtat.setHorizontalAlignment(SwingConstants.CENTER);
 		lblEtat.setBounds(buttonsStartX, buttonY + buttonHeight + 10, buttonWidth * 2, 30);
 		contentPane.add(lblEtat);
+		
+		JButton chboxPlacer = new JButton("Finir placer");
+		chboxPlacer.setBounds(50, 939, 111, 25);
+		chboxPlacer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				zoneAnimationOupi.finirPlacer();
+			}
+		});
+		contentPane.add(chboxPlacer);
+		
+		rdbtnOupi = new JRadioButton("Oupi");
+		rdbtnOupi.setBounds(270, 932, 123, 25);
+		rdbtnOupi.setSelected(true);
+		rdbtnOupi.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				zoneAnimationOupi.changerType(0);
+			}
+		});
+		buttonGroupTroupe.add(rdbtnOupi);
+		contentPane.add(rdbtnOupi);
+		
+		rdbtnElec = new JRadioButton("Electricien");
+		rdbtnElec.setBounds(270, 980, 123, 25);
+		rdbtnElec.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				zoneAnimationOupi.changerType(1);
+			}
+		});
+		buttonGroupTroupe.add(rdbtnElec);
+		contentPane.add(rdbtnElec);
+		
+		rdbtnGenial = new JRadioButton("Homme genial");
+		rdbtnGenial.setBounds(490, 932, 123, 25);
+		rdbtnGenial.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				zoneAnimationOupi.changerType(2);
+			}
+		});
+		buttonGroupTroupe.add(rdbtnGenial);
+		contentPane.add(rdbtnGenial);
+		
+		rdbtnLobo = new JRadioButton("Lobotomisateur");
+		rdbtnLobo.setBounds(490, 980, 123, 25);
+		rdbtnLobo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				zoneAnimationOupi.changerType(3);
+			}
+		});
+		buttonGroupTroupe.add(rdbtnLobo);
+		contentPane.add(rdbtnLobo);
+		
+		lblOupi = new JLabel("New label");
+		lblOupi.setBounds(206, 936, 56, 16);
+		contentPane.add(lblOupi);
+		
+		lblElec = new JLabel("New label");
+		lblElec.setBounds(206, 984, 56, 16);
+		contentPane.add(lblElec);
+		
+		lblGenial = new JLabel("New label");
+		lblGenial.setBounds(426, 936, 56, 16);
+		contentPane.add(lblGenial);
+		
+		lblLobo = new JLabel("New label");
+		lblLobo.setBounds(426, 984, 56, 16);
+		contentPane.add(lblLobo);
 
 		setBounds(0, 0, screenWidth, screenHeight);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 		setLocationRelativeTo(null);
+
+		ecranDebut.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				if(evt.getPropertyName().equals("Start")) {
+					ecranDebut.setVisible(false);
+					zoneAnimationOupi.setVisible(true);
+					zoneAnimationOupi.demarrer();
+				}
+			}
+		});
+		
+		zoneAnimationOupi.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				if(evt.getPropertyName().equals("Fin")) {
+					fin.setVisible(true);
+					zoneAnimationOupi.setVisible(false);
+				}
+				
+				if(evt.getPropertyName().equals("troupe")) {
+					stats.updateTroupe((Troupe) evt.getNewValue());
+				}
+				
+				// Détection du changement d'équipe
+				if(evt.getPropertyName().equals("equipeActuelle")) {
+					int nouvelleEquipe = (int) evt.getNewValue();
+					equipeActuelle = nouvelleEquipe;
+					updateBackgroundColor();
+				}
+				
+				if(evt.getPropertyName().equals("troupes restantes")) {
+					int[] troupesDispo = (int[]) evt.getNewValue();
+					lblOupi.setText(troupesDispo[0]+"");
+					lblElec.setText(troupesDispo[1]+"");
+					lblGenial.setText(troupesDispo[2]+"");
+					lblLobo.setText(troupesDispo[3]+"");
+				}
+			}
+		});
 	}
 	
 	/**

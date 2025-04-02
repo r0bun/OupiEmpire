@@ -11,5 +11,4 @@ public class Herbe extends Tuile{
 		nomTuile = "herbe";
 		setTexture(PATH_TUILE + nomTuile + ".png");
 	}
-	
 }

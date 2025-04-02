@@ -37,6 +37,8 @@ public class Troupe implements Dessinable {
     
     protected int HP,attaque,defense,vitesse,endurance;
     
+    protected int id;
+    
     // Distance d'attaque (1 = corps à corps par défaut)
     protected int distanceAttaque = 1;
 	private static int equipeActuelle = 0;
@@ -553,5 +555,13 @@ public class Troupe implements Dessinable {
 	 */
 	public void setDistanceAttaque(int distanceAttaque) {
 		this.distanceAttaque = distanceAttaque;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 }
