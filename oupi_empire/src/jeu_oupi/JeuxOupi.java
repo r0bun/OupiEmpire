@@ -79,9 +79,8 @@ public class JeuxOupi implements Dessinable {
      * @return L'identifiant de la troupe retiree
      */
 	public int delTroupe(Troupe troupe) {
-		int index = troupes.indexOf(troupe);
-		troupes.remove(index);
-		simTroupes.remove(index);
+		troupes.remove(troupe);
+		simTroupes.remove(troupe);
 		deselectionnerTroupeAct();
 		return troupe.getId();
 	}

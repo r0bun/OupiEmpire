@@ -12,6 +12,12 @@ import javax.swing.JPanel;
 
 import troupe.Troupe;
 
+/**
+ * 
+ * 
+ * @author Loic Simard
+ *
+ */
 public class Stats extends JPanel{
 	
 	private int screenWidth, screenHeight;
@@ -41,7 +47,7 @@ public class Stats extends JPanel{
 		if(troupe != null) {
 			g2d.setColor(Color.BLACK);
 			g2d.setFont(new Font("Franklin Gothic Book", Font.PLAIN, 50));
-			g2d.drawString(troupe.getClass().toString(), 10, (int)screenHeight/20);
+			g2d.drawString(troupe.getClass().getSimpleName(), 10, (int)screenHeight/20);
 			g2d.setFont(new Font("Franklin Gothic Book", Font.PLAIN, 20));
 			g2d.drawString("HP: "+troupe.getHP(), 10, (int)2*screenHeight/20);
 			g2d.drawString("Attaque: "+troupe.getAttaque(), 10, (int) (3*screenHeight/20));

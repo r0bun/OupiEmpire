@@ -116,42 +116,6 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 							}
 						}
 					}
-					// Si aucune troupe n'a été cliquée, gérer le clic sur une tuile
-					int ligne = gameY / jeuxOupi.getTailleTuile();
-					int colonne = gameX / jeuxOupi.getTailleTuile();
-
-					// Vérifier si le clic est dans les limites du plateau
-					if (ligne >= 0 && ligne < jeuxOupi.getTailleTuile() && colonne >= 0
-							&& colonne < jeuxOupi.getTailleTuile()) {
-						
-						Tuile tuileCliquee = jeuxOupi.getPlateau().getTuile(ligne, colonne);
-						System.out.println("Tuile cliquée : Ligne " + (ligne + 1) + ", Colonne " + (colonne + 1));
-						System.out.println(troupesDispo[type]);
-						
-						if (placer) {
-							if (troupesDispo[type] > 0) {
-								if (!tuileCliquee.estOccupee()) {
-									
-									nouvelleTroupe(type);
-									troupePlacer.setCol(colonne);
-									troupePlacer.setLig(ligne);
-									
-									tuileCliquee.setOccupee(true);
-									troupesDispo[type]--;
-									System.out.println("Il vous reste "+ troupesDispo[type]+ " troupes de ce type");
-									pcs.firePropertyChange("troupes restantes",0,troupesDispo);
-									jeuxOupi.addTroupe(troupePlacer);
-									System.out.println("Troupe placee");
-									
-									repaint();
-								} else {
-									System.out.println("Tuile occupee");
-								}
-							} else {
-								System.out.println("Vous n'avez plus de " + type);
-							}
-						}
-					}
 
 					isDragging = true;
 				}
@@ -164,7 +128,6 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-
 				int gameX = (int) ((e.getX() - translateX) / zoomFactor);
 				int gameY = (int) ((e.getY() - translateY) / zoomFactor);
 				Troupe cliquee = jeuxOupi.getTroupeA(gameX, gameY);
@@ -175,6 +138,43 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 				} else if (cliquee != null && !cliquee.equals(jeuxOupi.getTroupeSelectionnee())) {
 					pcs.firePropertyChange("troupe", "", cliquee);
 					jeuxOupi.selectionnerTroupe(cliquee);
+				}
+				
+				// Si aucune troupe n'a été cliquée, gérer le clic sur une tuile
+				int ligne = gameY / jeuxOupi.getTailleTuile();
+				int colonne = gameX / jeuxOupi.getTailleTuile();
+
+				// Vérifier si le clic est dans les limites du plateau
+				if (ligne >= 0 && ligne < jeuxOupi.getTailleTuile() && colonne >= 0
+						&& colonne < jeuxOupi.getTailleTuile()) {
+					
+					Tuile tuileCliquee = jeuxOupi.getPlateau().getTuile(ligne, colonne);
+					System.out.println("Tuile cliquée : Ligne " + (ligne + 1) + ", Colonne " + (colonne + 1));
+					System.out.println(troupesDispo[type]);
+					
+					if (placer) {
+						if (troupesDispo[type] > 0) {
+							if (!tuileCliquee.estOccupee()) {
+								
+								nouvelleTroupe(type);
+								troupePlacer.setCol(colonne);
+								troupePlacer.setLig(ligne);
+								
+								tuileCliquee.setOccupee(true);
+								troupesDispo[type]--;
+								System.out.println("Il vous reste "+ troupesDispo[type]+ " troupes de ce type");
+								pcs.firePropertyChange("troupes restantes",0,troupesDispo);
+								jeuxOupi.addTroupe(troupePlacer);
+								System.out.println("Troupe placee");
+								
+								repaint();
+							} else {
+								System.out.println("Tuile occupee");
+							}
+						} else {
+							System.out.println("Vous n'avez plus de " + type);
+						}
+					}
 				}
 			}
 		});
