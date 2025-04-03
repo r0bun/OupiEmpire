@@ -180,11 +180,43 @@ public class Troupe implements Dessinable {
 	protected BufferedImage getImage(String imagePath) {
 		BufferedImage image = null;
 		try {
-			image = ImageIO.read(getClass().getResourceAsStream(imagePath));
+			// Vérifier si la ressource existe
+			java.net.URL url = getClass().getResource(imagePath);
+			if (url == null) {
+				System.err.println("Erreur: Ressource image introuvable: " + imagePath);
+				System.err.println("Chemin de recherche: " + System.getProperty("java.class.path"));
+				// Créer une image par défaut comme solution de secours
+				return createPlaceholderImage();
+			}
+			
+			image = ImageIO.read(url);
+			if (image == null) {
+				System.err.println("Erreur: Échec de lecture de l'image: " + imagePath);
+				return createPlaceholderImage();
+			}
 		} catch (IOException e) {
+			System.err.println("Erreur lors du chargement de l'image: " + imagePath);
 			e.printStackTrace();
+			return createPlaceholderImage();
 		}
 		return image;
+	}
+
+	/**
+	 * Crée une image placeholder simple qui sera utilisée si l'image originale ne peut pas être chargée.
+	 * 
+	 * @return une image placeholder
+	 */
+	private BufferedImage createPlaceholderImage() {
+		BufferedImage placeholder = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = placeholder.createGraphics();
+		g2d.setColor(Color.RED);
+		g2d.fillRect(0, 0, 32, 32);
+		g2d.setColor(Color.WHITE);
+		g2d.drawLine(0, 0, 32, 32);
+		g2d.drawLine(0, 32, 32, 0);
+		g2d.dispose();
+		return placeholder;
 	}
 
 	/**

@@ -8,6 +8,8 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
 
+import tuiles.Rocher;
+
 /**
  * La classe {@code Tuile} représente une tuile sur le plateau de jeu. Elle
  * contient des informations sur la position, la taille, l'état d'occupation et
@@ -75,6 +77,10 @@ public abstract class Tuile {
                 // Si pas de texture, utiliser la couleur de fond
                 g2dPrive.setColor(couleur);
                 g2dPrive.fillRect(x, y, taille, taille);
+            }
+
+            if (obstacle != null) {
+                obstacle.dessiner(g2dPrive, x, y, taille);
             }
             
             // Si la tuile est accessible par la troupe sélectionnée
