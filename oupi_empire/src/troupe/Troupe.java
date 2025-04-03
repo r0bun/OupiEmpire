@@ -1,12 +1,14 @@
 package troupe;
 
-import interfaces.Dessinable;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
+
+import interfaces.Dessinable;
 import jeu_oupi.JeuxOupi;
 import plateau.Tuile;
 
@@ -37,7 +39,7 @@ public class Troupe implements Dessinable {
     private Tuile[][] tuilesSelec;
     
     protected int HP,attaque,defense,vitesse,endurance;
-    
+    protected ArrayList<Debuff> debuffs = new ArrayList<Debuff>();
     protected int id;
     
     // Distance d'attaque (1 = corps à corps par défaut)
@@ -104,14 +106,18 @@ public class Troupe implements Dessinable {
 		centreCol = col;
 		centreLig = lig;
 
+		// Get actual map boundaries
+		int mapRows = jeu.getPlateau().getLignes();
+		int mapCols = jeu.getPlateau().getColonnes();
+
 		for (int i = 0; i < taille; i++) {
 			for (int j = 0; j < taille; j++) {
 				int ligne = lig - bakDistParc + i;
 				int colonne = col - bakDistParc + j;
 
-				// Vérifier si la position est dans le losange
+				// Vérifier si la position est dans le losange et dans les limites de la carte
 				if (Math.abs(i - bakDistParc) + Math.abs(j - bakDistParc) <= bakDistParc && ligne >= 0
-						&& ligne < jeu.getNbTuiles() && colonne >= 0 && colonne < jeu.getNbTuiles()) {
+						&& ligne < mapRows && colonne >= 0 && colonne < mapCols) {
 					Tuile tuile = jeu.getPlateau().getTuile(ligne, colonne);
 					if (tuile.estOccupee() && !(ligne == lig && colonne == col)) {
 						tuilesSelec[i][j] = null;

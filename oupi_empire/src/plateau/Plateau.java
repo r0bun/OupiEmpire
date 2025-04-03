@@ -1,13 +1,12 @@
 package plateau;
 
 import interfaces.Dessinable;
-import tuiles.*;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import tuiles.*;
 
 /**
  * La classe {@code Plateau} représente le plateau de jeu composé de tuiles.
@@ -107,6 +106,7 @@ public class Plateau implements Dessinable {
                             break;
                         case 'W':
                             tuiles[ligne][colonne] = new Eau(x, y, tailleTuile, Color.BLUE, ligne, colonne);
+                            tuiles[ligne][colonne].setOccupee(true);
                             break;
                         case 'H':
                             tuiles[ligne][colonne] = new Herbe(x, y, tailleTuile, Color.GREEN, ligne, colonne);
@@ -151,12 +151,15 @@ public class Plateau implements Dessinable {
                         switch (type) {
                             case "rocher":
                                 tuiles[lig][col].setObstacle(new Rocher(x, y, tailleTuile, lig, col));
+                                tuiles[lig][col].setOccupee(true);
                                 break;
                             case "arbre":
                                 tuiles[lig][col].setObstacle(new Arbre(x, y, tailleTuile, lig, col));
+                                tuiles[lig][col].setOccupee(true);
                                 break;
                             case "buisson":
                                 tuiles[lig][col].setObstacle(new Buisson(x, y, tailleTuile, lig, col));
+                                //tuiles[lig][col].setOccupee(true); Peut aller sur un buisson
                                 break;
                             // Add other obstacle types here as needed
                             default:
@@ -196,5 +199,21 @@ public class Plateau implements Dessinable {
 		return tailleTuile;
 	}
 
-
+	/**
+	 * Retourne le nombre de lignes du plateau.
+	 * 
+	 * @return le nombre de lignes
+	 */
+	public int getLignes() {
+		return lignes;
+	}
+	
+	/**
+	 * Retourne le nombre de colonnes du plateau.
+	 * 
+	 * @return le nombre de colonnes
+	 */
+	public int getColonnes() {
+		return colonnes;
+	}
 }
