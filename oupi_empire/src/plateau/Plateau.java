@@ -90,6 +90,12 @@ public class Plateau implements Dessinable {
                     throw new IOException("Format de fichier incorrect: ligne " + ligne + " trop courte");
                 }
 
+                System.out.println(rowData);
+                
+                if(rowData.equals("OBS")) {
+                    break;
+                }
+                
                 for (int colonne = 0; colonne < colonnes; colonne++) {
                     char type = rowData.charAt(colonne);
                     int x = colonne * tailleTuile;
@@ -114,13 +120,76 @@ public class Plateau implements Dessinable {
                     }
                 }
             }
-
+            
+            // Check if we're at the obstacles section
+            String line = reader.readLine();
+            if (line != null && line.equals("OBS")) {
+                // Read obstacles
+                String obsLine;
+                while ((obsLine = reader.readLine()) != null) {
+                    if (obsLine.trim().isEmpty()) continue;
+                    String[] obstacle = obsLine.split(" ");
+                    if (obstacle.length < 3) {
+                        System.err.println("Format d'obstacle incorrect: " + obsLine);
+                        continue;
+                    }
+                    
+                    String type = obstacle[0];
+                    try {
+                        int col = Integer.parseInt(obstacle[1].trim());
+                        int lig = Integer.parseInt(obstacle[2].trim());
+                        
+                        // Verify coordinates are within map bounds
+                        if (lig < 0 || lig >= lignes || col < 0 || col >= colonnes) {
+                            System.err.println("Coordonnées d'obstacle hors limites: " + obsLine);
+                            continue;
+                        }
+                        
+                        int x = col * tailleTuile;
+                        int y = lig * tailleTuile;
+                        
+                        switch (type) {
+                            case "rocher":
+                                tuiles[lig][col].setObstacle(new Rocher(x, y, tailleTuile, lig, col));
+                                break;
+                            case "arbre":
+                                tuiles[lig][col].setObstacle(new Arbre(x, y, tailleTuile, lig, col));
+                                break;
+                            case "buisson":
+                                tuiles[lig][col].setObstacle(new Buisson(x, y, tailleTuile, lig, col));
+                                break;
+                            // Add other obstacle types here as needed
+                            default:
+                                System.err.println("Type d'obstacle inconnu: " + type);
+                                break;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.err.println("Coordonnées d'obstacle invalides: " + obsLine);
+                    }
+                }
+            }
+            
+            verifyObstacles();
             System.out.println("Plateau loaded successfully from: " + textPath);
         } catch (IOException | NumberFormatException e) {
             System.err.println("Error loading plateau from text file: " + e.getMessage());
             e.printStackTrace();
             initialiserTuiles();
         }
+    }
+    
+    public void verifyObstacles() {
+        System.out.println("Verifying obstacles on the plateau:");
+        int obstacleCount = 0;
+        for (int ligne = 0; ligne < lignes; ligne++) {
+            for (int colonne = 0; colonne < colonnes; colonne++) {
+                if (tuiles[ligne][colonne].hasObstacle()) {
+                    obstacleCount++;
+                    System.out.println("Obstacle found at: (" + ligne + "," + colonne + ")");
+                }
+            }
+        }
+        System.out.println("Total obstacles found: " + obstacleCount);
     }
     
 	public int getTailleTuile() {

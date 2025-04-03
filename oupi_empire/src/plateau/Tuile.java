@@ -27,7 +27,7 @@ public abstract class Tuile {
     protected Color couleur; // Couleur de la tuile
     protected BufferedImage texture;
     protected TerrainObstacle obstacle;
-    protected String nomTuile; //Utilise pour trouver le fichier image
+	protected String nomTuile; //Utilise pour trouver le fichier image
     protected final String PATH_TUILE = "/tuilesTexture/";
     protected int lig, col;
 
@@ -79,6 +79,7 @@ public abstract class Tuile {
                 g2dPrive.fillRect(x, y, taille, taille);
             }
 
+            // Draw obstacle if present
             if (obstacle != null) {
                 obstacle.dessiner(g2dPrive, x, y, taille);
             }
@@ -187,4 +188,24 @@ public abstract class Tuile {
     public int getCol() {
         return col;
     }
+    
+    public void setObstacle(TerrainObstacle obstacle) {
+		this.obstacle = obstacle;
+	}
+    
+    public boolean hasObstacle() {
+    	return obstacle != null;
+    }
+    
+    // Add debug method
+    public String debugInfo() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Tuile[").append(lig).append(",").append(col).append("]");
+        sb.append(" hasObstacle=").append(hasObstacle());
+        if (hasObstacle()) {
+            sb.append(" obstacle=").append(obstacle.toString());
+        }
+        return sb.toString();
+    }
+    
 }
