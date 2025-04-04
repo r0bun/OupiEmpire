@@ -83,20 +83,29 @@ public class Plateau implements Dessinable {
 
             this.tuiles = new Tuile[lignes][colonnes];
 
-            for (int ligne = 0; ligne < lignes; ligne++) {
+            int ligne = 0; // Declare ligne variable at method scope
+            
+            for (; ligne < lignes; ligne++) {
                 String rowData = reader.readLine();
-                if (rowData == null || rowData.length() < colonnes) {
-                    throw new IOException("Format de fichier incorrect: ligne " + ligne + " trop courte");
-                }
-
-                System.out.println(rowData);
-                
-                if(rowData.equals("OBS")) {
+                if (rowData == null) {
+                    // If we run out of lines, fill the rest with default tiles
+                    fillRemainingRows(ligne);
                     break;
                 }
                 
+                if(rowData.equals("OBS")) {
+                    // If we hit the obstacles section, stop reading map data
+                    reader.mark(1000);  // Mark this position to return to it
+                    break;
+                }
+                
+                System.out.println(rowData);
+                
+                int rowLength = rowData.length();
+                
                 for (int colonne = 0; colonne < colonnes; colonne++) {
-                    char type = rowData.charAt(colonne);
+                    // Default to sand if the column is beyond what's in the file
+                    char type = (colonne < rowLength) ? rowData.charAt(colonne) : 'S';
                     int x = colonne * tailleTuile;
                     int y = ligne * tailleTuile;
 
@@ -119,6 +128,11 @@ public class Plateau implements Dessinable {
                             break;
                     }
                 }
+            }
+            
+            // Fill any remaining rows that weren't in the file
+            if (ligne < lignes) {
+                fillRemainingRows(ligne);
             }
             
             // Check if we're at the obstacles section
@@ -178,6 +192,21 @@ public class Plateau implements Dessinable {
             System.err.println("Error loading plateau from text file: " + e.getMessage());
             e.printStackTrace();
             initialiserTuiles();
+        }
+    }
+    
+    /**
+     * Fill the remaining rows with default tiles (Sable/Sand)
+     * @param startRow The row to start filling from
+     */
+    private void fillRemainingRows(int startRow) {
+        for (int ligne = startRow; ligne < lignes; ligne++) {
+            for (int colonne = 0; colonne < colonnes; colonne++) {
+                int x = colonne * tailleTuile;
+                int y = ligne * tailleTuile;
+                // Create default sand tile
+                tuiles[ligne][colonne] = new Sable(x, y, tailleTuile, Color.YELLOW, ligne, colonne);
+            }
         }
     }
     

@@ -50,7 +50,7 @@ public class JeuxOupi implements Dessinable {
 
         // Load the map first
         plateau = new Plateau(1, 1, 1);
-        plateau.loadPlateau("res/cartes/map.txt");
+        plateau.loadPlateau("res/cartes/map3.txt");
 
         // Update nbTuiles to match the loaded map dimensions
         nbTuiles = Math.max(plateau.getLignes(), plateau.getColonnes());
