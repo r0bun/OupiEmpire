@@ -54,13 +54,19 @@ public class Troupe implements Dessinable {
     private boolean bounceGrowing = true;
 
 	/**
+	 * Fixe l'equipe de la {@link Troupe} selectionnee
 	 * 
-	 * @param equipe
+	 * @param equipe L'equipe de la troupe
 	 */
 	public void setEquipe(int equipe) {
 		this.equipe = equipe;
 	}
 
+	/**
+	 * Retournes l'equipe de la {@link Troupe} selectionnee
+	 * 
+	 * @return L'equipe de la troupe
+	 */
 	public int getEquipe() {
 		return equipe;
 	}

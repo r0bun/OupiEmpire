@@ -65,6 +65,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	private boolean placer = true;
 	private Troupe troupePlacer;
 	private int[] troupesDispo = { 2, 1, 0, 2 };
+	private String[] nomTroupes = {"Oupi", "Lobotomisateur", "Electricien", "Homme Genial"};
 	private int type = 0;
 
 	// Ajouter le support pour lancer des événements de type PropertyChange
@@ -80,7 +81,6 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		jeuxOupi = new JeuxOupi(screenWidth, screenHeight);
 
 		troupePlacer = new Oupi(0, 0, 0, jeuxOupi);
-		pcs.firePropertyChange("troupes restantes",0,troupesDispo);
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -147,6 +147,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 					if (placer && jeuxOupi.getTroupeSelectionnee() == null) {
 						if (troupesDispo[type] > 0) {
 							if (!tuileCliquee.estOccupee()) {
+								if(jeuxOupi.isInZone(tuileCliquee, jeuxOupi.getPlateau().getTuile(0, 0))) {
 								
 								nouvelleTroupe(type);
 								troupePlacer.setCol(colonne);
@@ -160,18 +161,21 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 								System.out.println("Troupe placee");
 								
 								repaint();
+								} else {
+									System.out.println("Veuillez selectionner une tuile dans la zone de placement");
+								}
 							} else {
 								System.out.println("Tuile occupee");
 							}
 						} else {
-							System.out.println("Vous n'avez plus de " + type);
+							System.out.println("Vous n'avez plus de " + nomTroupes[0]);
 						}
 					}
 				}
 
 				if (cliquee == null && jeuxOupi.getTroupeSelectionnee() != null) {
 					pcs.firePropertyChange("troupe", "", null);
-					jeuxOupi.deselectionnerTroupe(cliquee);
+					jeuxOupi.deselectionnerTroupeAct();
 				} else if (cliquee != null && !cliquee.equals(jeuxOupi.getTroupeSelectionnee())) {
 					pcs.firePropertyChange("troupe", "", cliquee);
 					jeuxOupi.selectionnerTroupe(cliquee);
@@ -237,7 +241,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 					if (troupe != null) {
 						System.out.println("📋 Désélection de la troupe avec touche Echap");
 						pcs.firePropertyChange("troupe", "", null);
-						jeuxOupi.deselectionnerTroupe(troupe);
+						jeuxOupi.deselectionnerTroupeAct();
 						modeAttaque = false; // Désactiver le mode attaque si actif
 					}
 					return;
@@ -446,7 +450,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		if (jeuxOupi.getTroupeSelectionnee() != null) {
 			Troupe troupe = jeuxOupi.getTroupeSelectionnee();
 			pcs.firePropertyChange("troupe", "", null);
-			jeuxOupi.deselectionnerTroupe(troupe);
+			jeuxOupi.deselectionnerTroupeAct();
 		}
 
 		ArrayList<Troupe> troupes = jeuxOupi.getTroupes();
@@ -559,5 +563,11 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 			System.out.println("Type change Lobo " + type);
 			break;
 		}
+	}
+	
+	public void setVisible(boolean aFlag) {
+		super.setVisible(aFlag);
+
+		pcs.firePropertyChange("troupes restantes",0,troupesDispo);
 	}
 }

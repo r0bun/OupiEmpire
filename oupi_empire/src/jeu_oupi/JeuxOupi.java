@@ -33,6 +33,8 @@ public class JeuxOupi implements Dessinable {
     private Troupe troupeSelectionnee = null;
     private int colO = 0;
     private int ligO = 0;
+    
+    private int zonePlacer = 4;
 
     /**
      * Constructeur de la classe {@code JeuxOupi}.
@@ -217,7 +219,7 @@ public class JeuxOupi implements Dessinable {
     public void selectionnerTroupe(Troupe troupe) {
         // Désélectionner la troupe précédemment sélectionnée
         if (troupeSelectionnee != null) {
-            deselectionnerTroupe(troupeSelectionnee);
+            deselectionnerTroupeAct();
         }
 
         // Sélectionner la nouvelle troupe
@@ -231,17 +233,6 @@ public class JeuxOupi implements Dessinable {
 
             // Marquer comme position de départ sans changer la couleur
             plateau.getTuile(ligO, colO).setPosDep(true);
-        }
-    }
-
-    public void deselectionnerTroupe(Troupe troupe) {
-        if (troupeSelectionnee != null) {
-            troupeSelectionnee.deselec();
-
-            // Réinitialiser le marquage de la position de départ
-            plateau.getTuile(ligO, colO).setPosDep(false);
-
-            troupeSelectionnee = null;
         }
     }
 
@@ -317,13 +308,13 @@ public class JeuxOupi implements Dessinable {
             int lig2 = troupeSelectionnee.getLig();
             plateau.getTuile(lig2, col2).setOccupee(true);
 
-            deselectionnerTroupe(troupeSelectionnee);
+            deselectionnerTroupeAct();
         }
     }
 
     public void confirm() {
         troupeSelectionnee.setEpuisee(true);
-        deselectionnerTroupe(troupeSelectionnee);
+        deselectionnerTroupeAct();
     }
 
     /**
@@ -427,7 +418,20 @@ public class JeuxOupi implements Dessinable {
     }
 
     public void deselectionnerTroupeAct() {
-        deselectionnerTroupe(troupeSelectionnee);
+    	if (troupeSelectionnee != null) {
+            troupeSelectionnee.deselec();
 
+            // Réinitialiser le marquage de la position de départ
+            plateau.getTuile(ligO, colO).setPosDep(false);
+
+            troupeSelectionnee = null;
+        }
+
+    }
+    
+    public boolean isInZone(Tuile clique, Tuile coin) {
+    	if(clique.getLig() <= coin.getLig()+zonePlacer && clique.getLig() >= coin.getLig()) {
+    			return true;    	}
+    	return false;
     }
 }

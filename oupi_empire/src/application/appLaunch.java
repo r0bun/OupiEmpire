@@ -95,11 +95,54 @@ public class appLaunch extends JFrame {
 		minimap.setBounds(1020, 331, 482, 485);
 		contentPane.add(minimap);*/
 		
+		lblOupi = new JLabel("New label");
+		lblOupi.setBounds(206, 936, 56, 16);
+		contentPane.add(lblOupi);
+		
+		lblElec = new JLabel("New label");
+		lblElec.setBounds(206, 984, 56, 16);
+		contentPane.add(lblElec);
+		
+		lblGenial = new JLabel("New label");
+		lblGenial.setBounds(426, 936, 56, 16);
+		contentPane.add(lblGenial);
+		
+		lblLobo = new JLabel("New label");
+		lblLobo.setBounds(426, 984, 56, 16);
+		contentPane.add(lblLobo);
+		
 		ecranDebut = new Debut(screenWidth, screenHeight);
 		ecranDebut.setBounds(50, 30, (int) (screenWidth / 2), (int) (screenHeight*0.725));
 		contentPane.add(ecranDebut);
 		
 		zoneAnimationOupi = new ZoneAnimationOupi(screenWidth, screenHeight);
+		zoneAnimationOupi.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				if(evt.getPropertyName().equals("Fin")) {
+					fin.setVisible(true);
+					zoneAnimationOupi.setVisible(false);
+				}
+				
+				if(evt.getPropertyName().equals("troupe")) {
+					stats.updateTroupe((Troupe) evt.getNewValue());
+				}
+				
+				// Détection du changement d'équipe
+				if(evt.getPropertyName().equals("equipeActuelle")) {
+					int nouvelleEquipe = (int) evt.getNewValue();
+					equipeActuelle = nouvelleEquipe;
+					updateBackgroundColor();
+				}
+				
+				if(evt.getPropertyName().equals("troupes restantes")) {
+					int[] troupesDispo = (int[]) evt.getNewValue();
+					lblOupi.setText(troupesDispo[0]+"");
+					lblElec.setText(troupesDispo[1]+"");
+					lblGenial.setText(troupesDispo[2]+"");
+					lblLobo.setText(troupesDispo[3]+"");
+				}
+			}
+		});
 		zoneAnimationOupi.setBounds(50, 30, (int) (screenWidth / 2), (int) (screenHeight*0.725));
 		zoneAnimationOupi.setVisible(false);
 		contentPane.add(zoneAnimationOupi);
@@ -230,22 +273,6 @@ public class appLaunch extends JFrame {
 		});
 		buttonGroupTroupe.add(rdbtnLobo);
 		contentPane.add(rdbtnLobo);
-		
-		lblOupi = new JLabel("New label");
-		lblOupi.setBounds(206, 936, 56, 16);
-		contentPane.add(lblOupi);
-		
-		lblElec = new JLabel("New label");
-		lblElec.setBounds(206, 984, 56, 16);
-		contentPane.add(lblElec);
-		
-		lblGenial = new JLabel("New label");
-		lblGenial.setBounds(426, 936, 56, 16);
-		contentPane.add(lblGenial);
-		
-		lblLobo = new JLabel("New label");
-		lblLobo.setBounds(426, 984, 56, 16);
-		contentPane.add(lblLobo);
 
 		setBounds(0, 0, screenWidth, screenHeight);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -262,33 +289,7 @@ public class appLaunch extends JFrame {
 			}
 		});
 		
-		zoneAnimationOupi.addPropertyChangeListener(new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent evt) {
-				if(evt.getPropertyName().equals("Fin")) {
-					fin.setVisible(true);
-					zoneAnimationOupi.setVisible(false);
-				}
-				
-				if(evt.getPropertyName().equals("troupe")) {
-					stats.updateTroupe((Troupe) evt.getNewValue());
-				}
-				
-				// Détection du changement d'équipe
-				if(evt.getPropertyName().equals("equipeActuelle")) {
-					int nouvelleEquipe = (int) evt.getNewValue();
-					equipeActuelle = nouvelleEquipe;
-					updateBackgroundColor();
-				}
-				
-				if(evt.getPropertyName().equals("troupes restantes")) {
-					int[] troupesDispo = (int[]) evt.getNewValue();
-					lblOupi.setText(troupesDispo[0]+"");
-					lblElec.setText(troupesDispo[1]+"");
-					lblGenial.setText(troupesDispo[2]+"");
-					lblLobo.setText(troupesDispo[3]+"");
-				}
-			}
-		});
+		
 	}
 	
 	/**
