@@ -16,65 +16,59 @@ import tuiles.*;
  * @author Badr Rifki
  */
 public class Plateau implements Dessinable {
-	private int lignes, colonnes;
-	private int tailleTuile;
-	private Tuile[][] tuiles;
+    // Variables d'instance
+    private int lignes, colonnes;
+    private int tailleTuile;
+    private Tuile[][] tuiles;
 
-	/**
-	 * Constructeur de la classe {@code Plateau}.
-	 * 
-	 * @param lignes      le nombre de lignes du plateau
-	 * @param colonnes    le nombre de colonnes du plateau
-	 * @param tailleTuile la taille de chaque tuile
-	 */
-	public Plateau(int lignes, int colonnes, int tailleTuile) {
-		this.lignes = lignes;
-		this.colonnes = colonnes;
-		this.tailleTuile = tailleTuile;
-		initialiserTuiles();
-	}
+    /**
+     * Constructeur de la classe {@code Plateau}.
+     * 
+     * @param lignes      le nombre de lignes du plateau
+     * @param colonnes    le nombre de colonnes du plateau
+     * @param tailleTuile la taille de chaque tuile
+     */
+    public Plateau(int lignes, int colonnes, int tailleTuile) {
+        this.lignes = lignes;
+        this.colonnes = colonnes;
+        this.tailleTuile = tailleTuile;
+        initialiserTuiles();
+    }
 
-	/**
-	 * Initialise les tuiles du plateau avec des couleurs alternées pour un effet
-	 * damier.
-	 */
-	private void initialiserTuiles() {
-		tuiles = new Tuile[lignes][colonnes];
-		for (int ligne = 0; ligne < lignes; ligne++) {
-			for (int colonne = 0; colonne < colonnes; colonne++) {
-				
-				Color couleur = Color.RED;
-				tuiles[ligne][colonne] = new Sable(colonne * tailleTuile, ligne * tailleTuile, tailleTuile, couleur,ligne,colonne);
-			}
-		}
-	}
+    /**
+     * Initialise les tuiles du plateau avec des couleurs alternées pour un effet
+     * damier.
+     */
+    private void initialiserTuiles() {
+        tuiles = new Tuile[lignes][colonnes];
+        for (int ligne = 0; ligne < lignes; ligne++) {
+            for (int colonne = 0; colonne < colonnes; colonne++) {
+                Color couleur = Color.RED;
+                tuiles[ligne][colonne] = new Sable(colonne * tailleTuile, ligne * tailleTuile, tailleTuile, couleur, ligne, colonne);
+            }
+        }
+    }
 
-	/**
-	 * Dessine le plateau de jeu.
-	 * 
-	 * @param g2d l'objet {@link Graphics2D} utilisé pour dessiner
-	 */
-	@Override
-	public void dessiner(Graphics2D g2d) {
-		Graphics2D g2dPrive = (Graphics2D) g2d.create();
-		for (int ligne = 0; ligne < lignes; ligne++) {
-			for (int colonne = 0; colonne < colonnes; colonne++) {
-				tuiles[ligne][colonne].dessiner(g2dPrive);
-			}
-		}
-	}
+    /**
+     * Dessine le plateau de jeu.
+     * 
+     * @param g2d l'objet {@link Graphics2D} utilisé pour dessiner
+     */
+    @Override
+    public void dessiner(Graphics2D g2d) {
+        Graphics2D g2dPrive = (Graphics2D) g2d.create();
+        for (int ligne = 0; ligne < lignes; ligne++) {
+            for (int colonne = 0; colonne < colonnes; colonne++) {
+                tuiles[ligne][colonne].dessiner(g2dPrive);
+            }
+        }
+    }
 
-	/**
-	 * Retourne la tuile à la position spécifiée.
-	 * 
-	 * @param ligne   la ligne de la tuile
-	 * @param colonne la colonne de la tuile
-	 * @return la tuile à la position spécifiée
-	 */
-	public Tuile getTuile(int ligne, int colonne) {
-		return tuiles[ligne][colonne];
-	}
-
+    /**
+     * Charge le plateau à partir d'un fichier texte.
+     * 
+     * @param textPath le chemin du fichier texte
+     */
     public void loadPlateau(String textPath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(textPath))) {
             this.lignes = Integer.parseInt(reader.readLine().trim());
@@ -83,19 +77,19 @@ public class Plateau implements Dessinable {
 
             this.tuiles = new Tuile[lignes][colonnes];
 
-            int ligne = 0; // Declare ligne variable at method scope
+            int ligne = 0;
             
             for (; ligne < lignes; ligne++) {
                 String rowData = reader.readLine();
                 if (rowData == null) {
-                    // If we run out of lines, fill the rest with default tiles
+                    // Si on manque de lignes, remplir le reste avec des tuiles par défaut
                     fillRemainingRows(ligne);
                     break;
                 }
                 
                 if(rowData.equals("OBS")) {
-                    // If we hit the obstacles section, stop reading map data
-                    reader.mark(1000);  // Mark this position to return to it
+                    // Si on atteint la section des obstacles, arrêter la lecture des données de la carte
+                    reader.mark(1000);  // Marquer cette position pour y revenir
                     break;
                 }
                 
@@ -104,7 +98,7 @@ public class Plateau implements Dessinable {
                 int rowLength = rowData.length();
                 
                 for (int colonne = 0; colonne < colonnes; colonne++) {
-                    // Default to sand if the column is beyond what's in the file
+                    // Par défaut, du sable si la colonne est au-delà de ce qui est dans le fichier
                     char type = (colonne < rowLength) ? rowData.charAt(colonne) : 'S';
                     int x = colonne * tailleTuile;
                     int y = ligne * tailleTuile;
@@ -130,15 +124,15 @@ public class Plateau implements Dessinable {
                 }
             }
             
-            // Fill any remaining rows that weren't in the file
+            // Remplir les lignes restantes qui n'étaient pas dans le fichier
             if (ligne < lignes) {
                 fillRemainingRows(ligne);
             }
             
-            // Check if we're at the obstacles section
+            // Vérifier si on est à la section des obstacles
             String line = reader.readLine();
             if (line != null && line.equals("OBS")) {
-                // Read obstacles
+                // Lire les obstacles
                 String obsLine;
                 while ((obsLine = reader.readLine()) != null) {
                     if (obsLine.trim().isEmpty()) continue;
@@ -153,7 +147,7 @@ public class Plateau implements Dessinable {
                         int col = Integer.parseInt(obstacle[1].trim());
                         int lig = Integer.parseInt(obstacle[2].trim());
                         
-                        // Verify coordinates are within map bounds
+                        // Vérifier que les coordonnées sont dans les limites de la carte
                         if (lig < 0 || lig >= lignes || col < 0 || col >= colonnes) {
                             System.err.println("Coordonnées d'obstacle hors limites: " + obsLine);
                             continue;
@@ -175,7 +169,6 @@ public class Plateau implements Dessinable {
                                 tuiles[lig][col].setObstacle(new Buisson(x, y, tailleTuile, lig, col));
                                 //tuiles[lig][col].setOccupee(true); Peut aller sur un buisson
                                 break;
-                            // Add other obstacle types here as needed
                             default:
                                 System.err.println("Type d'obstacle inconnu: " + type);
                                 break;
@@ -187,62 +180,83 @@ public class Plateau implements Dessinable {
             }
             
             verifyObstacles();
-            System.out.println("Plateau loaded successfully from: " + textPath);
+            System.out.println("Plateau chargé avec succès depuis: " + textPath);
         } catch (IOException | NumberFormatException e) {
-            System.err.println("Error loading plateau from text file: " + e.getMessage());
+            System.err.println("Erreur lors du chargement du plateau depuis le fichier texte: " + e.getMessage());
             e.printStackTrace();
             initialiserTuiles();
         }
     }
     
     /**
-     * Fill the remaining rows with default tiles (Sable/Sand)
-     * @param startRow The row to start filling from
+     * Remplit les lignes restantes avec des tuiles par défaut (Sable)
+     * @param startRow La ligne à partir de laquelle commencer le remplissage
      */
     private void fillRemainingRows(int startRow) {
         for (int ligne = startRow; ligne < lignes; ligne++) {
             for (int colonne = 0; colonne < colonnes; colonne++) {
                 int x = colonne * tailleTuile;
                 int y = ligne * tailleTuile;
-                // Create default sand tile
+                // Créer une tuile de sable par défaut
                 tuiles[ligne][colonne] = new Sable(x, y, tailleTuile, Color.YELLOW, ligne, colonne);
             }
         }
     }
     
+    /**
+     * Vérifie les obstacles sur le plateau et affiche leur position
+     */
     public void verifyObstacles() {
-        System.out.println("Verifying obstacles on the plateau:");
+        System.out.println("Vérification des obstacles sur le plateau:");
         int obstacleCount = 0;
         for (int ligne = 0; ligne < lignes; ligne++) {
             for (int colonne = 0; colonne < colonnes; colonne++) {
                 if (tuiles[ligne][colonne].hasObstacle()) {
                     obstacleCount++;
-                    System.out.println("Obstacle found at: (" + ligne + "," + colonne + ")");
+                    System.out.println("Obstacle trouvé en: (" + ligne + "," + colonne + ")");
                 }
             }
         }
-        System.out.println("Total obstacles found: " + obstacleCount);
+        System.out.println("Total des obstacles trouvés: " + obstacleCount);
     }
     
-	public int getTailleTuile() {
-		return tailleTuile;
-	}
+    // --- GETTERS ET SETTERS ---
+    
+    /**
+     * Retourne la tuile à la position spécifiée.
+     * 
+     * @param ligne   la ligne de la tuile
+     * @param colonne la colonne de la tuile
+     * @return la tuile à la position spécifiée
+     */
+    public Tuile getTuile(int ligne, int colonne) {
+        return tuiles[ligne][colonne];
+    }
+    
+    /**
+     * Retourne la taille d'une tuile.
+     * 
+     * @return la taille d'une tuile
+     */
+    public int getTailleTuile() {
+        return tailleTuile;
+    }
 
-	/**
-	 * Retourne le nombre de lignes du plateau.
-	 * 
-	 * @return le nombre de lignes
-	 */
-	public int getLignes() {
-		return lignes;
-	}
-	
-	/**
-	 * Retourne le nombre de colonnes du plateau.
-	 * 
-	 * @return le nombre de colonnes
-	 */
-	public int getColonnes() {
-		return colonnes;
-	}
+    /**
+     * Retourne le nombre de lignes du plateau.
+     * 
+     * @return le nombre de lignes
+     */
+    public int getLignes() {
+        return lignes;
+    }
+    
+    /**
+     * Retourne le nombre de colonnes du plateau.
+     * 
+     * @return le nombre de colonnes
+     */
+    public int getColonnes() {
+        return colonnes;
+    }
 }

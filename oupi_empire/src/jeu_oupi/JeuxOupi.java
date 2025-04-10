@@ -16,19 +16,18 @@ import troupe.*;
  * @author Loic Simard
  */
 public class JeuxOupi implements Dessinable {
-
+    // Variables d'instance
     // INFO GEN
     private int screenWidth;
-    // private int screenHeight;
-
+    
     // PLATEAU
-    public Plateau plateau; // Non-statique maintenant
-    private int nbTuiles = 20; // Non-statique maintenant
-    public int tailleTuile; // Non-statique maintenant
+    public Plateau plateau; 
+    private int nbTuiles = 20; 
+    public int tailleTuile; 
     public Tuile tuileSelectionnee;
 
     // TROUPES
-    private ArrayList<Troupe> troupes = new ArrayList<>(); // liste pour annuler une decision faite par un joueur
+    private ArrayList<Troupe> troupes = new ArrayList<>();
     private ArrayList<Troupe> simTroupes = new ArrayList<>();
     private Troupe troupeSelectionnee = null;
     private int colO = 0;
@@ -44,17 +43,16 @@ public class JeuxOupi implements Dessinable {
      */
     public JeuxOupi(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
-        //this.screenHeight = screenHeight;
 
         creeTailleTuile();
         setTroupes();
         copyTroupes(troupes, simTroupes);
 
-        // Load the map first
+        // Charger la carte en premier
         plateau = new Plateau(1, 1, 1);
         plateau.loadPlateau("res/cartes/map2.txt");
 
-        // Update nbTuiles to match the loaded map dimensions
+        // Mettre à jour nbTuiles pour correspondre aux dimensions de la carte chargée
         nbTuiles = Math.max(plateau.getLignes(), plateau.getColonnes());
         tailleTuile = plateau.getTailleTuile();
 
@@ -63,26 +61,17 @@ public class JeuxOupi implements Dessinable {
     }
 
     /**
-     * Ajoutes une nouvelle troupe a la liste de troupes sur le plateau
+     * Dessine le plateau et les troupes.
      *
-     * @param troupe La troupe a ajouter
+     * @param g2d l'objet {@link Graphics2D} utilisé pour dessiner
      */
-    public void addTroupe(Troupe troupe) {
-        troupes.add(troupe);
-        simTroupes.add(troupe);
-    }
-
-    /**
-     * Retire une troupe de la liste de troupes sur le plateau
-     *
-     * @param troupe La troupe a retirer
-     * @return L'identifiant de la troupe retiree
-     */
-    public int delTroupe(Troupe troupe) {
-        troupes.remove(troupe);
-        simTroupes.remove(troupe);
-        deselectionnerTroupeAct();
-        return troupe.getId();
+    @Override
+    public void dessiner(Graphics2D g2d) {
+        Graphics2D g2dPrive = (Graphics2D) g2d.create();
+        plateau.dessiner(g2dPrive);
+        for (Troupe p : simTroupes) {
+            p.dessiner(g2dPrive);
+        }
     }
 
     /**
@@ -116,39 +105,26 @@ public class JeuxOupi implements Dessinable {
     }
 
     /**
-     * Copie les troupes de la source vers la destination.
+     * Ajoute une nouvelle troupe à la liste de troupes sur le plateau
      *
-     * @param source la liste source des troupes
-     * @param dest la liste destination des troupes
+     * @param troupe La troupe à ajouter
      */
-    private void copyTroupes(ArrayList<Troupe> source, ArrayList<Troupe> dest) {
-        dest.clear();
-        for (int i = 0; i < source.size(); i++) {
-            dest.add(source.get(i));
-        }
+    public void addTroupe(Troupe troupe) {
+        troupes.add(troupe);
+        simTroupes.add(troupe);
     }
 
     /**
-     * Dessine le plateau et les troupes.
+     * Retire une troupe de la liste de troupes sur le plateau
      *
-     * @param g2d l'objet {@link Graphics2D} utilisé pour dessiner
+     * @param troupe La troupe à retirer
+     * @return L'identifiant de la troupe retirée
      */
-    @Override
-    public void dessiner(Graphics2D g2d) {
-        Graphics2D g2dPrive = (Graphics2D) g2d.create();
-        plateau.dessiner(g2dPrive);
-        for (Troupe p : simTroupes) {
-            p.dessiner(g2dPrive);
-        }
-    }
-
-    /**
-     * Retourne le plateau de jeu.
-     *
-     * @return le plateau de jeu
-     */
-    public Plateau getPlateau() {
-        return plateau;
+    public int delTroupe(Troupe troupe) {
+        troupes.remove(troupe);
+        simTroupes.remove(troupe);
+        deselectionnerTroupeAct();
+        return troupe.getId();
     }
 
     /**
@@ -157,58 +133,6 @@ public class JeuxOupi implements Dessinable {
     public void creeTailleTuile() {
         // taille = taille du composant c-a-d screenWidth/2 diviser par le nombre de tuiles
         tailleTuile = (screenWidth / 2) / nbTuiles;
-    }
-
-    /**
-     * Retourne le nombre de tuiles.
-     *
-     * @return le nombre de tuiles
-     */
-    public int getNbTuiles() {
-        return nbTuiles;
-    }
-
-    /**
-     * Retourne la taille d'une tuile.
-     *
-     * @return la taille d'une tuile en pixels
-     */
-    public int getTailleTuile() {
-        return tailleTuile;
-    }
-
-    /**
-     * Retourne la troupe à la position spécifiée.
-     *
-     * @param x la position x
-     * @param y la position y
-     * @return la troupe à la position spécifiée, ou {@code null} si aucune
-     * troupe n'est trouvée
-     */
-    public Troupe getTroupeA(int x, int y) {
-        for (int i = 0; i < troupes.size(); i++) {
-            if (simTroupes.get(i).estA(x, y)) {
-                return simTroupes.get(i);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Déplace la troupe à la position spécifiée vers une nouvelle position.
-     *
-     * @param x la position x actuelle
-     * @param y la position y actuelle
-     * @param newCol la nouvelle colonne
-     * @param newLig la nouvelle ligne
-     */
-    public void setTroupeA(int x, int y, int newCol, int newLig) {
-        for (int i = 0; i < troupes.size(); i++) {
-            if (simTroupes.get(i).estA(x, y)) {
-                simTroupes.get(i).setLig(newLig);
-                simTroupes.get(i).setCol(newCol);
-            }
-        }
     }
 
     /**
@@ -233,6 +157,20 @@ public class JeuxOupi implements Dessinable {
 
             // Marquer comme position de départ sans changer la couleur
             plateau.getTuile(ligO, colO).setPosDep(true);
+        }
+    }
+    
+    /**
+     * Désélectionne la troupe actuellement sélectionnée.
+     */
+    public void deselectionnerTroupeAct() {
+    	if (troupeSelectionnee != null) {
+            troupeSelectionnee.deselec();
+
+            // Réinitialiser le marquage de la position de départ
+            plateau.getTuile(ligO, colO).setPosDep(false);
+
+            troupeSelectionnee = null;
         }
     }
 
@@ -312,31 +250,12 @@ public class JeuxOupi implements Dessinable {
         }
     }
 
+    /**
+     * Confirme le mouvement de la troupe sélectionnée et la marque comme épuisée.
+     */
     public void confirm() {
         troupeSelectionnee.setEpuisee(true);
         deselectionnerTroupeAct();
-    }
-
-    /**
-     * Gère la mort d'une troupe en libérant sa tuile et en effaçant les tuiles
-     * accessibles.
-     *
-     * @param troupe La troupe qui meurt
-     */
-    private void gererMortTroupe(Troupe troupe) {
-        if (troupe != null) {
-            // Libérer la tuile occupée
-            int lig = troupe.getLig();
-            int col = troupe.getCol();
-            plateau.getTuile(lig, col).setOccupee(false);
-
-            // Effacer les tuiles accessibles
-            troupe.deselec();
-
-            // Retirer la troupe des listes
-            troupes.remove(troupe);
-            simTroupes.remove(troupe);
-        }
     }
 
     /**
@@ -377,6 +296,8 @@ public class JeuxOupi implements Dessinable {
 
         // Appel de la méthode d'attaque de la troupe
         troupeSelectionnee.attaquer(troupeCible);
+        
+        fireAttackEvent();
 
         // Vérifier si la troupe cible est morte (HP <= 0)
         if (troupeCible.getHP() <= 0) {
@@ -394,14 +315,135 @@ public class JeuxOupi implements Dessinable {
         return true;
     }
 
+    /**
+     * Gère la mort d'une troupe en libérant sa tuile et en effaçant les tuiles
+     * accessibles.
+     *
+     * @param troupe La troupe qui meurt
+     */
+    private void gererMortTroupe(Troupe troupe) {
+        if (troupe != null) {
+            // Libérer la tuile occupée
+            int lig = troupe.getLig();
+            int col = troupe.getCol();
+            plateau.getTuile(lig, col).setOccupee(false);
+
+            // Effacer les tuiles accessibles
+            troupe.deselec();
+
+            // Retirer la troupe des listes
+            troupes.remove(troupe);
+            simTroupes.remove(troupe);
+        }
+    }
+
+    /**
+     * Méthode utilisée pour déclencher des événements d'attaque.
+     */
+    private void fireAttackEvent() {
+        // Implémenté par ZoneAnimationOupi
+    }
+
+    /**
+     * Copie les troupes de la source vers la destination.
+     *
+     * @param source la liste source des troupes
+     * @param dest la liste destination des troupes
+     */
+    private void copyTroupes(ArrayList<Troupe> source, ArrayList<Troupe> dest) {
+        dest.clear();
+        for (int i = 0; i < source.size(); i++) {
+            dest.add(source.get(i));
+        }
+    }
+
+    // --- GETTERS ET SETTERS ---
+
+    /**
+     * Retourne le plateau de jeu.
+     *
+     * @return le plateau de jeu
+     */
+    public Plateau getPlateau() {
+        return plateau;
+    }
+
+    /**
+     * Retourne le nombre de tuiles.
+     *
+     * @return le nombre de tuiles
+     */
+    public int getNbTuiles() {
+        return nbTuiles;
+    }
+
+    /**
+     * Retourne la taille d'une tuile.
+     *
+     * @return la taille d'une tuile en pixels
+     */
+    public int getTailleTuile() {
+        return tailleTuile;
+    }
+
+    /**
+     * Retourne la troupe à la position spécifiée.
+     *
+     * @param x la position x
+     * @param y la position y
+     * @return la troupe à la position spécifiée, ou {@code null} si aucune
+     * troupe n'est trouvée
+     */
+    public Troupe getTroupeA(int x, int y) {
+        for (int i = 0; i < troupes.size(); i++) {
+            if (simTroupes.get(i).estA(x, y)) {
+                return simTroupes.get(i);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Déplace la troupe à la position spécifiée vers une nouvelle position.
+     *
+     * @param x la position x actuelle
+     * @param y la position y actuelle
+     * @param newCol la nouvelle colonne
+     * @param newLig la nouvelle ligne
+     */
+    public void setTroupeA(int x, int y, int newCol, int newLig) {
+        for (int i = 0; i < troupes.size(); i++) {
+            if (simTroupes.get(i).estA(x, y)) {
+                simTroupes.get(i).setLig(newLig);
+                simTroupes.get(i).setCol(newCol);
+            }
+        }
+    }
+
+    /**
+     * Retourne la troupe actuellement sélectionnée.
+     *
+     * @return la troupe actuellement sélectionnée
+     */
     public Troupe getTroupeSelectionnee() {
         return troupeSelectionnee;
     }
 
+    /**
+     * Retourne la liste des troupes.
+     *
+     * @return la liste des troupes
+     */
     public ArrayList<Troupe> getTroupes() {
         return troupes;
     }
 
+    /**
+     * Retourne la liste des troupes appartenant à un joueur spécifique.
+     *
+     * @param player l'identifiant du joueur
+     * @return la liste des troupes du joueur
+     */
     public ArrayList<Troupe> getTroupePlayer(int player) {
         ArrayList<Troupe> troupesP = new ArrayList<>();
         for (int i = 0; i < troupes.size(); i++) {
@@ -409,24 +451,16 @@ public class JeuxOupi implements Dessinable {
                 troupesP.add(troupes.get(i));
             }
         }
-
         return troupesP;
     }
 
+    /**
+     * Définit la liste des troupes.
+     *
+     * @param troupes la liste des troupes à définir
+     */
     public void setTroupes(ArrayList<Troupe> troupes) {
         this.troupes = troupes;
-    }
-
-    public void deselectionnerTroupeAct() {
-    	if (troupeSelectionnee != null) {
-            troupeSelectionnee.deselec();
-
-            // Réinitialiser le marquage de la position de départ
-            plateau.getTuile(ligO, colO).setPosDep(false);
-
-            troupeSelectionnee = null;
-        }
-
     }
     
     public boolean isInZone(Tuile clique, Tuile coin) {

@@ -5,12 +5,14 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
 import interfaces.Dessinable;
 import jeu_oupi.JeuxOupi;
 import plateau.Tuile;
+import tuiles.Sable;
 
 /**
  * La classe {@code Troupe} représente une troupe dans le jeu Oupi. Elle
@@ -21,6 +23,7 @@ import plateau.Tuile;
  * @author Loic Simard
  */
 public class Troupe implements Dessinable {
+    // Variables d'instance
     protected BufferedImage image;
     private int x, y;
     private int col, lig, preCol, preLig;
@@ -38,584 +41,560 @@ public class Troupe implements Dessinable {
     
     private Tuile[][] tuilesSelec;
     
-    protected int HP,attaque,defense,vitesse,endurance;
+    protected int HP, attaque, defense, vitesse, endurance;
     protected ArrayList<Debuff> debuffs = new ArrayList<Debuff>();
     protected int id;
     
     // Distance d'attaque (1 = corps à corps par défaut)
     protected int distanceAttaque = 1;
-	private static int equipeActuelle = 0;
+    private static int equipeActuelle = 0;
 
-	// Référence à l'instance de JeuxOupi
-	private JeuxOupi jeu;
+    // Référence à l'instance de JeuxOupi
+    private JeuxOupi jeu;
 
     // Variables pour l'animation de sautillement
     private int bounceSize = 0;
     private boolean bounceGrowing = true;
-
-	/**
-	 * Fixe l'equipe de la {@link Troupe} selectionnee
-	 * 
-	 * @param equipe L'equipe de la troupe
-	 */
-	public void setEquipe(int equipe) {
-		this.equipe = equipe;
-	}
-
-	/**
-	 * Retournes l'equipe de la {@link Troupe} selectionnee
-	 * 
-	 * @return L'equipe de la troupe
-	 */
-	public int getEquipe() {
-		return equipe;
-	}
-
-	/**
-	 * Constructeur de la classe {@code Troupe}.
-	 * 
-	 * @param lig la ligne initiale de la troupe
-	 * @param col la colonne initiale de la troupe
-	 * @param jeu l'instance du jeu à laquelle appartient cette troupe
-	 */
-	public Troupe(int lig, int col, JeuxOupi jeu) {
-		this.col = col;
-		this.lig = lig;
-		this.jeu = jeu;
-		// Calculer la position en pixels basée sur la taille de tuile
-		updatePosition();
-		preCol = col;
-		preLig = lig;
-		selectionne = false;
-		
-		HP= 100;
-		attaque= 20;
-		defense= 10;
-		vitesse=20;
-		endurance=30;
-        distanceAttaque = 1; // Distance d'attaque par défaut (corps à corps)
-	}
-
-	/**
-	 * Met à jour la position en pixels basée sur les coordonnées de la grille
-	 */
-	private void updatePosition() {
-		x = getX(col);
-		y = getY(lig);
-	}
-
-	private void initialiserTuilesSelec() {
-		int taille = 2 * bakDistParc + 1; // Zone autour de la troupe
-		tuilesSelec = new Tuile[taille][taille];
-
-		// Sauvegarde de la position centrale actuelle
-		centreCol = col;
-		centreLig = lig;
-
-		// Get actual map boundaries
-		int mapRows = jeu.getPlateau().getLignes();
-		int mapCols = jeu.getPlateau().getColonnes();
-
-		for (int i = 0; i < taille; i++) {
-			for (int j = 0; j < taille; j++) {
-				int ligne = lig - bakDistParc + i;
-				int colonne = col - bakDistParc + j;
-
-				// Vérifier si la position est dans le losange et dans les limites de la carte
-				if (Math.abs(i - bakDistParc) + Math.abs(j - bakDistParc) <= bakDistParc && ligne >= 0
-						&& ligne < mapRows && colonne >= 0 && colonne < mapCols) {
-					Tuile tuile = jeu.getPlateau().getTuile(ligne, colonne);
-					if (tuile.estOccupee() && !(ligne == lig && colonne == col)) {
-						tuilesSelec[i][j] = null;
-					} else {
-						tuilesSelec[i][j] = tuile;
-						// Marquer la tuile comme accessible pour le rendu visuel
-						tuile.setAccessible(true);
-					}
-				} else {
-					tuilesSelec[i][j] = null; // En dehors du plateau ou en dehors du losange
-				}
-			}
-		}
-	}
+    
+    private static ArrayList<String> combatMessages = new ArrayList<>();
+    private static final Random random = new Random();
 	
-	/**
-	 * Efface le marquage d'accessibilité de toutes les tuiles
-	 */
-	private void effacerZoneAccessible() {
-		if (tuilesSelec != null) {
-			int taille = tuilesSelec.length;
-			for (int i = 0; i < taille; i++) {
-				for (int j = 0; j < taille; j++) {
-					if (tuilesSelec[i][j] != null) {
-						tuilesSelec[i][j].setAccessible(false);
-					}
-				}
-			 }
-			// Pour s'assurer que les références sont libérées correctement
-			tuilesSelec = null;
-		}
-	}
+    /**
+     * Constructeur de la classe {@code Troupe}.
+     * 
+     * @param lig la ligne initiale de la troupe
+     * @param col la colonne initiale de la troupe
+     * @param jeu l'instance du jeu à laquelle appartient cette troupe
+     */
+    public Troupe(int lig, int col, JeuxOupi jeu) {
+        this.col = col;
+        this.lig = lig;
+        this.jeu = jeu;
+        // Calculer la position en pixels basée sur la taille de tuile
+        updatePosition();
+        preCol = col;
+        preLig = lig;
+        selectionne = false;
+        
+        HP = 100;
+        attaque = 20;
+        defense = 10;
+        vitesse = 20;
+        endurance = 30;
+        distanceAttaque = 1; // Distance d'attaque par défaut (corps à corps)
+    }
 
-	/**
-	 * Retourne l'image de la troupe.
-	 * 
-	 * @return l'image de la troupe
-	 */
-	public BufferedImage getImage() {
-		return image;
-	}
+    /**
+     * Change l'equipe qui est en train de jouer
+     */
+    public static void toggleEquipeActuelle() {
+        if (equipeActuelle == 0) {
+            equipeActuelle = 1;
+        } else {
+            equipeActuelle = 0;
+        }
+    }
 
-	/**
-	 * Définit l'image de la troupe.
-	 * 
-	 * @param image l'image de la troupe
-	 */
-	public void setImage(BufferedImage image) {
-		this.image = image;
-	}
+    /**
+     * Met à jour la position en pixels basée sur les coordonnées de la grille
+     */
+    private void updatePosition() {
+        x = getX(col);
+        y = getY(lig);
+    }
 
-	private int getY(int lig) {
-		return lig * jeu.getTailleTuile();
-	}
+    private void initialiserTuilesSelec() {
+        int taille = 2 * bakDistParc + 1; // Zone autour de la troupe
+        tuilesSelec = new Tuile[taille][taille];
 
-	private int getX(int col) {
-		return col * jeu.getTailleTuile();
-	}
+        // Sauvegarde de la position centrale actuelle
+        centreCol = col;
+        centreLig = lig;
 
-	/**
-	 * Charge une image à partir du chemin spécifié.
-	 * 
-	 * @param imagePath le chemin de l'image
-	 * @return l'image chargée
-	 */
-	protected BufferedImage getImage(String imagePath) {
-		BufferedImage image = null;
-		try {
-			// Vérifier si la ressource existe
-			java.net.URL url = getClass().getResource(imagePath);
-			if (url == null) {
-				System.err.println("Erreur: Ressource image introuvable: " + imagePath);
-				System.err.println("Chemin de recherche: " + System.getProperty("java.class.path"));
-				// Créer une image par défaut comme solution de secours
-				return createPlaceholderImage();
-			}
-			
-			image = ImageIO.read(url);
-			if (image == null) {
-				System.err.println("Erreur: Échec de lecture de l'image: " + imagePath);
-				return createPlaceholderImage();
-			}
-		} catch (IOException e) {
-			System.err.println("Erreur lors du chargement de l'image: " + imagePath);
-			e.printStackTrace();
-			return createPlaceholderImage();
-		}
-		return image;
-	}
+        // Get actual map boundaries
+        int mapRows = jeu.getPlateau().getLignes();
+        int mapCols = jeu.getPlateau().getColonnes();
 
-	/**
-	 * Crée une image placeholder simple qui sera utilisée si l'image originale ne peut pas être chargée.
-	 * 
-	 * @return une image placeholder
-	 */
-	private BufferedImage createPlaceholderImage() {
-		BufferedImage placeholder = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2d = placeholder.createGraphics();
-		g2d.setColor(Color.RED);
-		g2d.fillRect(0, 0, 32, 32);
-		g2d.setColor(Color.WHITE);
-		g2d.drawLine(0, 0, 32, 32);
-		g2d.drawLine(0, 32, 32, 0);
-		g2d.dispose();
-		return placeholder;
-	}
+        for (int i = 0; i < taille; i++) {
+            for (int j = 0; j < taille; j++) {
+                int ligne = lig - bakDistParc + i;
+                int colonne = col - bakDistParc + j;
 
-	/**
-	 * Dessine la troupe avec une animation de sautillement.
-	 * 
-	 * @param g2d l'objet {@link Graphics2D} utilisé pour dessiner
-	 */
-	@Override
-	public void dessiner(Graphics2D g2d) {
-		Graphics2D g2dPrive = (Graphics2D) g2d.create();
+                // Vérifier si la position est dans le losange et dans les limites de la carte
+                if (Math.abs(i - bakDistParc) + Math.abs(j - bakDistParc) <= bakDistParc && ligne >= 0
+                        && ligne < mapRows && colonne >= 0 && colonne < mapCols) {
+                    Tuile tuile = jeu.getPlateau().getTuile(ligne, colonne);
+                    if (tuile.estOccupee() && !(ligne == lig && colonne == col)) {
+                        tuilesSelec[i][j] = null;
+                    } else {
+                        tuilesSelec[i][j] = tuile;
+                        // Marquer la tuile comme accessible pour le rendu visuel
+                        tuile.setAccessible(true);
+                    }
+                } else {
+                    tuilesSelec[i][j] = null; // En dehors du plateau ou en dehors du losange
+                }
+            }
+        }
+    }
+    
+    /**
+     * Efface le marquage d'accessibilité de toutes les tuiles
+     */
+    private void effacerZoneAccessible() {
+        if (tuilesSelec != null) {
+            int taille = tuilesSelec.length;
+            for (int i = 0; i < taille; i++) {
+                for (int j = 0; j < taille; j++) {
+                    if (tuilesSelec[i][j] != null) {
+                        tuilesSelec[i][j].setAccessible(false);
+                    }
+                }
+            }
+            // Pour s'assurer que les références sont libérées correctement
+            tuilesSelec = null;
+        }
+    }
 
+    private void printTuilesSelec() {
+        int taille = tuilesSelec.length;
+        System.out.println("Tableau des tuiles sélectionnables (distance max: " + bakDistParc + "):");
+        for (int i = 0; i < taille; i++) {
+            for (int j = 0; j < taille; j++) {
+                if (i == bakDistParc && j == bakDistParc) {
+                    System.out.print(" [X]  "); // Position de la troupe
+                } else if (tuilesSelec[i][j] != null) {
+                    System.out.printf("(%d,%d) ", i, j); // Tuile valide
+                } else {
+                    System.out.print(" [#]  "); // Hors plateau
+                }
+            }
+            System.out.println();
+        }
+    }
 
-		Color couleur = new Color(0, 0, 0);
+    /**
+     * Dessine la troupe avec une animation de sautillement.
+     * 
+     * @param g2d l'objet {@link Graphics2D} utilisé pour dessiner
+     */
+    @Override
+    public void dessiner(Graphics2D g2d) {
+        Graphics2D g2dPrive = (Graphics2D) g2d.create();
 
-		// Dessiner un contour si la troupe est sélectionnée
-		if (equipe == equipeActuelle) {
-			couleur = Color.GREEN;
-		} else {
-			bounceSize -= 2;
-			if (bounceSize <= 0) { // Taille minimale de la réduction
-				bounceGrowing = true;
-			}
-		}
+        Color couleur = new Color(0, 0, 0);
 
-		g2dPrive.setColor(couleur);
+        // Dessiner un contour si la troupe est sélectionnée
+        if (equipe == equipeActuelle) {
+            couleur = Color.GREEN;
+        } else {
+            bounceSize -= 2;
+            if (bounceSize <= 0) { // Taille minimale de la réduction
+                bounceGrowing = true;
+            }
+        }
 
-		if (selectionne && !epuisee) {
-			g2dPrive.drawRect(x, y, jeu.getTailleTuile(), jeu.getTailleTuile());
-		}
+        g2dPrive.setColor(couleur);
 
-		// g2dPrive.setColor(new Color(0,0,255,50));
-		couleur = new Color(couleur.getRed(), couleur.getGreen(), couleur.getBlue(), 50);
-		g2dPrive.setColor(couleur);
-		g2dPrive.fillRect(x, y, jeu.getTailleTuile(), jeu.getTailleTuile());
-		g2dPrive.drawImage(image, x, y, jeu.getTailleTuile(), jeu.getTailleTuile(), null);
-	}
+        if (selectionne && !epuisee) {
+            g2dPrive.drawRect(x, y, jeu.getTailleTuile(), jeu.getTailleTuile());
+        }
 
-	/**
-	 * Vérifie si la troupe est sélectionnée.
-	 * 
-	 * @return {@code true} si la troupe est sélectionnée, {@code false} sinon
-	 */
-	public boolean estSelectionne() {
-		return selectionne;
-	}
+        couleur = new Color(couleur.getRed(), couleur.getGreen(), couleur.getBlue(), 50);
+        g2dPrive.setColor(couleur);
+        g2dPrive.fillRect(x, y, jeu.getTailleTuile(), jeu.getTailleTuile());
+        g2dPrive.drawImage(image, x, y, jeu.getTailleTuile(), jeu.getTailleTuile(), null);
+    }
 
-	/**
-	 * Définit l'état de sélection de la troupe.
-	 * 
-	 * @param selectionne l'état de sélection de la troupe
-	 */
-	public void setSelectionne(boolean selectionne) {
-		this.selectionne = selectionne;
-		if (selectionne) {
-			initialiserTuilesSelec();
-			printTuilesSelec();
-			distanceParcourable = bakDistParc; // Réinitialiser la distance parcourable
-		} else {
-			effacerZoneAccessible();
-		}
-	}
+    /**
+     * Déplace la troupe vers le haut.
+     */
+    public void deplacerHaut() {
+        int nouvelleLigne = lig - 1;
+        if (estDansLimites(nouvelleLigne, col)) {
+            preLig = lig;
+            lig = nouvelleLigne;
+            y = getY(lig);
+            
+            Tuile currentTile = jeu.getPlateau().getTuile(lig, col);
+            if (currentTile instanceof tuiles.Sable) {
+            }
+        }
+    }
 
-	private void printTuilesSelec() {
-		int taille = tuilesSelec.length;
-		System.out.println("Tableau des tuiles sélectionnables (distance max: " + bakDistParc + "):");
-		for (int i = 0; i < taille; i++) {
-			for (int j = 0; j < taille; j++) {
-				if (i == bakDistParc && j == bakDistParc) {
-					System.out.print(" [X]  "); // Position de la troupe
-				} else if (tuilesSelec[i][j] != null) {
-					System.out.printf("(%d,%d) ", i, j); // Tuile valide
-				} else {
-					System.out.print(" [#]  "); // Hors plateau
-				}
-			}
-			System.out.println();
-		}
-	}
+    /**
+     * Déplace la troupe vers le bas.
+     */
+    public void deplacerBas() {
+        int nouvelleLigne = lig + 1;
+        if (estDansLimites(nouvelleLigne, col)) {
+            preLig = lig;
+            lig = nouvelleLigne;
+            y = getY(lig);
+            
+            Tuile currentTile = jeu.getPlateau().getTuile(lig, col);
+            if (currentTile instanceof tuiles.Sable) {
+            }
+        }
+    }
 
-	/**
-	 * Déplace la troupe vers le haut.
-	 */
-	public void deplacerHaut() {
-		int nouvelleLigne = lig - 1;
-		if (distanceParcourable > 0 && estDansLimites(nouvelleLigne, col)) {
-			preLig = lig;
-			lig = nouvelleLigne;
-			y = getY(lig);
-		}
-	}
+    /**
+     * Déplace la troupe vers la gauche.
+     */
+    public void deplacerGauche() {
+        int nouvelleColonne = col - 1;
+        if (estDansLimites(lig, nouvelleColonne)) {
+            preCol = col;
+            col = nouvelleColonne;
+            x = getX(col);
+            
+            Tuile currentTile = jeu.getPlateau().getTuile(lig, col);
+            if (currentTile instanceof tuiles.Sable) {
+            }
+        }
+    }
 
-	/**
-	 * Déplace la troupe vers le bas.
-	 */
-	public void deplacerBas() {
-		int nouvelleLigne = lig + 1;
-		if (distanceParcourable > 0 && estDansLimites(nouvelleLigne, col)) {
-			preLig = lig;
-			lig = nouvelleLigne;
-			y = getY(lig);
-		}
-	}
+    /**
+     * Déplace la troupe vers la droite.
+     */
+    public void deplacerDroite() {
+        int nouvelleColonne = col + 1;
+        if (estDansLimites(lig, nouvelleColonne)) {
+            preCol = col;
+            col = nouvelleColonne;
+            x = getX(col);
+            
+            Tuile currentTile = jeu.getPlateau().getTuile(lig, col);
+            if (currentTile instanceof tuiles.Sable) {
+            }
+        }
+    }
 
-	/**
-	 * Déplace la troupe vers la gauche.
-	 */
-	public void deplacerGauche() {
-		int nouvelleColonne = col - 1;
-		if (distanceParcourable > 0 && estDansLimites(lig, nouvelleColonne)) {
-			preCol = col;
-			col = nouvelleColonne;
-			x = getX(col);
-		}
-	}
+    public void confirmerMouv() {
+        selectionne = false;
+    }
 
-	/**
-	 * Déplace la troupe vers la droite.
-	 */
-	public void deplacerDroite() {
-		int nouvelleColonne = col + 1;
-		if (distanceParcourable > 0 && estDansLimites(lig, nouvelleColonne)) {
-			preCol = col;
-			col = nouvelleColonne;
-			x = getX(col);
-		}
-	}
+    /**
+     * Charge une image à partir du chemin spécifié.
+     * 
+     * @param imagePath le chemin de l'image
+     * @return l'image chargée
+     */
+    protected BufferedImage getImage(String imagePath) {
+        BufferedImage image = null;
+        try {
+            // Vérifier si la ressource existe
+            java.net.URL url = getClass().getResource(imagePath);
+            if (url == null) {
+                System.err.println("Erreur: Ressource image introuvable: " + imagePath);
+                System.err.println("Chemin de recherche: " + System.getProperty("java.class.path"));
+                // Créer une image par défaut comme solution de secours
+                return createPlaceholderImage();
+            }
+            
+            image = ImageIO.read(url);
+            if (image == null) {
+                System.err.println("Erreur: Échec de lecture de l'image: " + imagePath);
+                return createPlaceholderImage();
+            }
+        } catch (IOException e) {
+            System.err.println("Erreur lors du chargement de l'image: " + imagePath);
+            e.printStackTrace();
+            return createPlaceholderImage();
+        }
+        return image;
+    }
 
-	public void confirmerMouv() {
-		selectionne = false;
-	}
+    /**
+     * Crée une image placeholder simple qui sera utilisée si l'image originale ne peut pas être chargée.
+     * 
+     * @return une image placeholder
+     */
+    private BufferedImage createPlaceholderImage() {
+        BufferedImage placeholder = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = placeholder.createGraphics();
+        g2d.setColor(Color.RED);
+        g2d.fillRect(0, 0, 32, 32);
+        g2d.setColor(Color.WHITE);
+        g2d.drawLine(0, 0, 32, 32);
+        g2d.drawLine(0, 32, 32, 0);
+        g2d.dispose();
+        return placeholder;
+    }
 
-	private boolean estDansLimites(int ligne, int colonne) {
-		// Calculer les indices dans tuilesSelec par rapport à la position centrale
-		// initiale
-		int i = ligne - (centreLig - bakDistParc);
-		int j = colonne - (centreCol - bakDistParc);
+    private boolean estDansLimites(int ligne, int colonne) {
+        // Calculer les indices dans tuilesSelec par rapport à la position centrale
+        // initiale
+        int i = ligne - (centreLig - bakDistParc);
+        int j = colonne - (centreCol - bakDistParc);
 
-		// Vérifier si le déplacement est dans les limites du tableau et que la tuile
-		// existe
-		return i >= 0 && i < tuilesSelec.length && j >= 0 && j < tuilesSelec[0].length && tuilesSelec[i][j] != null;
-	}
+        // Vérifier si le déplacement est dans les limites du tableau et que la tuile
+        // existe
+        return i >= 0 && i < tuilesSelec.length && j >= 0 && j < tuilesSelec[0].length && tuilesSelec[i][j] != null;
+    }
 
-	/**
-	 * Vérifie si la troupe est à la position spécifiée.
-	 * 
-	 * @param clickX la position x du clic
-	 * @param clickY la position y du clic
-	 * @return {@code true} si la troupe est à la position spécifiée, {@code false}
-	 *         sinon
-	 */
-	public boolean estA(int clickX, int clickY) {
-		int troupeX = x;
-		int troupeY = y;
-		return clickX >= troupeX && clickX < troupeX + jeu.getTailleTuile() && clickY >= troupeY
-				&& clickY < troupeY + jeu.getTailleTuile();
-	}
+    /**
+     * Vérifie si la troupe est à la position spécifiée.
+     * 
+     * @param clickX la position x du clic
+     * @param clickY la position y du clic
+     * @return {@code true} si la troupe est à la position spécifiée, {@code false}
+     *         sinon
+     */
+    public boolean estA(int clickX, int clickY) {
+        int troupeX = x;
+        int troupeY = y;
+        return clickX >= troupeX && clickX < troupeX + jeu.getTailleTuile() && clickY >= troupeY
+                && clickY < troupeY + jeu.getTailleTuile();
+    }
 
-	/**
-	 * Retourne la distance parcourable par la troupe.
-	 * 
-	 * @return la distance parcourable
-	 */
-	public int getDistanceParcourable() {
-		return distanceParcourable;
-	}
+    public void deselec() {
+        selectionne = false;
+        effacerZoneAccessible();
+        // Libérer les références pour éviter les fuites mémoire
+        tuilesSelec = null;
+    }
 
-	/**
-	 * Définit la distance parcourable par la troupe.
-	 * 
-	 * @param distanceParcourable la distance parcourable
-	 */
-	public void setDistanceParcourable(int distanceParcourable) {
-		this.distanceParcourable = distanceParcourable;
-	}
-
-	/**
-	 * Retourne la distance parcourable initiale de la troupe.
-	 * 
-	 * @return la distance parcourable initiale
-	 */
-	public int getBakDistParc() {
-		return bakDistParc;
-	}
-
-	/**
-	 * Définit la distance parcourable initiale de la troupe.
-	 * 
-	 * @param bakDistParc la distance parcourable initiale
-	 */
-	public void setBakDistParc(int bakDistParc) {
-		this.bakDistParc = bakDistParc;
-	}
-
-	/**
-	 * Retourne la colonne de la troupe.
-	 * 
-	 * @return la colonne de la troupe
-	 */
-	public int getCol() {
-		return col;
-	}
-
-	/**
-	 * Retourne la ligne de la troupe.
-	 * 
-	 * @return la ligne de la troupe
-	 */
-	public int getLig() {
-		return lig;
-	}
-
-	/**
-	 * Définit la colonne de la troupe.
-	 * 
-	 * @param col la nouvelle colonne de la troupe
-	 */
-	public void setCol(int col) {
-		this.col = col;
-		x = getX(col);
-	}
-
-	/**
-	 * Définit la ligne de la troupe.
-	 * 
-	 * @param lig la nouvelle ligne de la troupe
-	 */
-	public void setLig(int lig) {
-		this.lig = lig;
-		y = getY(lig);
-	}
-
-	/**
-	 * Change l'equipe qui est en train de jouer
-	 */
-	public static void toggleEquipeActuelle() {
-		if (equipeActuelle == 0) {
-			equipeActuelle = 1;
-		} else {
-			equipeActuelle = 0;
-		}
-	}
-
-	public void deselec() {
-		selectionne = false;
-		effacerZoneAccessible();
-		// Libérer les références pour éviter les fuites mémoire
-		tuilesSelec = null;
-	}
-
-	public void attaquer(Troupe troupeEnem) {
-		// Vérifier que les troupes sont d'équipes différentes
-		if (this.equipe == troupeEnem.getEquipe()) {
-			System.out.println("⚠️ Impossible d'attaquer une troupe alliée!");
-			return;
-		}
-		
+    public void attaquer(Troupe troupeEnem) {
+        combatMessages.clear();
+        
+        // Vérifier que les troupes sont d'équipes différentes
+        if (this.equipe == troupeEnem.getEquipe()) {
+            String message = "⚠️ Impossible d'attaquer une troupe alliée!";
+            System.out.println(message);
+            combatMessages.add(message);
+            return;
+        }
+        
         // Calcul de la distance entre les troupes
         int distance = Math.abs(this.getCol() - troupeEnem.getCol()) + Math.abs(this.getLig() - troupeEnem.getLig());
         
         // Vérifier que la troupe est à portée d'attaque
         if (distance > distanceAttaque) {
-            System.out.println("⚠️ Cible hors de portée! Distance maximale d'attaque: " + distanceAttaque);
+            String message = "⚠️ Cible hors de portée! Distance maximale d'attaque: " + distanceAttaque;
+            System.out.println(message);
+            combatMessages.add(message);
             return;
         }
         
-		// Calcul des dégâts infligés (formule simple inspirée de Fire Emblem)
-		int degats = Math.max(1, this.attaque - troupeEnem.defense / 2);
+        int dodgeChance = Math.max(0, Math.min(70, troupeEnem.vitesse - this.vitesse + 20));
+        
+        if (random.nextInt(100) < dodgeChance) {
+            String message = "🏃 " + troupeEnem.getClass().getSimpleName() + " esquive l'attaque!";
+            System.out.println(message);
+            combatMessages.add(message);
+            return;
+        }
+        
+        // Calcul des dégâts infligés (formule simple inspirée de Fire Emblem)
+        int degats = Math.max(1, this.attaque - troupeEnem.defense / 2);
 
-		// Application des dégâts
-		troupeEnem.HP = Math.max(0, troupeEnem.HP - degats);
+        // Application des dégâts
+        troupeEnem.HP = Math.max(0, troupeEnem.HP - degats);
 
-		System.out.println(
-				"🗡️ " + this.getClass().getSimpleName() + " attaque et inflige " + degats + " points de dégâts!");
-		System.out.println("   " + troupeEnem.getClass().getSimpleName() + " a maintenant " + troupeEnem.HP + " HP.");
+        String message = "🗡️ " + this.getClass().getSimpleName() + " attaque et inflige " + degats + " points de dégâts!";
+        System.out.println(message);
+        combatMessages.add(message);
+        
+        message = "   " + troupeEnem.getClass().getSimpleName() + " a maintenant " + troupeEnem.HP + " HP.";
+        System.out.println(message);
+        combatMessages.add(message);
 
-		// Vérifier si la troupe ennemie est vaincue
-		if (troupeEnem.HP <= 0) {
-			System.out.println("💀 " + troupeEnem.getClass().getSimpleName() + " a été vaincu!");
-			// Ici on pourrait ajouter une logique pour retirer la troupe du jeu
-		} else {
-			// Contre-attaque si la troupe ennemie est encore en vie
-			// La vitesse détermine si une contre-attaque est possible (comme dans Fire
-			// Emblem)
-			if (troupeEnem.vitesse >= this.vitesse - 5) {
-				int degatsContre = Math.max(1, troupeEnem.attaque - this.defense / 2);
-				this.HP = Math.max(0, this.HP - degatsContre);
+        // Vérifier si la troupe ennemie est vaincue
+        if (troupeEnem.HP <= 0) {
+            message = "💀 " + troupeEnem.getClass().getSimpleName() + " a été vaincu!";
+            System.out.println(message);
+            combatMessages.add(message);
+        } else {
+            // Contre-attaque si la troupe ennemie est encore en vie
+            if (troupeEnem.vitesse >= this.vitesse - 5) {
+                int counterDodgeChance = Math.max(0, Math.min(70, this.vitesse - troupeEnem.vitesse + 20));
+                
+                if (random.nextInt(100) < counterDodgeChance) {
+                    message = "🏃 " + this.getClass().getSimpleName() + " esquive la contre-attaque!";
+                    System.out.println(message);
+                    combatMessages.add(message);
+                } else {
+                    int degatsContre = Math.max(1, troupeEnem.attaque - this.defense / 2);
+                    this.HP = Math.max(0, this.HP - degatsContre);
+    
+                    message = "⚔️ " + troupeEnem.getClass().getSimpleName() + " contre-attaque et inflige "
+                            + degatsContre + " points de dégâts!";
+                    System.out.println(message);
+                    combatMessages.add(message);
+                    
+                    message = "   " + this.getClass().getSimpleName() + " a maintenant " + this.HP + " HP.";
+                    System.out.println(message);
+                    combatMessages.add(message);
+    
+                    // Vérifier si l'attaquant est vaincu par la contre-attaque
+                    if (this.HP <= 0) {
+                        message = "💀 " + this.getClass().getSimpleName() + " a été vaincu!";
+                        System.out.println(message);
+                        combatMessages.add(message);
+                    }
+                }
+            } else {
+                message = "🛡️ " + troupeEnem.getClass().getSimpleName() + " est trop lent pour contre-attaquer.";
+                System.out.println(message);
+                combatMessages.add(message);
+            }
+        }
 
-				System.out.println("⚔️ " + troupeEnem.getClass().getSimpleName() + " contre-attaque et inflige "
-						+ degatsContre + " points de dégâts!");
-				System.out.println("   " + this.getClass().getSimpleName() + " a maintenant " + this.HP + " HP.");
+        // Réduction de l'endurance après l'attaque
+        this.endurance = Math.max(0, this.endurance - 5);
+        message = "⚡ Endurance de " + this.getClass().getSimpleName() + " réduite à " + this.endurance;
+        System.out.println(message);
+        combatMessages.add(message);
+    }
 
-				// Vérifier si l'attaquant est vaincu par la contre-attaque
-				if (this.HP <= 0) {
-					System.out.println("💀 " + this.getClass().getSimpleName() + " a été vaincu!");
-					// Ici on pourrait ajouter une logique pour retirer la troupe du jeu
-				}
-			} else {
-				System.out.println(
-						"🛡️ " + troupeEnem.getClass().getSimpleName() + " est trop lent pour contre-attaquer.");
-			}
-		}
+    private int getY(int lig) {
+        return lig * jeu.getTailleTuile();
+    }
 
-		// Réduction de l'endurance après l'attaque
-		this.endurance = Math.max(0, this.endurance - 5);
-		System.out.println("⚡ Endurance de " + this.getClass().getSimpleName() + " réduite à " + this.endurance);
-	}
+    private int getX(int col) {
+        return col * jeu.getTailleTuile();
+    }
 
-	public int getHP() {
-		return HP;
-	}
+    // --- GETTERS ET SETTERS ---
+    
+    /**
+     * @param equipe l'équipe à définir
+     */
+    public void setEquipe(int equipe) {
+        this.equipe = equipe;
+    }
 
-	public boolean isEpuisee() {
-		return epuisee;
-	}
+    public int getEquipe() {
+        return equipe;
+    }
+    
+    public BufferedImage getImage() {
+        return image;
+    }
 
-	public void setEpuisee(boolean epuisee) {
-		this.epuisee = epuisee;
-	}
+    public void setImage(BufferedImage image) {
+        this.image = image;
+    }
+    
+    public boolean estSelectionne() {
+        return selectionne;
+    }
 
-	public int getAttaque() {
-		return attaque;
-	}
+    public void setSelectionne(boolean selectionne) {
+        this.selectionne = selectionne;
+        if (selectionne) {
+            initialiserTuilesSelec();
+            printTuilesSelec();
+            distanceParcourable = bakDistParc; // Réinitialiser la distance parcourable
+        } else {
+            effacerZoneAccessible();
+        }
+    }
 
-	public void setAttaque(int attaque) {
-		this.attaque = attaque;
-	}
+    public int getDistanceParcourable() {
+        return distanceParcourable;
+    }
 
-	public int getDefense() {
-		return defense;
-	}
+    public void setDistanceParcourable(int distanceParcourable) {
+        this.distanceParcourable = distanceParcourable;
+    }
 
-	public void setDefense(int defense) {
-		this.defense = defense;
-	}
+    public int getBakDistParc() {
+        return bakDistParc;
+    }
 
-	public int getVitesse() {
-		return vitesse;
-	}
+    public void setBakDistParc(int bakDistParc) {
+        this.bakDistParc = bakDistParc;
+    }
 
-	public void setVitesse(int vitesse) {
-		this.vitesse = vitesse;
-	}
+    public int getCol() {
+        return col;
+    }
 
-	public int getEndurance() {
-		return endurance;
-	}
+    public int getLig() {
+        return lig;
+    }
 
-	public void setEndurance(int endurance) {
-		this.endurance = endurance;
-	}
+    public void setCol(int col) {
+        this.col = col;
+        x = getX(col);
+    }
 
-	public void setHP(int hP) {
-		HP = hP;
-	}
+    public void setLig(int lig) {
+        this.lig = lig;
+        y = getY(lig);
+    }
+    
+    public static ArrayList<String> getCombatMessages() {
+        return combatMessages;
+    }
 
-	/**
-	 * Obtient l'instance du jeu associée à cette troupe
-	 * 
-	 * @return l'instance de JeuxOupi
-	 */
-	public JeuxOupi getJeu() {
-		return jeu;
-	}
-	
-	/**
-	 * Obtient la distance d'attaque de la troupe
-	 * 
-	 * @return la distance d'attaque
-	 */
-	public int getDistanceAttaque() {
-		return distanceAttaque;
-	}
-	
-	/**
-	 * Définit la distance d'attaque de la troupe
-	 * 
-	 * @param distanceAttaque la nouvelle distance d'attaque
-	 */
-	public void setDistanceAttaque(int distanceAttaque) {
-		this.distanceAttaque = distanceAttaque;
-	}
+    public int getHP() {
+        return HP;
+    }
+    
+    public void setHP(int hP) {
+        HP = hP;
+    }
 
-	public int getId() {
-		return id;
-	}
+    public boolean isEpuisee() {
+        return epuisee;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public void setEpuisee(boolean epuisee) {
+        this.epuisee = epuisee;
+    }
+
+    public int getAttaque() {
+        return attaque;
+    }
+
+    public void setAttaque(int attaque) {
+        this.attaque = attaque;
+    }
+
+    public int getDefense() {
+        return defense;
+    }
+
+    public void setDefense(int defense) {
+        this.defense = defense;
+    }
+
+    public int getVitesse() {
+        return vitesse;
+    }
+
+    public void setVitesse(int vitesse) {
+        this.vitesse = vitesse;
+    }
+
+    public int getEndurance() {
+        return endurance;
+    }
+
+    public void setEndurance(int endurance) {
+        this.endurance = endurance;
+    }
+
+    public JeuxOupi getJeu() {
+        return jeu;
+    }
+    
+    public int getDistanceAttaque() {
+        return distanceAttaque;
+    }
+    
+    public void setDistanceAttaque(int distanceAttaque) {
+        this.distanceAttaque = distanceAttaque;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

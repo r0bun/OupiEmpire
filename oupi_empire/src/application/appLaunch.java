@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 
 /**
  * La classe {@code appLaunch} représente la fenêtre principale de l'application
@@ -271,8 +272,16 @@ public class appLaunch extends JFrame {
 				zoneAnimationOupi.changerType(3);
 			}
 		});
-		buttonGroupTroupe.add(rdbtnLobo);
-		contentPane.add(rdbtnLobo);
+		
+		JTextArea textAreaAttaque = new JTextArea();
+		textAreaAttaque.setBounds(1561, 30, 333, 783);
+		textAreaAttaque.setEditable(false);
+		textAreaAttaque.setLineWrap(true);
+		textAreaAttaque.setWrapStyleWord(true);
+		// Add scrolling capability to the text area
+		JScrollPane scrollPane = new JScrollPane(textAreaAttaque);
+		scrollPane.setBounds(1561, 30, 333, 783);
+		contentPane.add(scrollPane);
 
 		setBounds(0, 0, screenWidth, screenHeight);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -289,7 +298,49 @@ public class appLaunch extends JFrame {
 			}
 		});
 		
-		
+		zoneAnimationOupi.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				if(evt.getPropertyName().equals("Fin")) {
+					fin.setVisible(true);
+					zoneAnimationOupi.setVisible(false);
+				}
+				
+				if(evt.getPropertyName().equals("troupe")) {
+					stats.updateTroupe((Troupe) evt.getNewValue());
+				}
+				
+				// Détection du changement d'équipe
+				if(evt.getPropertyName().equals("equipeActuelle")) {
+					int nouvelleEquipe = (int) evt.getNewValue();
+					equipeActuelle = nouvelleEquipe;
+					updateBackgroundColor();
+				}
+				
+				if(evt.getPropertyName().equals("troupes restantes")) {
+					int[] troupesDispo = (int[]) evt.getNewValue();
+					lblOupi.setText(troupesDispo[0]+"");
+					lblElec.setText(troupesDispo[1]+"");
+					lblGenial.setText(troupesDispo[2]+"");
+					lblLobo.setText(troupesDispo[3]+"");
+					}
+				
+				if(evt.getPropertyName().equals("combatMessages")) {
+					@SuppressWarnings("unchecked")
+					ArrayList<String> messages = (ArrayList<String>) evt.getNewValue();
+					if (messages != null && !messages.isEmpty()) {
+						StringBuilder sb = new StringBuilder();
+						sb.append("----- COMBAT LOG -----\n");
+						for (String message : messages) {
+							sb.append(message).append("\n");
+						}
+						sb.append("---------------------\n\n");
+						
+						textAreaAttaque.append(sb.toString());
+						textAreaAttaque.setCaretPosition(textAreaAttaque.getDocument().getLength());
+					}
+				}
+			}
+		});
 	}
 	
 	/**

@@ -23,6 +23,7 @@ import troupe.Genial;
 import troupe.Lobotomisateur;
 import troupe.Oupi;
 import troupe.Troupe;
+import tuiles.Eau;
 
 /**
  * La classe {@code ZoneAnimationOupi} représente la zone d'animation pour le
@@ -146,6 +147,13 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 					
 					if (placer && jeuxOupi.getTroupeSelectionnee() == null) {
 						if (troupesDispo[type] > 0) {
+							if (tuileCliquee instanceof tuiles.Eau) {
+								String message = "⚠️ Impossible de placer une troupe sur l'eau!";
+								System.out.println(message);
+								pcs.firePropertyChange("combatMessage", null, new ArrayList<String>() {{ add(message); }});
+								return;
+							}
+							
 							if (!tuileCliquee.estOccupee()) {
 								if(jeuxOupi.isInZone(tuileCliquee, jeuxOupi.getPlateau().getTuile(0, 0))) {
 								
@@ -569,5 +577,12 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		super.setVisible(aFlag);
 
 		pcs.firePropertyChange("troupes restantes",0,troupesDispo);
+	}
+	
+	public void sendCombatMessages() {
+		ArrayList<String> messages = Troupe.getCombatMessages();
+		if (!messages.isEmpty()) {
+			pcs.firePropertyChange("combatMessages", null, messages);
+		}
 	}
 }
