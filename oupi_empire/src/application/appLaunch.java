@@ -272,6 +272,8 @@ public class appLaunch extends JFrame {
 				zoneAnimationOupi.changerType(3);
 			}
 		});
+		buttonGroupTroupe.add(rdbtnLobo);
+		contentPane.add(rdbtnLobo);
 		
 		JTextArea textAreaAttaque = new JTextArea();
 		textAreaAttaque.setBounds(1561, 30, 333, 783);
