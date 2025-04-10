@@ -131,19 +131,11 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 				int gameX = (int) ((e.getX() - translateX) / zoomFactor);
 				int gameY = (int) ((e.getY() - translateY) / zoomFactor);
 				Troupe cliquee = jeuxOupi.getTroupeA(gameX, gameY);
-
-				if (cliquee == null && jeuxOupi.getTroupeSelectionnee() != null) {
-					pcs.firePropertyChange("troupe", "", null);
-					jeuxOupi.deselectionnerTroupe(cliquee);
-				} else if (cliquee != null && !cliquee.equals(jeuxOupi.getTroupeSelectionnee())) {
-					pcs.firePropertyChange("troupe", "", cliquee);
-					jeuxOupi.selectionnerTroupe(cliquee);
-				}
 				
 				// Si aucune troupe n'a été cliquée, gérer le clic sur une tuile
 				int ligne = gameY / jeuxOupi.getTailleTuile();
 				int colonne = gameX / jeuxOupi.getTailleTuile();
-
+				
 				// Vérifier si le clic est dans les limites du plateau
 				if (ligne >= 0 && ligne < jeuxOupi.getTailleTuile() && colonne >= 0
 						&& colonne < jeuxOupi.getTailleTuile()) {
@@ -152,7 +144,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 					System.out.println("Tuile cliquée : Ligne " + (ligne + 1) + ", Colonne " + (colonne + 1));
 					System.out.println(troupesDispo[type]);
 					
-					if (placer) {
+					if (placer && jeuxOupi.getTroupeSelectionnee() == null) {
 						if (troupesDispo[type] > 0) {
 							if (!tuileCliquee.estOccupee()) {
 								
@@ -175,6 +167,14 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 							System.out.println("Vous n'avez plus de " + type);
 						}
 					}
+				}
+
+				if (cliquee == null && jeuxOupi.getTroupeSelectionnee() != null) {
+					pcs.firePropertyChange("troupe", "", null);
+					jeuxOupi.deselectionnerTroupe(cliquee);
+				} else if (cliquee != null && !cliquee.equals(jeuxOupi.getTroupeSelectionnee())) {
+					pcs.firePropertyChange("troupe", "", cliquee);
+					jeuxOupi.selectionnerTroupe(cliquee);
 				}
 			}
 		});
