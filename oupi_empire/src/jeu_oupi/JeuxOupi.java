@@ -35,6 +35,9 @@ public class JeuxOupi implements Dessinable {
     
     private int zonePlacer = 4;
 
+    // Liste pour stocker les messages d'attaque et d'erreur
+    private ArrayList<String> combatMessages = new ArrayList<>();
+
     /**
      * Constructeur de la classe {@code JeuxOupi}.
      *
@@ -265,18 +268,27 @@ public class JeuxOupi implements Dessinable {
      * @return true si l'attaque a été effectuée avec succès, false sinon
      */
     public boolean attaquerTroupe(Troupe troupeCible) {
+        // Vider les messages précédents
+        combatMessages.clear();
+        
         if (troupeSelectionnee == null || troupeCible == null) {
-            System.out.println("⚠️ Échec de l'attaque: Aucune troupe sélectionnée ou cible invalide.");
+            String msg = "⚠️ Échec de l'attaque: Aucune troupe sélectionnée ou cible invalide.";
+            System.out.println(msg);
+            combatMessages.add(msg);
             return false;
         }
 
         if (troupeSelectionnee == troupeCible) {
-            System.out.println("⚠️ Échec de l'attaque: Une troupe ne peut pas s'attaquer elle-même.");
+            String msg = "⚠️ Échec de l'attaque: Une troupe ne peut pas s'attaquer elle-même.";
+            System.out.println(msg);
+            combatMessages.add(msg);
             return false;
         }
 
         if (troupeSelectionnee.getEquipe() == troupeCible.getEquipe()) {
-            System.out.println("⚠️ Échec de l'attaque: Impossible d'attaquer une troupe alliée.");
+            String msg = "⚠️ Échec de l'attaque: Impossible d'attaquer une troupe alliée.";
+            System.out.println(msg);
+            combatMessages.add(msg);
             return false;
         }
 
@@ -286,13 +298,17 @@ public class JeuxOupi implements Dessinable {
 
         // Vérifier si la cible est à portée d'attaque selon la distance d'attaque de la troupe
         if (distance > troupeSelectionnee.getDistanceAttaque()) {
-            System.out.println("⚠️ Échec de l'attaque: La cible est trop éloignée (distance " + distance
-                    + ", portée maximale " + troupeSelectionnee.getDistanceAttaque() + ")");
+            String msg = "⚠️ Échec de l'attaque: La cible est trop éloignée (distance " + distance
+                    + ", portée maximale " + troupeSelectionnee.getDistanceAttaque() + ")";
+            System.out.println(msg);
+            combatMessages.add(msg);
             return false;
         }
 
-        System.out.println("🗡️ Attaque initiée par " + troupeSelectionnee.getClass().getSimpleName()
-                + " contre " + troupeCible.getClass().getSimpleName());
+        String msg = "🗡️ Attaque initiée par " + troupeSelectionnee.getClass().getSimpleName()
+                + " contre " + troupeCible.getClass().getSimpleName();
+        System.out.println(msg);
+        combatMessages.add(msg);
 
         // Appel de la méthode d'attaque de la troupe
         troupeSelectionnee.attaquer(troupeCible);
@@ -355,6 +371,22 @@ public class JeuxOupi implements Dessinable {
         for (int i = 0; i < source.size(); i++) {
             dest.add(source.get(i));
         }
+    }
+
+    /**
+     * Récupère les messages de combat générés dans JeuxOupi.
+     * 
+     * @return liste de messages de combat
+     */
+    public ArrayList<String> getCombatMessages() {
+        return new ArrayList<>(combatMessages);
+    }
+    
+    /**
+     * Vide la liste des messages de combat.
+     */
+    public void clearCombatMessages() {
+        combatMessages.clear();
     }
 
     // --- GETTERS ET SETTERS ---
