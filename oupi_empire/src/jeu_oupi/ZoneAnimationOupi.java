@@ -23,6 +23,7 @@ import troupe.Genial;
 import troupe.Lobotomisateur;
 import troupe.Oupi;
 import troupe.Troupe;
+import tuiles.Eau;
 
 /**
  * La classe {@code ZoneAnimationOupi} représente la zone d'animation pour le
@@ -154,6 +155,13 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 					
 					if (placer) {
 						if (troupesDispo[type] > 0) {
+							if (tuileCliquee instanceof tuiles.Eau) {
+								String message = "⚠️ Impossible de placer une troupe sur l'eau!";
+								System.out.println(message);
+								pcs.firePropertyChange("combatMessage", null, new ArrayList<String>() {{ add(message); }});
+								return;
+							}
+							
 							if (!tuileCliquee.estOccupee()) {
 								
 								nouvelleTroupe(type);
@@ -558,6 +566,13 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 			troupePlacer = new Lobotomisateur(0, 0, 0, jeuxOupi);
 			System.out.println("Type change Lobo " + type);
 			break;
+		}
+	}
+	
+	public void sendCombatMessages() {
+		ArrayList<String> messages = Troupe.getCombatMessages();
+		if (!messages.isEmpty()) {
+			pcs.firePropertyChange("combatMessages", null, messages);
 		}
 	}
 }

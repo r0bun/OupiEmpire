@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 
 /**
  * La classe {@code appLaunch} représente la fenêtre principale de l'application
@@ -246,6 +247,16 @@ public class appLaunch extends JFrame {
 		lblLobo = new JLabel("New label");
 		lblLobo.setBounds(426, 984, 56, 16);
 		contentPane.add(lblLobo);
+		
+		JTextArea textAreaAttaque = new JTextArea();
+		textAreaAttaque.setBounds(1561, 30, 333, 783);
+		textAreaAttaque.setEditable(false);
+		textAreaAttaque.setLineWrap(true);
+		textAreaAttaque.setWrapStyleWord(true);
+		// Add scrolling capability to the text area
+		JScrollPane scrollPane = new JScrollPane(textAreaAttaque);
+		scrollPane.setBounds(1561, 30, 333, 783);
+		contentPane.add(scrollPane);
 
 		setBounds(0, 0, screenWidth, screenHeight);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -286,6 +297,22 @@ public class appLaunch extends JFrame {
 					lblElec.setText(troupesDispo[1]+"");
 					lblGenial.setText(troupesDispo[2]+"");
 					lblLobo.setText(troupesDispo[3]+"");
+					}
+				
+				if(evt.getPropertyName().equals("combatMessages")) {
+					@SuppressWarnings("unchecked")
+					ArrayList<String> messages = (ArrayList<String>) evt.getNewValue();
+					if (messages != null && !messages.isEmpty()) {
+						StringBuilder sb = new StringBuilder();
+						sb.append("----- COMBAT LOG -----\n");
+						for (String message : messages) {
+							sb.append(message).append("\n");
+						}
+						sb.append("---------------------\n\n");
+						
+						textAreaAttaque.append(sb.toString());
+						textAreaAttaque.setCaretPosition(textAreaAttaque.getDocument().getLength());
+					}
 				}
 			}
 		});
