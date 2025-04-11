@@ -72,6 +72,9 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	// Ajouter le support pour lancer des événements de type PropertyChange
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
+	// Liste temporaire pour stocker les messages de combat
+	private ArrayList<String> tempCombatMessages = new ArrayList<>();
+
 	/**
 	 * Constructeur de la classe {@code ZoneAnimationOupi}.
 	 * 
@@ -96,23 +99,34 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 					if (!placer) {
 						// En mode attaque, essayer de sélectionner une troupe à attaquer
 						if (modeAttaque && jeuxOupi.getTroupeSelectionnee() != null) {
+							tempCombatMessages.clear(); // Effacer les messages précédents
+							
 							Troupe troupeCible = jeuxOupi.getTroupeA(gameX, gameY);
 							if (troupeCible != null) {
-								System.out.println(
-										"⚔️ Tentative d'attaque sur " + troupeCible.getClass().getSimpleName());
+								String msg = "⚔️ Tentative d'attaque sur " + troupeCible.getClass().getSimpleName();
+								System.out.println(msg);
+								tempCombatMessages.add(msg);
+								
 								// Attaquer la troupe ciblée
 								boolean attaqueReussie = jeuxOupi.attaquerTroupe(troupeCible);
 								if (attaqueReussie) {
-									System.out.println("✅ Attaque réussie!");
+									msg = "✅ Attaque réussie!";
+									System.out.println(msg);
+									tempCombatMessages.add(msg);
+									
 									jeuxOupi.getTroupeSelectionnee().setEpuisee(true);
 									jeuxOupi.deselectionnerTroupeAct();
 									checkFinTour();
 								}
 								// Désactiver le mode attaque après une tentative
 								modeAttaque = false;
+								sendCombatMessages();
 								return;
 							} else {
-								System.out.println("❌ Pas de troupe à attaquer ici! Cliquez sur une troupe ennemie.");
+								String msg = "❌ Pas de troupe à attaquer ici! Cliquez sur une troupe ennemie.";
+								System.out.println(msg);
+								tempCombatMessages.add(msg);
+								sendCombatMessages();
 								return;
 							}
 						}
@@ -247,10 +261,16 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 				// Si la touche Escape est pressée et qu'une troupe est sélectionnée
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					if (troupe != null) {
-						System.out.println("📋 Désélection de la troupe avec touche Echap");
+						tempCombatMessages.clear();
+						String msg = "📋 Désélection de la troupe avec touche Echap";
+						System.out.println(msg);
+						tempCombatMessages.add(msg);
+						
 						pcs.firePropertyChange("troupe", "", null);
 						jeuxOupi.deselectionnerTroupeAct();
 						modeAttaque = false; // Désactiver le mode attaque si actif
+						
+						sendCombatMessages();
 					}
 					return;
 				}
@@ -315,26 +335,51 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	 * Active le mode attaque, permettant de sélectionner une troupe à attaquer.
 	 */
 	private void activerModeAttaque() {
+		tempCombatMessages.clear(); // Effacer les messages précédents
+		
 		if (jeuxOupi.getTroupeSelectionnee() != null) {
 			Troupe troupe = jeuxOupi.getTroupeSelectionnee();
 			if (troupe.getEquipe() != joueurActuel) {
-				System.out.println("⚠️ Impossible d'attaquer avec une troupe ennemie.");
-				System.out.println("ℹ️ Appuyez sur la touche ECHAP pour désélectionner cette troupe.");
+				String msg = "⚠️ Impossible d'attaquer avec une troupe ennemie.";
+				System.out.println(msg);
+				tempCombatMessages.add(msg);
+				
+				msg = "ℹ️ Appuyez sur la touche ECHAP pour désélectionner cette troupe.";
+				System.out.println(msg);
+				tempCombatMessages.add(msg);
+				sendCombatMessages();
 				return;
 			}
 
 			modeAttaque = !modeAttaque; // Toggle attack mode
 			if (modeAttaque) {
-				System.out.println("🔴 MODE ATTAQUE ACTIVÉ! Cliquez sur une troupe ennemie à attaquer.");
-				System.out.println("   - L'ennemi doit être adjacent (distance 1)");
-				System.out.println("   - Appuyez sur F ou X à nouveau pour annuler");
-				System.out.println("   - Appuyez sur ECHAP pour désélectionner la troupe");
+				String msg = "🔴 MODE ATTAQUE ACTIVÉ! Cliquez sur une troupe ennemie à attaquer.";
+				System.out.println(msg);
+				tempCombatMessages.add(msg);
+				
+				msg = "   - L'ennemi doit être adjacent (distance 1)";
+				System.out.println(msg);
+				tempCombatMessages.add(msg);
+				
+				msg = "   - Appuyez sur F ou X à nouveau pour annuler";
+				System.out.println(msg);
+				tempCombatMessages.add(msg);
+				
+				msg = "   - Appuyez sur ECHAP pour désélectionner la troupe";
+				System.out.println(msg);
+				tempCombatMessages.add(msg);
 			} else {
-				System.out.println("🟢 Mode attaque désactivé.");
+				String msg = "🟢 Mode attaque désactivé.";
+				System.out.println(msg);
+				tempCombatMessages.add(msg);
 			}
 		} else {
-			System.out.println("⚠️ Veuillez d'abord sélectionner une troupe pour attaquer.");
+			String msg = "⚠️ Veuillez d'abord sélectionner une troupe pour attaquer.";
+			System.out.println(msg);
+			tempCombatMessages.add(msg);
 		}
+		
+		sendCombatMessages();
 	}
 
 	/**
@@ -579,10 +624,28 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		pcs.firePropertyChange("troupes restantes",0,troupesDispo);
 	}
 	
+	/**
+	 * Envoie les messages de combat à l'interface utilisateur.
+	 */
 	public void sendCombatMessages() {
-		ArrayList<String> messages = Troupe.getCombatMessages();
-		if (!messages.isEmpty()) {
-			pcs.firePropertyChange("combatMessages", null, messages);
+		// Ajouter les messages temporaires à la liste principale
+		ArrayList<String> messagesToSend = new ArrayList<>(tempCombatMessages);
+		if (!messagesToSend.isEmpty()) {
+			pcs.firePropertyChange("combatMessages", null, messagesToSend);
+			tempCombatMessages.clear(); // Vider la liste temporaire après envoi
+		}
+		
+		// Envoyer aussi les messages générés par la classe JeuxOupi
+		ArrayList<String> jeuxOupiMessages = jeuxOupi.getCombatMessages();
+		if (!jeuxOupiMessages.isEmpty()) {
+			pcs.firePropertyChange("combatMessages", null, jeuxOupiMessages);
+			jeuxOupi.clearCombatMessages();
+		}
+		
+		// Envoyer aussi les messages générés par la classe Troupe
+		ArrayList<String> troupeMessages = Troupe.getCombatMessages();
+		if (!troupeMessages.isEmpty()) {
+			pcs.firePropertyChange("combatMessages", null, troupeMessages);
 		}
 	}
 }
