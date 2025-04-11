@@ -456,7 +456,6 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	public void toggleJoueur() {
 		// Désélectionner la troupe actuelle si elle existe
 		if (jeuxOupi.getTroupeSelectionnee() != null) {
-			Troupe troupe = jeuxOupi.getTroupeSelectionnee();
 			pcs.firePropertyChange("troupe", "", null);
 			jeuxOupi.deselectionnerTroupeAct();
 		}
@@ -535,6 +534,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	public void finirPlacer() {
 		placer = false;
 		System.out.println("Mode placement = " + placer);
+		jeuxOupi.finirPlacer();
 		requestFocus();
 	}
 

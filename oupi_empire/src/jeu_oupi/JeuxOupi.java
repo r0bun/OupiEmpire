@@ -51,6 +51,24 @@ public class JeuxOupi implements Dessinable {
         // Charger la carte en premier
         plateau = new Plateau(1, 1, 1);
         plateau.loadPlateau("res/cartes/map2.txt");
+        
+        for(int i = 0; i < zonePlacer; i++) {
+        	for(int j = 0 ; j < plateau.getColonnes(); j++) {
+        		if(!plateau.getTuile(i, j).estOccupee()) {
+        			plateau.getTuile(i, j).setAccessible(true);
+        		}
+        	}
+        }
+        
+
+		int zoneBas = plateau.getLignes()-zonePlacer;
+        for(int i = 0; i < zonePlacer; i++) {
+        	for(int j = 0 ; j < plateau.getColonnes(); j++) {
+        		if(!plateau.getTuile(zoneBas+i, j).estOccupee()) {
+        			plateau.getTuile(zoneBas+i, j).setPlacable(true);
+        		}
+        	}
+        }
 
         // Mettre à jour nbTuiles pour correspondre aux dimensions de la carte chargée
         nbTuiles = Math.max(plateau.getLignes(), plateau.getColonnes());
@@ -83,8 +101,8 @@ public class JeuxOupi implements Dessinable {
         troupes.add(new Lobotomisateur(3, 1, 0, this));
 
         // Équipe 1 (joueur 2)
-        troupes.add(new Genial(15, 15, 1, this));
-        troupes.add(new Electricien(17, 15, 1, this));
+        troupes.add(new Genial(12, 8, 1, this));
+        troupes.add(new Electricien(14, 8, 1, this));
     }
 
     /**
@@ -467,5 +485,14 @@ public class JeuxOupi implements Dessinable {
     	if(clique.getLig() <= coin.getLig()+zonePlacer && clique.getLig() >= coin.getLig()) {
     			return true;    	}
     	return false;
+    }
+    
+    public void finirPlacer() {
+    	for(int i = 0; i < plateau.getLignes(); i++) {
+    		for(int j = 0; j < plateau.getColonnes(); j++) {
+    			plateau.getTuile(i, j).setPlacable(false);
+    			plateau.getTuile(i, j).setAccessible(false);
+    		}
+    	}
     }
 }

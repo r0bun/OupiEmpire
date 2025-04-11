@@ -24,6 +24,7 @@ public abstract class Tuile {
     protected boolean occupee; // Indique si la tuile est occupée
     protected boolean posDep;
     protected boolean accessible; // Indique si la tuile est accessible par la troupe sélectionnée
+    protected boolean placable;
     protected Color couleur; // Couleur de la tuile
     protected BufferedImage texture;
     protected TerrainObstacle obstacle;
@@ -85,13 +86,17 @@ public abstract class Tuile {
             }
             
             // Si la tuile est accessible par la troupe sélectionnée
-            if (accessible) {
+            if (accessible || placable) {
                 // Sauvegarder le composite original
                 Composite originalComposite = g2dPrive.getComposite();
                 
                 // Appliquer un effet de surbrillance (vert clair semi-transparent)
                 g2dPrive.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
-                g2dPrive.setColor(new Color(100, 255, 100)); // Vert clair
+                if(accessible) {
+                	g2dPrive.setColor(new Color(100, 255, 100)); // Vert clair
+                } else {
+                	g2dPrive.setColor(new Color(255, 100, 100));
+                }
                 g2dPrive.fillRect(x, y, taille, taille);
                 
                 // Restaurer le composite original
@@ -163,7 +168,15 @@ public abstract class Tuile {
         this.accessible = accessible;
     }
 
-    /**
+    public boolean isPlacable() {
+		return placable;
+	}
+
+	public void setPlacable(boolean placable) {
+		this.placable = placable;
+	}
+
+	/**
      * Définit la couleur de la tuile.
      *
      * @param couleur la nouvelle couleur de la tuile
