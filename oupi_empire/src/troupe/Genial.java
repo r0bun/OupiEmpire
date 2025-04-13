@@ -25,7 +25,7 @@ public class Genial extends Troupe {
         image = getImage("/troupes/genial.png");
         
         // Corps à corps (distance d'attaque de 1)
-        this.setDistanceAttaque(100);
+        this.setDistanceAttaque(1);
         
         // Statistiques équilibrées
         HP = 120;
