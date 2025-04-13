@@ -335,17 +335,19 @@ public class JeuxOupi implements Dessinable {
 
         // Vérifier si la troupe cible est morte (HP <= 0)
         if (troupeCible.getHP() <= 0) {
-            System.out.println("💀 " + troupeCible.getClass().getSimpleName() + " a été vaincu!");
-            gererMortTroupe(troupeCible);
+        	System.out.println("💀 " + troupeCible.getClass().getSimpleName() + " a été vaincu!");
+        	troupeSelectionnee.kill();
+        	gererMortTroupe(troupeCible);
+        	
         }
 
         // Vérifier si l'attaquant est mort suite à une contre-attaque
         if (troupeSelectionnee.getHP() <= 0) {
-            System.out.println("💀 " + troupeSelectionnee.getClass().getSimpleName() + " a été vaincu!");
-            gererMortTroupe(troupeSelectionnee);
-            troupeSelectionnee = null;
+        	System.out.println("💀 " + troupeSelectionnee.getClass().getSimpleName() + " a été vaincu!");
+        	gererMortTroupe(troupeSelectionnee);
+        	troupeSelectionnee = null;
         }
-
+        
         return true;
     }
 
@@ -361,9 +363,6 @@ public class JeuxOupi implements Dessinable {
             int lig = troupe.getLig();
             int col = troupe.getCol();
             plateau.getTuile(lig, col).setOccupee(false);
-
-            // Effacer les tuiles accessibles
-            troupe.deselec();
 
             // Retirer la troupe des listes
             troupes.remove(troupe);

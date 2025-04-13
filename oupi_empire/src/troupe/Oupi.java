@@ -25,9 +25,10 @@ public class Oupi extends Troupe {
 		image = getImage("/troupes/oupi.jpg");
 		
 		// Corps à corps (distance d'attaque de 1, valeur par défaut)
-		this.setDistanceAttaque(1);
+		this.setDistanceAttaque(100);
 		
 		HP=150;
+		attaque = 1000;
 		
 		id = 0;
 	}

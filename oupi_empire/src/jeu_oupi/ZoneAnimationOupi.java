@@ -96,42 +96,6 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 					int gameX = (int) ((e.getX() - translateX) / zoomFactor);
 					int gameY = (int) ((e.getY() - translateY) / zoomFactor);
 
-					if (!placer) {
-						// En mode attaque, essayer de sélectionner une troupe à attaquer
-						if (modeAttaque && jeuxOupi.getTroupeSelectionnee() != null) {
-							tempCombatMessages.clear(); // Effacer les messages précédents
-							
-							Troupe troupeCible = jeuxOupi.getTroupeA(gameX, gameY);
-							if (troupeCible != null) {
-								String msg = "⚔️ Tentative d'attaque sur " + troupeCible.getClass().getSimpleName();
-								System.out.println(msg);
-								tempCombatMessages.add(msg);
-								
-								// Attaquer la troupe ciblée
-								boolean attaqueReussie = jeuxOupi.attaquerTroupe(troupeCible);
-								if (attaqueReussie) {
-									msg = "✅ Attaque réussie!";
-									System.out.println(msg);
-									tempCombatMessages.add(msg);
-									
-									jeuxOupi.getTroupeSelectionnee().setEpuisee(true);
-									jeuxOupi.deselectionnerTroupeAct();
-									checkFinTour();
-								}
-								// Désactiver le mode attaque après une tentative
-								modeAttaque = false;
-								sendCombatMessages();
-								return;
-							} else {
-								String msg = "❌ Pas de troupe à attaquer ici! Cliquez sur une troupe ennemie.";
-								System.out.println(msg);
-								tempCombatMessages.add(msg);
-								sendCombatMessages();
-								return;
-							}
-						}
-					}
-
 					isDragging = true;
 				}
 			}
@@ -194,6 +158,49 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 						}
 					}
 				}
+				
+				// En mode attaque, essayer de sélectionner une troupe à attaquer
+				if (modeAttaque && jeuxOupi.getTroupeSelectionnee() != null && !placer) {
+					tempCombatMessages.clear(); // Effacer les messages précédents
+					
+					Troupe troupeCible = jeuxOupi.getTroupeA(gameX, gameY);
+					if (troupeCible != null) {
+						String msg = "⚔️ Tentative d'attaque sur " + troupeCible.getClass().getSimpleName();
+						System.out.println(msg);
+						tempCombatMessages.add(msg);
+						
+						// Attaquer la troupe ciblée
+						boolean attaqueReussie = jeuxOupi.attaquerTroupe(troupeCible);
+						if (attaqueReussie) {
+							msg = "✅ Attaque réussie!";
+							System.out.println(msg);
+							tempCombatMessages.add(msg);
+							
+							if(jeuxOupi.getTroupeSelectionnee() != null){
+								int lvlUp = jeuxOupi.getTroupeSelectionnee().levelUp();
+								
+								jeuxOupi.getTroupeSelectionnee().setEpuisee(true);
+								if(lvlUp > 0) {
+									pcs.firePropertyChange("level", 0, lvlUp);
+								} else {
+									jeuxOupi.deselectionnerTroupeAct();
+								}
+							}
+							checkFinTour();
+						}
+						// Désactiver le mode attaque après une tentative
+						modeAttaque = false;
+						sendCombatMessages();
+						return;
+					} else {
+						String msg = "❌ Pas de troupe à attaquer ici! Cliquez sur une troupe ennemie.";
+						System.out.println(msg);
+						tempCombatMessages.add(msg);
+						sendCombatMessages();
+						return;
+					}
+				}
+				
 
 				if (cliquee == null && jeuxOupi.getTroupeSelectionnee() != null) {
 					pcs.firePropertyChange("troupe", "", null);
@@ -646,6 +653,11 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		ArrayList<String> troupeMessages = Troupe.getCombatMessages();
 		if (!troupeMessages.isEmpty()) {
 			pcs.firePropertyChange("combatMessages", null, troupeMessages);
+			Troupe.clearCombatMessages();
 		}
+	}
+
+	public JeuxOupi getJeuxOupi() {
+		return jeuxOupi;
 	}
 }

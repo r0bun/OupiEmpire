@@ -45,6 +45,8 @@ public class appLaunch extends JFrame {
 	
 	private JLabel lblOupi, lblElec, lblGenial, lblLobo;
 	
+	private JTextArea textAreaAttaque;
+	
 	// Pour suivre l'équipe actuelle (0 ou 1)
 	private int equipeActuelle = 0;
 	
@@ -142,6 +144,11 @@ public class appLaunch extends JFrame {
 					lblGenial.setText(troupesDispo[2]+"");
 					lblLobo.setText(troupesDispo[3]+"");
 				}
+				
+				if(evt.getPropertyName().equals("level")) {
+					int nbr = (int) evt.getNewValue();
+					stats.levelUp(zoneAnimationOupi.getJeuxOupi().getTroupeSelectionnee(), nbr);
+				}
 			}
 		});
 		zoneAnimationOupi.setBounds(50, 30, (int) (screenWidth / 2), (int) (screenHeight*0.725));
@@ -156,6 +163,103 @@ public class appLaunch extends JFrame {
 		fin.setBounds(50, 30, (int) (screenWidth / 2), (int) (screenHeight*0.725));
 		fin.setVisible(false);
 		contentPane.add(fin);
+		
+		ecranDebut.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				if(evt.getPropertyName().equals("Start")) {
+					ecranDebut.setVisible(false);
+					zoneAnimationOupi.setVisible(true);
+					zoneAnimationOupi.demarrer();
+				}
+			}
+		});
+		
+		zoneAnimationOupi.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				if(evt.getPropertyName().equals("Fin")) {
+					fin.setVisible(true);
+					zoneAnimationOupi.setVisible(false);
+				}
+				
+				if(evt.getPropertyName().equals("troupe")) {
+					stats.updateTroupe((Troupe) evt.getNewValue());
+				}
+				
+				// Détection du changement d'équipe
+				if(evt.getPropertyName().equals("equipeActuelle")) {
+					int nouvelleEquipe = (int) evt.getNewValue();
+					equipeActuelle = nouvelleEquipe;
+					updateBackgroundColor();
+				}
+				
+				if(evt.getPropertyName().equals("troupes restantes")) {
+					int[] troupesDispo = (int[]) evt.getNewValue();
+					lblOupi.setText(troupesDispo[0]+"");
+					lblElec.setText(troupesDispo[1]+"");
+					lblGenial.setText(troupesDispo[2]+"");
+					lblLobo.setText(troupesDispo[3]+"");
+					}
+				
+				if(evt.getPropertyName().equals("combatMessages")) {
+					@SuppressWarnings("unchecked")
+					ArrayList<String> messages = (ArrayList<String>) evt.getNewValue();
+					if (messages != null && !messages.isEmpty()) {
+						StringBuilder sb = new StringBuilder();
+						sb.append("----- COMBAT LOG -----\n");
+						for (String message : messages) {
+							sb.append(message).append("\n");
+						}
+						sb.append("---------------------\n\n");
+						
+						textAreaAttaque.append(sb.toString());
+						textAreaAttaque.setCaretPosition(textAreaAttaque.getDocument().getLength());
+					}
+				}
+			}
+		});
+		
+		stats.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				if(evt.getPropertyName().equals("stat")) {
+					Troupe troupeLvlUp = (Troupe) evt.getOldValue();
+					String msg = "";
+					StringBuilder sb = new StringBuilder();
+					sb.append("----- TROUPE AMELIOREE -----\n");
+					switch((int) evt.getNewValue()){
+					case 0:
+						troupeLvlUp.setHP(troupeLvlUp.getHP() + 25);
+						sb.append("Vous avez augment\u00E9 les points de vie de "+troupeLvlUp.getClass().getSimpleName()+" de 25\n");
+						sb.append("La nouvelle valeur est de "+troupeLvlUp.getHP());
+						break;
+					case 1:
+						troupeLvlUp.setAttaque(troupeLvlUp.getAttaque()+10);
+						sb.append("Vous avez augment\u00E9 l'attaque de "+troupeLvlUp.getClass().getSimpleName()+" de 10\n");
+						sb.append("La nouvelle valeur est de "+troupeLvlUp.getAttaque());
+						break;
+					case 2:
+						troupeLvlUp.setDefense(troupeLvlUp.getDefense()+10);
+						sb.append("Vous avez augment\u00E9 la d\u00E9fense de "+troupeLvlUp.getClass().getSimpleName()+" de 10\n");
+						sb.append("La nouvelle valeur est de "+troupeLvlUp.getDefense());
+						break;
+					case 3:
+						troupeLvlUp.setVitesse(troupeLvlUp.getVitesse()+5);
+						sb.append("Vous avez augment\u00E9 la vitesse de "+troupeLvlUp.getClass().getSimpleName()+" de 5\n");
+						sb.append("La nouvelle valeur est de "+troupeLvlUp.getVitesse());
+						break;
+					case 4:
+						troupeLvlUp.setEndurance(troupeLvlUp.getEndurance()+5);
+						sb.append("Vous avez augment\u00E9 l'endurance de "+troupeLvlUp.getClass().getSimpleName()+" de 5\n");
+						sb.append("La nouvelle valeur est de "+troupeLvlUp.getEndurance());
+						break;
+					}
+					
+					sb.append("\n---------------------\n\n");
+					textAreaAttaque.append(sb.toString());
+					
+					zoneAnimationOupi.requestFocus();
+				}
+			}
+		});
 
 		// Calcul de la position pour les boutons sous la zone d'animation
 		int buttonY = 30 + (int)(screenHeight*0.725) + 20; // 20px de marge après la zone d'animation
@@ -275,7 +379,7 @@ public class appLaunch extends JFrame {
 		buttonGroupTroupe.add(rdbtnLobo);
 		contentPane.add(rdbtnLobo);
 		
-		JTextArea textAreaAttaque = new JTextArea();
+		textAreaAttaque = new JTextArea();
 		textAreaAttaque.setBounds(1561, 30, 333, 783);
 		textAreaAttaque.setEditable(false);
 		textAreaAttaque.setLineWrap(true);
@@ -289,60 +393,6 @@ public class appLaunch extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 		setLocationRelativeTo(null);
-
-		ecranDebut.addPropertyChangeListener(new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent evt) {
-				if(evt.getPropertyName().equals("Start")) {
-					ecranDebut.setVisible(false);
-					zoneAnimationOupi.setVisible(true);
-					zoneAnimationOupi.demarrer();
-				}
-			}
-		});
-		
-		zoneAnimationOupi.addPropertyChangeListener(new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent evt) {
-				if(evt.getPropertyName().equals("Fin")) {
-					fin.setVisible(true);
-					zoneAnimationOupi.setVisible(false);
-				}
-				
-				if(evt.getPropertyName().equals("troupe")) {
-					stats.updateTroupe((Troupe) evt.getNewValue());
-				}
-				
-				// Détection du changement d'équipe
-				if(evt.getPropertyName().equals("equipeActuelle")) {
-					int nouvelleEquipe = (int) evt.getNewValue();
-					equipeActuelle = nouvelleEquipe;
-					updateBackgroundColor();
-				}
-				
-				if(evt.getPropertyName().equals("troupes restantes")) {
-					int[] troupesDispo = (int[]) evt.getNewValue();
-					lblOupi.setText(troupesDispo[0]+"");
-					lblElec.setText(troupesDispo[1]+"");
-					lblGenial.setText(troupesDispo[2]+"");
-					lblLobo.setText(troupesDispo[3]+"");
-					}
-				
-				if(evt.getPropertyName().equals("combatMessages")) {
-					@SuppressWarnings("unchecked")
-					ArrayList<String> messages = (ArrayList<String>) evt.getNewValue();
-					if (messages != null && !messages.isEmpty()) {
-						StringBuilder sb = new StringBuilder();
-						sb.append("----- COMBAT LOG -----\n");
-						for (String message : messages) {
-							sb.append(message).append("\n");
-						}
-						sb.append("---------------------\n\n");
-						
-						textAreaAttaque.append(sb.toString());
-						textAreaAttaque.setCaretPosition(textAreaAttaque.getDocument().getLength());
-					}
-				}
-			}
-		});
 	}
 	
 	/**

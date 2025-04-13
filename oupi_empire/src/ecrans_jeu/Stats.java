@@ -4,11 +4,15 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -27,6 +31,8 @@ public class Stats extends JPanel {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private Troupe selectedTroupe;
     private JLabel imageLabel;
+    private JButton btnLvlHp, btnLvlAtk, btnLvlDef, btnLvlSpd, btnLvlEnd;
+    private int nbrLvl = 0;
     
     
     public Stats(int screenWidth, int screenHeight) {
@@ -40,6 +46,65 @@ public class Stats extends JPanel {
         imageLabel.setBounds(250, 150, 100, 100);
         add(imageLabel);
         
+        btnLvlHp = new JButton("+");
+		btnLvlHp.setBounds(150, (int)2*screenHeight/20-18, 20, 20);
+		btnLvlHp.setMargin(new Insets(0,0,0,0));
+		btnLvlHp.setFont(new Font("Arial", Font.PLAIN, 10));
+		btnLvlHp.setVisible(false);
+		btnLvlHp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				statIncrease(0);
+			}
+		});
+		add(btnLvlHp);
+		
+		btnLvlAtk = new JButton("+");
+		btnLvlAtk.setBounds(150, (int)3*screenHeight/20-18, 20, 20);
+		btnLvlAtk.setMargin(new Insets(0,0,0,0));
+		btnLvlAtk.setFont(new Font("Arial", Font.PLAIN, 10));
+		btnLvlAtk.setVisible(false);
+		btnLvlAtk.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				statIncrease(1);
+			}
+		});
+		add(btnLvlAtk);
+		
+		btnLvlDef = new JButton("+");
+		btnLvlDef.setBounds(150, (int)4*screenHeight/20-18, 20, 20);
+		btnLvlDef.setMargin(new Insets(0,0,0,0));
+		btnLvlDef.setFont(new Font("Arial", Font.PLAIN, 10));
+		btnLvlDef.setVisible(false);
+		btnLvlDef.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				statIncrease(2);
+			}
+		});
+		add(btnLvlDef);
+		
+		btnLvlSpd = new JButton("+");
+		btnLvlSpd.setBounds(150, (int)5*screenHeight/20-18, 20, 20);
+		btnLvlSpd.setMargin(new Insets(0,0,0,0));
+		btnLvlSpd.setFont(new Font("Arial", Font.PLAIN, 10));
+		btnLvlSpd.setVisible(false);
+		btnLvlSpd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				statIncrease(3);
+			}
+		});
+		add(btnLvlSpd);
+		
+		btnLvlEnd = new JButton("+");
+		btnLvlEnd.setBounds(150, (int)6*screenHeight/20-18, 20, 20);
+		btnLvlEnd.setMargin(new Insets(0,0,0,0));
+		btnLvlEnd.setFont(new Font("Arial", Font.PLAIN, 10));
+		btnLvlEnd.setVisible(false);
+		btnLvlEnd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				statIncrease(4);
+			}
+		});
+		add(btnLvlEnd);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -94,7 +159,6 @@ public class Stats extends JPanel {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         if (selectedTroupe != null) {
-            // Draw troop statistics
             g2d.setColor(Color.BLACK);
             g2d.setFont(new Font("Franklin Gothic Book", Font.PLAIN, 50));
             g2d.drawString(selectedTroupe.getClass().getSimpleName(), 10, (int)screenHeight/20);
@@ -105,5 +169,29 @@ public class Stats extends JPanel {
             g2d.drawString("Vitesse: " + selectedTroupe.getVitesse(), 10, (int) (5*screenHeight/20));
             g2d.drawString("Endurance: " + selectedTroupe.getEndurance(), 10, (int) (6*screenHeight/20));
         }
+    }
+    
+    public void levelUp(Troupe troupe, int nombre) {
+    	btnLvlHp.setVisible(true);
+    	btnLvlAtk.setVisible(true);
+    	btnLvlDef.setVisible(true);
+    	btnLvlSpd.setVisible(true);
+    	btnLvlEnd.setVisible(true);
+    	updateTroupe(troupe);
+    }
+    
+    public void statIncrease(int id) {
+    	nbrLvl--;
+    	
+    	if (nbrLvl <= 0) {
+    		btnLvlHp.setVisible(false);
+        	btnLvlAtk.setVisible(false);
+        	btnLvlDef.setVisible(false);
+        	btnLvlSpd.setVisible(false);
+        	btnLvlEnd.setVisible(false);
+    	}
+    	
+    	pcs.firePropertyChange("stat", selectedTroupe, id);
+    	updateTroupe(selectedTroupe);
     }
 }

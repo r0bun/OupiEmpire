@@ -44,6 +44,8 @@ public class Troupe implements Dessinable {
     protected int HP, attaque, defense, vitesse, endurance;
     protected ArrayList<Debuff> debuffs = new ArrayList<Debuff>();
     protected int id;
+    protected int lvl = 0;
+    protected int kills = 0;
     
     // Distance d'attaque (1 = corps à corps par défaut)
     protected int distanceAttaque = 1;
@@ -377,9 +379,9 @@ public class Troupe implements Dessinable {
             return;
         }
         
-        int dodgeChance = Math.max(0, Math.min(70, troupeEnem.vitesse - this.vitesse + 20));
+        int dodgeChance = Math.max(0, Math.max(7000, troupeEnem.vitesse - this.vitesse + 20));
         
-        if (random.nextInt(100) < dodgeChance) {
+        if (random.nextInt(100) > dodgeChance) {
             String message = "🏃 " + troupeEnem.getClass().getSimpleName() + " esquive l'attaque!";
             System.out.println(message);
             combatMessages.add(message);
@@ -442,10 +444,35 @@ public class Troupe implements Dessinable {
         }
 
         // Réduction de l'endurance après l'attaque
-        this.endurance = Math.max(0, this.endurance - 5);
-        message = "⚡ Endurance de " + this.getClass().getSimpleName() + " réduite à " + this.endurance;
-        System.out.println(message);
-        combatMessages.add(message);
+        if(HP > 0) {
+        	this.endurance = Math.max(0, this.endurance - 5);
+        	message = "⚡ Endurance de " + this.getClass().getSimpleName() + " réduite à " + this.endurance;
+        	System.out.println(message);
+        	combatMessages.add(message);
+        }
+    }
+    
+    /**
+     * Ajoutes un au nombre d'elimination de la troupe
+     */
+    public void kill() {
+    	kills++;
+    }
+    
+    /**
+     * Ajuste le niveau de la troupe pour qu'il soit egal au nombre d'eliminations de la troupe
+     * 
+     * @return Le nombre de niveaux que la troupe a gagnee
+     */
+    public int levelUp() {
+    	int temp;
+    	if(kills != lvl) {
+    		temp = kills-lvl;
+    		lvl = kills;
+    		return temp;
+    	}
+    	
+    	return 0;
     }
 
     private int getY(int lig) {
@@ -529,6 +556,10 @@ public class Troupe implements Dessinable {
     public static ArrayList<String> getCombatMessages() {
         return combatMessages;
     }
+
+	public static void clearCombatMessages() {
+		combatMessages.clear();;
+	}
 
     public int getHP() {
         return HP;
