@@ -7,5 +7,8 @@
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="res"/>
+	<classpathentry kind="lib" path="C:/Users/sacha/Downloads/mysql-connector-j-9.3.0/mysql-connector-j-9.3.0/mysql-connector-j-9.3.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/sacha/Downloads/jbcrypt-0.4.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/jdk-24/lib/jrt-fs.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
