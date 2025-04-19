@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 
 import database.LoginManager;
 
@@ -19,8 +20,8 @@ public class Login extends JFrame {
     private JPanel contentPane;
     private JTextField usernameField;
     private JPasswordField passwordField;
-    private String username;
-    private String password;
+    private String username = null;
+    private String password = null;
     
     private MainMenu pageMenu = new MainMenu();
 
@@ -96,6 +97,9 @@ public class Login extends JFrame {
         
         int fieldWidth = 240;
         int fieldHeight = 30;
+        Border redBorder = BorderFactory.createLineBorder(Color.RED, 2);
+        Border defaultBorder = UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border");
+
         
         // === TITLE ===
         JLabel titleLabel = new JLabel("Login");
@@ -127,6 +131,30 @@ public class Login extends JFrame {
         passwordField = new JPasswordField();
         passwordField.setBounds((formPanel.getWidth() - fieldWidth) / 2, 190, fieldWidth, fieldHeight); // Centré avec la largeur du panel
         formPanel.add(passwordField);
+        
+        //=== Messages d'erreurs ===
+        JLabel usernameError = new JLabel("Veuillez entrer un nom d'utilisateur.");
+        JLabel passwordError = new JLabel("Veuillez entrer un mot de passe.");
+        JLabel passwordInvalid = new JLabel("Username ou password invalide.");
+
+        usernameError.setForeground(Color.RED);
+        usernameError.setFont(customFont.deriveFont(Font.PLAIN, 10f));
+        usernameError.setBounds((formPanel.getWidth() - fieldWidth) / 2, 135, fieldWidth, fieldHeight); // Centré avec la largeur du panel
+        usernameError.setVisible(false);
+        
+        passwordError.setForeground(Color.RED);
+        passwordError.setFont(customFont.deriveFont(Font.PLAIN, 10f));
+        passwordError.setBounds((formPanel.getWidth() - fieldWidth) / 2, 215, fieldWidth, fieldHeight); // Centré avec la largeur du panel
+        passwordError.setVisible(false);
+        
+        passwordInvalid.setForeground(Color.RED);
+        passwordInvalid.setFont(customFont.deriveFont(Font.PLAIN, 10f));
+        passwordInvalid.setBounds((formPanel.getWidth() - fieldWidth) / 2, 215, fieldWidth, fieldHeight); // Centré avec la largeur du panel
+        passwordInvalid.setVisible(false);
+        
+        formPanel.add(passwordError);
+        formPanel.add(usernameError);
+        formPanel.add(passwordInvalid);
 
         // === Confirm Button ===
         JButton confirmButton = new JButton("Connexion");
@@ -171,11 +199,35 @@ public class Login extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 username = usernameField.getText();
                 password = new String(passwordField.getPassword());
-                System.out.println("Username: " + username);
-                System.out.println("Password: " + password);
+            	usernameField.setBorder(defaultBorder);
+            	passwordField.setBorder(defaultBorder);
+            	passwordError.setVisible(false);
+            	usernameError.setVisible(false);
+            	passwordInvalid.setVisible(false);
                 
-                LoginManager login = new LoginManager();
-                Boolean userValid = login.verifiyLogin(username, password);
+                Boolean userValid = false;
+                System.out.println(username);
+                System.out.println(password);
+                
+                if (username.isEmpty() && password.isEmpty()) {
+                	usernameField.setBorder(redBorder);
+                	passwordField.setBorder(redBorder);
+                	passwordError.setVisible(true);
+                	usernameError.setVisible(true);
+                	return;
+                }else if (username.isEmpty()){
+                	usernameField.setBorder(redBorder);
+                	usernameError.setVisible(true);
+                	return;
+                }else if (password.isEmpty()) {
+                	passwordField.setBorder(redBorder);
+                	passwordError.setVisible(true);
+                	return;
+                } else {
+                	LoginManager login = new LoginManager();
+                	userValid = login.verifiyLogin(username, password);
+                }
+                
                 
                 if(userValid) {
                 System.out.println("Bouton 'Jouer' cliqué !");
@@ -185,6 +237,9 @@ public class Login extends JFrame {
                 } else {
                 System.out.println("Bouton 'Jouer' cliqué !");
                 System.out.println("Utilisateur invalide!");
+                passwordField.setBorder(redBorder);
+            	passwordInvalid.setVisible(true);
+            	passwordField.setText("");
                 }
                 
             }
