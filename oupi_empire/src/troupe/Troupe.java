@@ -25,6 +25,8 @@ import tuiles.Sable;
 public class Troupe implements Dessinable {
     // Variables d'instance
     protected BufferedImage image;
+    protected String playerCard;
+    protected String nom;
     private int x, y;
     private int col, lig, preCol, preLig;
     private boolean selectionne;
@@ -84,6 +86,8 @@ public class Troupe implements Dessinable {
         vitesse = 20;
         endurance = 30;
         distanceAttaque = 1; // Distance d'attaque par défaut (corps à corps)
+        playerCard = "res/bak/Oupi_player_card.png";
+        nom = "Oupi Goupi";
     }
 
     /**
@@ -494,6 +498,14 @@ public class Troupe implements Dessinable {
 
     public int getEquipe() {
         return equipe;
+    }
+    
+    public String getPlayerCard() {
+    	return playerCard;
+    }
+    
+    public String getNom() {
+    	return nom;
     }
     
     public BufferedImage getImage() {

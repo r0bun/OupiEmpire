@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
@@ -12,9 +13,12 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import troupe.Troupe;
 
@@ -22,6 +26,7 @@ import troupe.Troupe;
  * 
  * 
  * @author Loic Simard
+ * @author Sacha Burelle
  *
  */
 public class Stats extends JPanel {
@@ -30,81 +35,59 @@ public class Stats extends JPanel {
     private int screenWidth, screenHeight;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private Troupe selectedTroupe;
-    private JLabel imageLabel;
+    private JLabel backgroundLabel;
+    private JLabel lblHp, lblAtk, lblDef, lblSpd;
     private JButton btnLvlHp, btnLvlAtk, btnLvlDef, btnLvlSpd, btnLvlEnd;
+    private JLabel lblNom;
+
     private int nbrLvl = 0;
     
     
     public Stats(int screenWidth, int screenHeight) {
-        this.screenWidth = screenWidth;
-        this.screenHeight = screenHeight;
         setLayout(null);
         
-        setBackground(new Color(220, 220, 220, 200)); 
+        // Default background
+        setBackground(new Color(210, 180, 140)); // Light brown
         
-        imageLabel = new JLabel();
-        imageLabel.setBounds(250, 150, 100, 100);
-        add(imageLabel);
+        // Ajouter un JLabel pour l'image de fond
+        backgroundLabel = new JLabel();
+        backgroundLabel.setBounds(0, 0, 380, 450); // Taille du panneau Stats
+        add(backgroundLabel);
         
-        btnLvlHp = new JButton("+");
-		btnLvlHp.setBounds(150, (int)2*screenHeight/20-18, 20, 20);
-		btnLvlHp.setMargin(new Insets(0,0,0,0));
-		btnLvlHp.setFont(new Font("Arial", Font.PLAIN, 10));
-		btnLvlHp.setVisible(false);
-		btnLvlHp.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				statIncrease(0);
-			}
-		});
-		add(btnLvlHp);
-		
-		btnLvlAtk = new JButton("+");
-		btnLvlAtk.setBounds(150, (int)3*screenHeight/20-18, 20, 20);
-		btnLvlAtk.setMargin(new Insets(0,0,0,0));
-		btnLvlAtk.setFont(new Font("Arial", Font.PLAIN, 10));
-		btnLvlAtk.setVisible(false);
-		btnLvlAtk.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				statIncrease(1);
-			}
-		});
-		add(btnLvlAtk);
-		
-		btnLvlDef = new JButton("+");
-		btnLvlDef.setBounds(150, (int)4*screenHeight/20-18, 20, 20);
-		btnLvlDef.setMargin(new Insets(0,0,0,0));
-		btnLvlDef.setFont(new Font("Arial", Font.PLAIN, 10));
-		btnLvlDef.setVisible(false);
-		btnLvlDef.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				statIncrease(2);
-			}
-		});
-		add(btnLvlDef);
-		
-		btnLvlSpd = new JButton("+");
-		btnLvlSpd.setBounds(150, (int)5*screenHeight/20-18, 20, 20);
-		btnLvlSpd.setMargin(new Insets(0,0,0,0));
-		btnLvlSpd.setFont(new Font("Arial", Font.PLAIN, 10));
-		btnLvlSpd.setVisible(false);
-		btnLvlSpd.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				statIncrease(3);
-			}
-		});
-		add(btnLvlSpd);
-		
-		btnLvlEnd = new JButton("+");
-		btnLvlEnd.setBounds(150, (int)6*screenHeight/20-18, 20, 20);
-		btnLvlEnd.setMargin(new Insets(0,0,0,0));
-		btnLvlEnd.setFont(new Font("Arial", Font.PLAIN, 10));
-		btnLvlEnd.setVisible(false);
-		btnLvlEnd.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				statIncrease(4);
-			}
-		});
-		add(btnLvlEnd);
+        
+     // Stats labels
+        lblHp = createStatLabel(40, 160);
+        lblAtk = createStatLabel(40, 235);
+        lblDef = createStatLabel(40, 295);
+        lblSpd = createStatLabel(40, 360);
+
+        add(lblHp);
+        add(lblAtk);
+        add(lblDef);
+        add(lblSpd);
+        
+        // Nom Label
+        lblNom = new JLabel("");
+        lblNom.setFont(new Font("Arial", Font.BOLD, 20));
+        lblNom.setForeground(Color.WHITE);
+        lblNom.setHorizontalAlignment(SwingConstants.RIGHT);
+
+
+        // Taille du panneau = 380px, on place à droite
+        lblNom.setBounds(180, 30, 180, 30); // x + width = 370, donc à droite
+        add(lblNom);
+        
+        setComponentZOrder(backgroundLabel, getComponentCount() - 1);
+        
+    }
+    
+    private JLabel createStatLabel(int x, int y) {
+        JLabel label = new JLabel("");
+        label.setBounds(x, y, 50, 30);
+        label.setFont(new Font("Arial", Font.BOLD, 20));
+        label.setForeground(Color.WHITE);
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        return label;
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -112,64 +95,50 @@ public class Stats extends JPanel {
     }
     
     /**
-     * Updates the stats display with information from the selected troop
+     * Updates the stats display with information from the selected troop.
      * 
-     * @param troupe The troupe to display stats for, null to clear display
+     * @param troupe The troop to display stats for, null to clear display.
      */
     public void updateTroupe(Troupe troupe) {
         this.selectedTroupe = troupe;
-        
+
         if (troupe != null) {
-            if (troupe.getImage() != null) {
-                BufferedImage scaledImage = scaleImage(troupe.getImage(), 100, 100);
-                imageLabel.setIcon(new javax.swing.ImageIcon(scaledImage));
+            // Update background image
+            String playerCardPath = troupe.getPlayerCard();
+            if (playerCardPath != null && !playerCardPath.isEmpty()) {
+                backgroundLabel.setIcon(new ImageIcon(scaleImage(playerCardPath, 380, 450)));
             } else {
-                imageLabel.setIcon(null);
+                backgroundLabel.setIcon(null);
             }
-            
-            
+
+            // Update stats
+            lblHp.setText("" + troupe.getHP());
+            lblAtk.setText("" + troupe.getAttaque());
+            lblDef.setText("" + troupe.getDefense());
+            lblSpd.setText("" + troupe.getVitesse());
+            lblNom.setText("" + troupe.getNom());
         } else {
-            imageLabel.setIcon(null);
+            // Reset to default state
+            backgroundLabel.setIcon(null);
+            lblHp.setText("");
+            lblAtk.setText("");
+            lblDef.setText("");
+            lblSpd.setText("");
+            lblNom.setText("");
         }
-        
+
         repaint();
     }
     
-    /**
-     * Scales a BufferedImage to the specified width and height
-     */
-    private BufferedImage scaleImage(BufferedImage original, int width, int height) {
-        BufferedImage scaledImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = scaledImage.createGraphics();
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g.drawImage(original, 0, 0, width, height, null);
-        g.dispose();
-        return scaledImage;
+    
+ // Méthode pour charger et redimensionner une image depuis un chemin
+    public Image scaleImage(String path, int width, int height) {
+        ImageIcon icon = new ImageIcon(path);
+        Image image = icon.getImage();
+        return image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
     }
     
-    /**
-     * Dessine le panneau.
-     * 
-     * @param g l'objet {@link Graphics} utilisé pour dessiner
-     */
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        if (selectedTroupe != null) {
-            g2d.setColor(Color.BLACK);
-            g2d.setFont(new Font("Franklin Gothic Book", Font.PLAIN, 50));
-            g2d.drawString(selectedTroupe.getClass().getSimpleName(), 10, (int)screenHeight/20);
-            g2d.setFont(new Font("Franklin Gothic Book", Font.PLAIN, 20));
-            g2d.drawString("HP: " + selectedTroupe.getHP(), 10, (int)2*screenHeight/20);
-            g2d.drawString("Attaque: " + selectedTroupe.getAttaque(), 10, (int) (3*screenHeight/20));
-            g2d.drawString("Defense: " + selectedTroupe.getDefense(), 10, (int) (4*screenHeight/20));
-            g2d.drawString("Vitesse: " + selectedTroupe.getVitesse(), 10, (int) (5*screenHeight/20));
-            g2d.drawString("Endurance: " + selectedTroupe.getEndurance(), 10, (int) (6*screenHeight/20));
-        }
-    }
+  
     
     public void levelUp(Troupe troupe, int nombre) {
     	btnLvlHp.setVisible(true);

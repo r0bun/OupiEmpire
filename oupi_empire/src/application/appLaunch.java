@@ -78,7 +78,6 @@ public class appLaunch extends JFrame {
 	 * Crée le cadre.
 	 */
 	public appLaunch() {
-		//setBackground(new Color(0, 0, 0));
 		// Régler sans décoration pour le mode plein écran (supprime la barre de titre)
 		// setUndecorated(true);
 
@@ -86,18 +85,7 @@ public class appLaunch extends JFrame {
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    setExtendedState(JFrame.MAXIMIZED_BOTH);
 	    setAlwaysOnTop(true);
-	    
-	    /*
-		contentPane = new JPanel();
-		contentPane.setBorder(BorderFactory.createEmptyBorder());
-		contentPane.setLayout(null);
-		contentPane.setBackground(COULEUR_EQUIPE_0); // Couleur initiale pour l'équipe 0
-		setContentPane(contentPane);
 
-		setExtendedState(JFrame.MAXIMIZED_BOTH);
-		setAlwaysOnTop(true);
-		*/
-	    
 	    // Get screen dimensions
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice gd = ge.getDefaultScreenDevice();
@@ -109,17 +97,39 @@ public class appLaunch extends JFrame {
 		minimap.setBounds(1020, 331, 482, 485);
 		contentPane.add(minimap);*/
 		
-	    // === 1. Create a JLayeredPane to hold everything ===
+	    // === JLayeredPane to hold everything ===
 	    JLayeredPane layeredPane = new JLayeredPane();
 	    layeredPane.setLayout(null); // Absolute positioning
 	    layeredPane.setPreferredSize(new Dimension(screenWidth, screenHeight));
 	    setContentPane(layeredPane);
 	    
-	    // === 2. Main content panel (your regular content) ===
+	    // === Add background image ===
+	    ImageIcon backgroundIcon = new ImageIcon("res/bak/background_jeu.png"); // Remplace par ton chemin
+	    JLabel backgroundLabel = new JLabel(backgroundIcon);
+	    backgroundLabel.setBounds(0, 0, screenWidth, screenHeight);
+	    layeredPane.add(backgroundLabel, Integer.valueOf(-1)); // tout au fond
+	    
+	    // === Add border image above the animation zone ===
+	    JPanel borderPanel = new JPanel();
+	    borderPanel.setLayout(null); // Absolute positioning
+	    borderPanel.setOpaque(false); // Make the panel transparent
+	    borderPanel.setBounds(-125, -120, (int) screenWidth, screenHeight ); // Same size as zoneAnimationOupi
+
+	    // Add the border image to the panel
+	    ImageIcon borderIcon = new ImageIcon("res/bak/cadre_jeu.png"); // Replace with your border image path
+	    JLabel borderLabel = new JLabel(borderIcon);
+	    borderLabel.setBounds(0, 0, borderPanel.getWidth(), borderPanel.getHeight()); // Fill the panel
+	    borderPanel.add(borderLabel);
+
+	    // Add the border panel to the layered pane above the animation zone
+	    layeredPane.add(borderPanel, Integer.valueOf(2)); // Add above the animation zone
+	    
+	    // === Main content panel ===
 	    contentPane = new JPanel();
 	    contentPane.setLayout(null);
 	    contentPane.setBounds(0, 0, screenWidth, screenHeight);
-	    contentPane.setBackground(COULEUR_EQUIPE_0); // Your team color background
+	    //contentPane.setBackground(COULEUR_EQUIPE_0); // Your team color background
+	    contentPane.setOpaque(false); // Pour que l'image soit visible à travers
 	    layeredPane.add(contentPane, Integer.valueOf(0));
 		
 		lblOupi = new JLabel("New label");
@@ -142,13 +152,13 @@ public class appLaunch extends JFrame {
 		ecranDebut.setBounds(50, 30, (int) (screenWidth / 2), (int) (screenHeight*0.725));
 		contentPane.add(ecranDebut);
 		
-		// === 4. Add the animation panel (on top) ===
+		// === animation panel (on top) ===
 	    String pathToFrames = "C:\\Users\\sacha\\git\\OupiEmpire4\\oupi_empire\\res\\png_animations\\Change_Player";
 	    ChangePlayerAnimation animationPanel = new ChangePlayerAnimation(pathToFrames);
 	    animationPanel.setBounds(0, 0, screenWidth, screenHeight);
 	    animationPanel.setOpaque(false); // Important!
 	    animationPanel.setVisible(false);
-	    layeredPane.add(animationPanel, Integer.valueOf(1)); // On top of game content  // Add the animation panel to the JFrame
+	    layeredPane.add(animationPanel, Integer.valueOf(3)); // On top of game content  // Add the animation panel to the JFrame
 		
 		zoneAnimationOupi = new ZoneAnimationOupi(screenWidth, screenHeight);
 		zoneAnimationOupi.addPropertyChangeListener(new PropertyChangeListener() {
@@ -188,7 +198,7 @@ public class appLaunch extends JFrame {
 		contentPane.add(zoneAnimationOupi);
 		
 		stats = new Stats(screenWidth, screenHeight);
-		stats.setBounds((int) (6*screenWidth/11) , 30, (int) (screenWidth/4), (int) (screenHeight*0.725));
+		stats.setBounds((int) (6*screenWidth/11) + 80 , 350, 380, 450);
 		contentPane.add(stats);
 		
 		fin = new Fin(screenWidth, screenHeight);
