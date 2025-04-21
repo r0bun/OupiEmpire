@@ -58,7 +58,7 @@ public class JeuxOupi implements Dessinable {
         for(int i = 0; i < zonePlacer; i++) {
         	for(int j = 0 ; j < plateau.getColonnes(); j++) {
         		if(!plateau.getTuile(i, j).estOccupee()) {
-        			plateau.getTuile(i, j).setAccessible(true);
+        			plateau.getTuile(i, j).setPlacable(true);
         		}
         	}
         }

@@ -94,6 +94,8 @@ public abstract class Tuile {
                 g2dPrive.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
                 if(accessible) {
                 	g2dPrive.setColor(new Color(100, 255, 100)); // Vert clair
+                } else if(placable){
+                	g2dPrive.setColor(new Color(100, 100, 255));
                 } else {
                 	g2dPrive.setColor(new Color(255, 100, 100));
                 }
