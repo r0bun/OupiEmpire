@@ -54,6 +54,7 @@ public class Stats extends JPanel {
         backgroundLabel.setBounds(0, 0, 380, 450); // Taille du panneau Stats
         add(backgroundLabel);
         
+        //TEST fndksjlfndsiajkfndsija
         
      // Stats labels
         lblHp = createStatLabel(40, 160);
