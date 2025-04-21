@@ -108,7 +108,7 @@ public class JeuxOupi implements Dessinable {
         troupes.add(new Genial(12, 8, 1, this));
         troupes.add(new Electricien(14, 8, 1, this));
         
-        
+         
     }
 
     /**
@@ -363,20 +363,19 @@ public class JeuxOupi implements Dessinable {
     private void gererMortTroupe(Troupe troupe) {
         if (troupe != null) {
             // Vérifier si c'est un Nexus qui a été détruit
-            boolean estNexus = troupe instanceof Nexus;
-            int equipeNexus = -1;
-            
-            if (estNexus) {
-                Nexus nexus = (Nexus) troupe;
-                equipeNexus = nexus.getEquipe();
-                // Libérer les 4 tuiles (méthode spéciale pour Nexus)
-                nexus.libererTuiles();
+            if (troupe instanceof Nexus) {
+                // Utiliser la méthode spéciale pour libérer les 4 tuiles du Nexus
+                ((Nexus) troupe).libererTuiles();
                 
-                String msg = "🏆 Le Nexus de l'équipe " + equipeNexus + " a été détruit !";
+                // Si c'est un Nexus, on déclare la victoire de l'équipe adverse
+                int equipeNexus = troupe.getEquipe();
+                int equipeGagnante = (equipeNexus == 0) ? 1 : 0;
+                
+                String msg = "🏆 Le Nexus de l'équipe " + equipeNexus + " a été détruit ! L'équipe " + equipeGagnante + " GAGNE !";
                 System.out.println(msg);
                 combatMessages.add(msg);
             } else {
-                // Libérer la tuile occupée (cas standard pour les autres troupes)
+                // Cas normal: libérer la tuile occupée par la troupe
                 int lig = troupe.getLig();
                 int col = troupe.getCol();
                 plateau.getTuile(lig, col).setOccupee(false);
@@ -385,17 +384,6 @@ public class JeuxOupi implements Dessinable {
             // Retirer la troupe des listes
             troupes.remove(troupe);
             simTroupes.remove(troupe);
-            
-            // Si c'était un Nexus, déclarer la victoire de l'équipe adverse
-            if (estNexus) {
-                int equipeGagnante = (equipeNexus == 0) ? 1 : 0;
-                String msg = "🎉 L'équipe " + equipeGagnante + " GAGNE la partie!";
-                System.out.println(msg);
-                combatMessages.add(msg);
-                
-                // TODO: Déclencher l'événement de fin de partie
-                // Cela pourrait être implémenté via un PropertyChangeEvent dans ZoneAnimationOupi
-            }
         }
     }
 

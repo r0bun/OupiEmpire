@@ -24,7 +24,7 @@ public class Nexus extends Troupe {
      * @param jeu l'instance du jeu associée à ce Nexus
      */
     public Nexus(int col, int lig, int equipe, JeuxOupi jeu) {
-        super(lig, col, jeu);
+        super(lig, col, jeu,"Le Lobotomisateur", "res/bak/lobotomisateur_player_card.png");
         this.setEquipe(equipe);
         image = getImage("/troupes/nexus.png");
         
@@ -54,7 +54,7 @@ public class Nexus extends Troupe {
     /**
      * Marque les 4 tuiles occupées par le Nexus
      */
-    private void occuperTuiles() {
+    public void occuperTuiles() {
         if (getJeu() != null && getJeu().getPlateau() != null) {
             for (int i = 0; i < TAILLE_NEXUS; i++) {
                 for (int j = 0; j < TAILLE_NEXUS; j++) {
@@ -91,6 +91,34 @@ public class Nexus extends Troupe {
                 }
             }
         }
+    }
+    
+    /**
+     * Vérifie si toutes les tuiles nécessaires pour placer le Nexus sont disponibles
+     * 
+     * @return true si toutes les tuiles sont disponibles, false sinon
+     */
+    public boolean peutEtrePlacé() {
+        if (getJeu() == null || getJeu().getPlateau() == null) {
+            return false;
+        }
+        
+        for (int i = 0; i < TAILLE_NEXUS; i++) {
+            for (int j = 0; j < TAILLE_NEXUS; j++) {
+                int ligCible = getLig() + i;
+                int colCible = getCol() + j;
+                
+                // Vérifier que la tuile est dans les limites du plateau et non occupée
+                if (ligCible < 0 || colCible < 0 || 
+                    ligCible >= getJeu().getPlateau().getLignes() || 
+                    colCible >= getJeu().getPlateau().getColonnes() ||
+                    getJeu().getPlateau().getTuile(ligCible, colCible).estOccupee()) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
     }
     
     /**
