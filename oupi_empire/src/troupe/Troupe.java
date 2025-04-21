@@ -210,6 +210,57 @@ public class Troupe implements Dessinable {
         g2dPrive.setColor(couleur);
         g2dPrive.fillRect(x, y, jeu.getTailleTuile(), jeu.getTailleTuile());
         g2dPrive.drawImage(image, x, y, jeu.getTailleTuile(), jeu.getTailleTuile(), null);
+        
+        // Dessiner une barre de vie au-dessus de la troupe
+        int barreWidth = jeu.getTailleTuile();
+        int barreHeight = 4;
+        int yBarre = y - 6;
+        
+        // Calculer la hauteur maximale des HP pour cette troupe
+        // Pour les troupes standard, on considère généralement leur HP initial comme max
+        // Pour une approche plus générique, on pourrait ajouter un attribut HPMax
+        int hpMax = getHPMax();
+        
+        // Fond de la barre de vie (rouge)
+        g2dPrive.setColor(Color.RED);
+        g2dPrive.fillRect(x, yBarre, barreWidth, barreHeight);
+        
+        // Partie remplie de la barre de vie (vert)
+        float pourcentageVie = (float)HP / (float)hpMax;
+        g2dPrive.setColor(Color.GREEN);
+        g2dPrive.fillRect(x, yBarre, (int)(barreWidth * pourcentageVie), barreHeight);
+        
+        // Contour noir pour la lisibilité
+        g2dPrive.setColor(Color.BLACK);
+        g2dPrive.drawRect(x, yBarre, barreWidth, barreHeight);
+        
+        g2dPrive.dispose();
+    }
+    
+    /**
+     * Détermine la valeur maximale des points de vie pour cette troupe.
+     * Cette méthode peut être surchargée par les sous-classes si nécessaire.
+     * 
+     * @return la valeur maximale des points de vie
+     */
+    protected int getHPMax() {
+        // Valeurs par défaut pour chaque type de troupe
+        // Ces valeurs correspondent aux HP initiaux définis dans les constructeurs
+        String className = this.getClass().getSimpleName();
+        switch (className) {
+            case "Oupi":
+                return 150;
+            case "Electricien":
+                return 90;
+            case "Genial":
+                return 120;
+            case "Lobotomisateur":
+                return 80;
+            case "Nexus":
+                return 300;
+            default:
+                return 100; // Valeur par défaut
+        }
     }
 
     /**

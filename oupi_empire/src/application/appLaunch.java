@@ -148,6 +148,11 @@ public class appLaunch extends JFrame {
 		lblLobo.setBounds(426, 984, 56, 16);
 		contentPane.add(lblLobo);
 		
+		// Add Nexus label
+		JLabel lblNexus = new JLabel("1");
+		lblNexus.setBounds(600, 936, 56, 16);
+		contentPane.add(lblNexus);
+		
 		ecranDebut = new Debut(screenWidth, screenHeight);
 		ecranDebut.setBounds(50, 30, (int) (screenWidth / 2), (int) (screenHeight*0.725));
 		contentPane.add(ecranDebut);
