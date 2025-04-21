@@ -8,7 +8,6 @@ import jeu_oupi.JeuxOupi;
  * @author Badr Rifki
  */
 public class Oupi extends Troupe {
-
 	/**
 	 * classe pour generer un objet de type Oupi
 	 * 
@@ -18,7 +17,8 @@ public class Oupi extends Troupe {
 	 * @param jeu l'instance du jeu associée à cette troupe
 	 */
 	public Oupi(int col, int lig, int equipe, JeuxOupi jeu) {
-		super(col, lig, jeu);
+
+		super(col, lig, jeu, "Oupi Goupi", "res/bak/Oupi_player_card.png");
 		this.setDistanceParcourable(5);
 		this.setBakDistParc(5);
 		this.setEquipe(equipe);
@@ -30,5 +30,6 @@ public class Oupi extends Troupe {
 		HP=150;
 		
 		id = 0;
+		
 	}
 }

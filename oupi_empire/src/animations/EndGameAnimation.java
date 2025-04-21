@@ -8,15 +8,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChangePlayerAnimation extends JPanel {
+public class EndGameAnimation extends JPanel {
     private List<ImageIcon> frames;  // List to hold the PNG frames
     private JLabel animationLabel;    // Label to display the current frame
     private int currentFrame = 0;     // Track the current frame being displayed
     private Timer timer;
+    private AnimationEndListener endListener;
 
-    public ChangePlayerAnimation(String imageFolderPath) {
+    public EndGameAnimation(String imageFolderPath) {
 
-    	frames = loadPNGFrames("C:\\Users\\sacha\\git\\OupiEmpire4\\oupi_empire\\res\\png_animations\\Change_Player");
+    	frames = loadPNGFrames("C:\\Users\\sacha\\git\\OupiEmpire4\\oupi_empire\\res\\png_animations\\Fin_Partie");
        
     	// Set up the Panel
         setLayout(null);
@@ -42,6 +43,9 @@ public class ChangePlayerAnimation extends JPanel {
             if (currentFrame >= frames.size()) {
                 ((Timer) e.getSource()).stop(); // Stop the animation when it finishes
                 setVisible(false); // Hide the animation panel after finishing
+                if (endListener != null) {
+                    endListener.onAnimationEnd(); // déclenche le callback
+                }
                 return;
             }
 
@@ -69,6 +73,10 @@ public class ChangePlayerAnimation extends JPanel {
         return imageList;
     }
     
+    public void setAnimationEndListener(AnimationEndListener listener) {
+        this.endListener = listener;
+    }
+    
 
     public static void main(String[] args) {
         // Create the main application window
@@ -78,8 +86,8 @@ public class ChangePlayerAnimation extends JPanel {
         frame.setLayout(null); // Allows absolute positioning
 
         // Create the animation panel
-        ChangePlayerAnimation animationPanel = new ChangePlayerAnimation(
-            "res\\png_animations\\Change_Player"
+        EndGameAnimation animationPanel = new EndGameAnimation(
+            "res\\png_animations\\Fin_Partie"
         );
         animationPanel.setBounds(0, 0, 1920, 1080); // Make sure the panel fits the frame
 
