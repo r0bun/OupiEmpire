@@ -119,10 +119,19 @@ public class JeuxOupi implements Dessinable {
         for (Troupe troupe : troupes) {
             int lig = troupe.getLig();
             int col = troupe.getCol();
-            if (lig >= 0 && lig < nbTuiles && col >= 0 && col < nbTuiles) {
+            
+            // Traitement spécial pour les Nexus qui occupent une zone 2x2
+            if (troupe instanceof Nexus) {
+                // Utiliser la méthode spécifique du Nexus pour occuper ses 4 tuiles
+                ((Nexus) troupe).occuperTuiles();
+                System.out.println("Nexus initialisé aux coordonnées (" + lig + "," + col + ") - 4 tuiles occupées");
+            } 
+            // Traitement standard pour les autres troupes (1 tuile)
+            else if (lig >= 0 && lig < nbTuiles && col >= 0 && col < nbTuiles) {
                 plateau.getTuile(lig, col).setOccupee(true);
             }
-            // Forcer la mise à jour des positions en pixels
+            
+            // Forcer la mise à jour des positions en pixels (pour toutes les troupes)
             troupe.setCol(col);
             troupe.setLig(lig);
         }
