@@ -21,6 +21,7 @@ import plateau.Tuile;
 import troupe.Electricien;
 import troupe.Genial;
 import troupe.Lobotomisateur;
+import troupe.Nexus;
 import troupe.Oupi;
 import troupe.Troupe;
 import tuiles.Eau;
@@ -621,6 +622,10 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		case 3:
 			troupePlacer = new Lobotomisateur(0, 0, 0, jeuxOupi);
 			System.out.println("Type change Lobo " + type);
+			break;
+		case 4:
+			troupePlacer = new Nexus(0, 0, 0, jeuxOupi);
+			System.out.println("Type change Nexus " + type);
 			break;
 		}
 	}
