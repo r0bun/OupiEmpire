@@ -11,6 +11,8 @@ import java.beans.PropertyChangeListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import animations.ChangePlayerAnimation;
+import animations.EndGameAnimation;
+//import animations.SpriteSheetAnimationPanel;
 
 /**
  * La classe {@code appLaunch} représente la fenêtre principale de l'application
@@ -49,6 +51,10 @@ public class appLaunch extends JFrame {
 	private JTextArea textAreaAttaque;
 	
 	private JLabel lblAnimChangeTurn;
+	
+	private PartieTerminee pagePartieTerminee = new PartieTerminee();
+	
+	//private SpriteSheetAnimationPanel spriteAnimationPanel;
 	
 	// Pour suivre l'équipe actuelle (0 ou 1)
 	private int equipeActuelle = 0;
@@ -153,13 +159,28 @@ public class appLaunch extends JFrame {
 		contentPane.add(ecranDebut);
 		
 		// === animation panel (on top) ===
-	    String pathToFrames = "C:\\Users\\sacha\\git\\OupiEmpire4\\oupi_empire\\res\\png_animations\\Change_Player";
+	    String pathToFrames = "res\\png_animations\\Change_Player";
 	    ChangePlayerAnimation animationPanel = new ChangePlayerAnimation(pathToFrames);
 	    animationPanel.setBounds(0, 0, screenWidth, screenHeight);
 	    animationPanel.setOpaque(false); // Important!
 	    animationPanel.setVisible(false);
 	    layeredPane.add(animationPanel, Integer.valueOf(3)); // On top of game content  // Add the animation panel to the JFrame
-		
+	    
+	    //=== End game animation ===
+	    String animationFolderPath = "res\\png_animations\\Fin_Partie";
+	    EndGameAnimation endAnimationPanel = new EndGameAnimation(animationFolderPath);
+	    endAnimationPanel.setBounds(0, 0, screenWidth, screenHeight);
+	    endAnimationPanel.setOpaque(false); // Important!
+	    endAnimationPanel.setVisible(false);
+	    layeredPane.add(endAnimationPanel, Integer.valueOf(4)); // On top of game content  // Add the animation panel to the JFrame
+	    
+	    // Définis ce qu’il faut faire quand l’animation se termine
+	    endAnimationPanel.setAnimationEndListener(() -> {
+	        System.out.println("Animation terminée !");
+	        pagePartieTerminee.setVisible(true);
+            dispose();
+	    });
+
 		zoneAnimationOupi = new ZoneAnimationOupi(screenWidth, screenHeight);
 		zoneAnimationOupi.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -342,6 +363,10 @@ public class appLaunch extends JFrame {
 		btnWin = new JButton("Gagner partie");
 		btnWin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
+				endAnimationPanel.setVisible(true);
+				endAnimationPanel.startAnimation();
+		        
 				System.out.println("Partie win");
 				String a = zoneAnimationOupi.win();
 				if (a != null) {
@@ -356,6 +381,10 @@ public class appLaunch extends JFrame {
 		btnLose = new JButton("Perdre partie");
 		btnLose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
+				endAnimationPanel.setVisible(true);
+				endAnimationPanel.startAnimation();
+				
 				System.out.println("Partie lose");
 				String a = zoneAnimationOupi.lose();
 				if (a != null) {

@@ -6,6 +6,8 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.*;
 
+import animations.ChangePlayerAnimation;
+import animations.EndGameAnimation;
 import styles.RoundedButton;
 
 public class MainMenu extends JFrame {
@@ -13,7 +15,7 @@ public class MainMenu extends JFrame {
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
 
-    private appLaunch affichierFrame = new appLaunch();
+    private appLaunch afficherFrame;
 
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
@@ -97,7 +99,20 @@ public class MainMenu extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("Bouton 'Jouer' cliqué !");
-                affichierFrame.setVisible(true);
+                
+                LoadingScreen loading = new LoadingScreen();
+                loading.startLoading(
+                    () -> {
+                        // Load game assets, levels, sprites
+                    	new ChangePlayerAnimation("res/png_animations/Change_Player");
+                        new EndGameAnimation("res/png_animations/End_Game");
+                        afficherFrame = new appLaunch();
+                    },
+                    () -> {
+                    	
+                    	afficherFrame.setVisible(true);
+                    }
+                );
                 dispose();
             }
         });
