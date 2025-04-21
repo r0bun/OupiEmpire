@@ -18,7 +18,7 @@ public class Genial extends Troupe {
      * @param jeu l'instance du jeu associée à cette troupe
      */
     public Genial(int col, int lig, int equipe, JeuxOupi jeu) {
-        super(lig, col, jeu);
+        super(lig, col, jeu, "L'homme génial", "res/bak/homme_genial_player_card.png");
         this.setDistanceParcourable(4);
         this.setBakDistParc(4);
         this.setEquipe(equipe);

@@ -70,7 +70,7 @@ public class Troupe implements Dessinable {
      * @param col la colonne initiale de la troupe
      * @param jeu l'instance du jeu à laquelle appartient cette troupe
      */
-    public Troupe(int lig, int col, JeuxOupi jeu) {
+    public Troupe(int lig, int col, JeuxOupi jeu, String nom, String playerCardPath) {
         this.col = col;
         this.lig = lig;
         this.jeu = jeu;
@@ -86,8 +86,8 @@ public class Troupe implements Dessinable {
         vitesse = 20;
         endurance = 30;
         distanceAttaque = 1; // Distance d'attaque par défaut (corps à corps)
-        playerCard = "res/bak/Oupi_player_card.png";
-        nom = "Oupi Goupi";
+        playerCard = playerCardPath;
+        this.nom = nom;
     }
 
     /**
