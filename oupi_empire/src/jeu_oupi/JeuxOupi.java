@@ -102,6 +102,7 @@ public class JeuxOupi implements Dessinable {
         // Équipe 0 (joueur 1)
         troupes.add(new Oupi(1, 1, 0, this));
         troupes.add(new Lobotomisateur(3, 1, 0, this));
+        
         troupes.add(new Nexus(4, 4, 0, this));
 
         // Équipe 1 (joueur 2)
