@@ -16,7 +16,7 @@ public class ChangePlayerAnimation extends JPanel {
 
     public ChangePlayerAnimation(String imageFolderPath) {
 
-    	frames = loadPNGFrames("C:\\Users\\sacha\\git\\OupiEmpire4\\oupi_empire\\res\\png_animations\\Change_Player");
+    	frames = loadPNGFrames("res\\png_animations\\Change_Player");
        
     	// Set up the Panel
         setLayout(null);
