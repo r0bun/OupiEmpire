@@ -2,6 +2,8 @@ package application;
 
 import java.awt.*;
 import javax.swing.*;
+
+import jeu_oupi.GameManager;
 import jeu_oupi.ZoneAnimationOupi;
 import troupe.Troupe;
 import ecrans_jeu.*;
@@ -54,7 +56,6 @@ public class appLaunch extends JFrame {
 	
 	private PartieTerminee pagePartieTerminee = new PartieTerminee();
 	
-	//private SpriteSheetAnimationPanel spriteAnimationPanel;
 	
 	// Pour suivre l'équipe actuelle (0 ou 1)
 	private int equipeActuelle = 0;
@@ -110,7 +111,7 @@ public class appLaunch extends JFrame {
 	    setContentPane(layeredPane);
 	    
 	    // === Add background image ===
-	    ImageIcon backgroundIcon = new ImageIcon("res/bak/background_jeu.png"); // Remplace par ton chemin
+	    ImageIcon backgroundIcon = new ImageIcon("res/bak/background2_jeu.png"); // Remplace par ton chemin
 	    JLabel backgroundLabel = new JLabel(backgroundIcon);
 	    backgroundLabel.setBounds(0, 0, screenWidth, screenHeight);
 	    layeredPane.add(backgroundLabel, Integer.valueOf(-1)); // tout au fond
@@ -186,7 +187,17 @@ public class appLaunch extends JFrame {
             dispose();
 	    });
 
-		zoneAnimationOupi = new ZoneAnimationOupi(screenWidth, screenHeight);
+	    //Zone d'animation ou se passe le jeu
+	    zoneAnimationOupi = GameManager.getInstance().getZoneAnimationOupi();
+	    if (zoneAnimationOupi != null) {
+	        zoneAnimationOupi.setBounds(50, 30, (int) (screenWidth / 2), (int) (screenHeight * 0.725));
+	        zoneAnimationOupi.setVisible(false);
+	        contentPane.add(zoneAnimationOupi);
+	    } else {
+	        System.err.println("Erreur : ZoneAnimationOupi n'a pas été initialisée !");
+	    }
+		
+		// Écouteur pour réagir aux différents évènements générés par ZoneAnimationOupi.
 		zoneAnimationOupi.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				if(evt.getPropertyName().equals("Fin")) {
@@ -194,6 +205,7 @@ public class appLaunch extends JFrame {
 					zoneAnimationOupi.setVisible(false);
 				}
 				
+				// Lorsqu'une troupe est sélectionnée ou mise a jour, update les stats affichées dans player card.
 				if(evt.getPropertyName().equals("troupe")) {
 					stats.updateTroupe((Troupe) evt.getNewValue());
 				}
@@ -205,6 +217,7 @@ public class appLaunch extends JFrame {
 					updateBackgroundColor();
 				}
 				
+				// Quand des troupes sont ajoutées au tableau, leur quantité change.
 				if(evt.getPropertyName().equals("troupes restantes")) {
 					int[] troupesDispo = (int[]) evt.getNewValue();
 					lblOupi.setText(troupesDispo[0]+"");
@@ -219,19 +232,21 @@ public class appLaunch extends JFrame {
 				}
 			}
 		});
-		zoneAnimationOupi.setBounds(50, 30, (int) (screenWidth / 2), (int) (screenHeight*0.725));
-		zoneAnimationOupi.setVisible(false);
-		contentPane.add(zoneAnimationOupi);
 		
+		
+		
+		//Écran de statistiques
 		stats = new Stats(screenWidth, screenHeight);
 		stats.setBounds((int) (6*screenWidth/11) + 80 , 350, 380, 450);
 		contentPane.add(stats);
 		
+		// Écran de fin
 		fin = new Fin(screenWidth, screenHeight);
 		fin.setBounds(50, 30, (int) (screenWidth / 2), (int) (screenHeight*0.725));
 		fin.setVisible(false);
 		contentPane.add(fin);
 		
+		//Écran de début
 		ecranDebut.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				if(evt.getPropertyName().equals("Start")) {

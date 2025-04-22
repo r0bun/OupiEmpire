@@ -24,7 +24,7 @@ public class Nexus extends Troupe {
      * @param jeu l'instance du jeu associée à ce Nexus
      */
     public Nexus(int col, int lig, int equipe, JeuxOupi jeu) {
-        super(lig, col, jeu);
+        super(lig, col, jeu, "Oupi Goupi", "res/bak/Oupi_player_card.png");
         this.setEquipe(equipe);
         image = getImage("/troupes/nexus.png");
         

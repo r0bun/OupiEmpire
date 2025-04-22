@@ -471,12 +471,14 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		requestFocus(); // Demander le focus pour garantir que les entrées du clavier fonctionnent
 	}
 
+
 	/**
 	 * Gagne la partie
 	 * 
 	 * @return une string contenant le resultat victoire si le thread a ete
 	 *         interrompu correctement
 	 */
+
 	public String win() {
 		threadJeu.interrupt();
 		if (enCours) {
@@ -580,6 +582,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 			pcs.firePropertyChange("Fin", 10, 1);
 		}
 	}
+	
 
 	/**
 	 * Change le mode de jeu pour permettre de placer les unitees

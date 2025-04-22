@@ -8,6 +8,9 @@ import javax.swing.*;
 
 import animations.ChangePlayerAnimation;
 import animations.EndGameAnimation;
+import jeu_oupi.Game;
+import jeu_oupi.GameManager;
+import jeu_oupi.ZoneAnimationOupi;
 import styles.RoundedButton;
 
 public class MainMenu extends JFrame {
@@ -65,6 +68,7 @@ public class MainMenu extends JFrame {
 
         // Charger l'image du titre
         ImageIcon titleIcon = new ImageIcon(getClass().getResource("/bak/title.png"));
+        
         // Récupérer l'image et la redimensionner (facteur d'échelle 1.5)
         Image titleImg = titleIcon.getImage();
         double scaleFactor = 1.5; // Facteur d'échelle - ajustez selon vos besoins
@@ -106,11 +110,13 @@ public class MainMenu extends JFrame {
                         // Load game assets, levels, sprites
                     	new ChangePlayerAnimation("res/png_animations/Change_Player");
                         new EndGameAnimation("res/png_animations/End_Game");
-                        afficherFrame = new appLaunch();
+                        
+                        GameManager.getInstance().startNewGame(1920, 1080);
                     },
                     () -> {
-                    	
-                    	afficherFrame.setVisible(true);
+                    	// When loading is done, show the game window
+                        afficherFrame = GameManager.getInstance().getGameWindow();
+                        afficherFrame.setVisible(true);
                     }
                 );
                 dispose();
