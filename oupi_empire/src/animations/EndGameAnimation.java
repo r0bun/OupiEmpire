@@ -17,7 +17,7 @@ public class EndGameAnimation extends JPanel {
 
     public EndGameAnimation(String imageFolderPath) {
 
-    	frames = loadPNGFrames("C:\\Users\\sacha\\git\\OupiEmpire4\\oupi_empire\\res\\png_animations\\Fin_Partie");
+    	frames = loadPNGFrames("res\\png_animations\\Fin_Partie");
        
     	// Set up the Panel
         setLayout(null);

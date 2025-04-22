@@ -116,7 +116,7 @@ public class JeuxOupi implements Dessinable {
         // S'assurer que les tuiles correspondantes sont marquées comme occupées
         for (Troupe troupe : troupes) {
             int lig = troupe.getLig();
-            int col = troupe.getCol();
+            int col = troupe.getCol(); 
             
             // Traitement spécial pour les Nexus qui occupent une zone 2x2
             if (troupe instanceof Nexus) {
