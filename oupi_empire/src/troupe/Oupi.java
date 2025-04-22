@@ -18,7 +18,7 @@ public class Oupi extends Troupe {
 	 */
 	public Oupi(int col, int lig, int equipe, JeuxOupi jeu) {
 
-		super(col, lig, jeu, "Oupi Goupi", "res/bak/Oupi_player_card.png");
+		super(col, lig, jeu, "Oupi Goupi", "res/bak/Oupi_player_card.png", false);
 		this.setDistanceParcourable(5);
 		this.setBakDistParc(5);
 		this.setEquipe(equipe);

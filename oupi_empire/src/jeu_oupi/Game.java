@@ -53,9 +53,7 @@ public class Game {
      * Logique à implémenter
      * @param resultat
      */
-    public void terminerPartie(String resultat) {
-        this.enCours = false;
-        this.resultat = resultat;
+    public void terminerPartie() {
         System.out.println("Partie terminée : " + resultat);
         // Vous pouvez ici notifier le GameManager ou afficher un écran de fin
     }
@@ -90,7 +88,7 @@ public class Game {
         }
 
         // Vérifier la fin de partie
-        checkFinPartie();
+        checkFinPartie(joueurActuel);
 
         // Changer de joueur si la partie n'est pas terminée
         if (enCours) {
@@ -102,24 +100,14 @@ public class Game {
      * On effectue dans cette fonction les vérifications de fin de partie.
      * La seule condition pour le moment est qu'une ou les deux équipes n'ont plus de troupes.
      */
-    public void checkFinPartie() {
-        int joueursEnJeu = 0;
-        Joueur dernierJoueurEnJeu = null;
+    public void checkFinPartie(int player) {
 
-        for (Joueur joueur : joueurs) {
-            if (joueur.aEncoreDesTroupes()) {
-                joueursEnJeu++;
-                dernierJoueurEnJeu = joueur;
-            } else {
-                //joueur.setAPerdu(true);
-            }
+        ArrayList<Troupe> listeTroupes= getPlayerTroupes(player);
+        
+        if(listeTroupes.isEmpty() || !containsNexus(listeTroupes)) {
+        	terminerPartie();
         }
-
-        if (joueursEnJeu == 0) {
-            terminerPartie("Égalité !");
-        } else if (joueursEnJeu == 1) {
-            terminerPartie(dernierJoueurEnJeu.getNom() + " a gagné !");
-        }
+       
     }
 
     
@@ -138,8 +126,33 @@ public class Game {
         System.out.println("🔄 C'est maintenant au tour de " + joueurs.get(joueurActuel).getNom());
     }
     
-    
-    
+    /**
+     * Cette fonction retourne la liste de troupes appartenant au joueur.
+     * @param player
+     * @return
+     */
+	public ArrayList<Troupe> getPlayerTroupes (int player){
+		
+		ArrayList<Troupe> troupes = jeuxOupi.getTroupes();
+		ArrayList<Troupe> troupesJoueur = new ArrayList<>();
+		
+		for (int i = 0; i < troupes.size(); i++) {
+			if(troupes.get(i).getEquipe() == player) {
+				troupesJoueur.add(troupes.get(i));
+			}
+		}
+		return troupesJoueur;
+	}
+	
+	public boolean containsNexus (ArrayList<Troupe> liste) {
+		for(Troupe troupe : liste) {
+			if(troupe.getIsNexus() == true) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 
     public void ajouterMessage(String message) {
         messages.add(message);

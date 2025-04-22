@@ -539,6 +539,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	 * Change le joueur qui agit
 	 */
 	public void toggleJoueur() {
+		checkFinPartie();
 		// Désélectionner la troupe actuelle si elle existe
 		if (jeuxOupi.getTroupeSelectionnee() != null) {
 			pcs.firePropertyChange("troupe", "", null);
@@ -601,16 +602,33 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 				nbEq2 += 1;
 			}
 		}
+		
 
-		if (nbEq1 == 0 && nbEq2 == 0) {
+		if (nbEq1 == 0 || nbEq2 == 0 || !containsNexus(troupes)) {
 			pcs.firePropertyChange("Fin", 10, -1);
 		}
-
-		if (nbEq1 == 0) {
-			pcs.firePropertyChange("Fin", 10, 0);
-		} else if (nbEq2 == 0) {
-			pcs.firePropertyChange("Fin", 10, 1);
+	}
+	
+	public ArrayList<Troupe> getPlayerTroupes (int player){
+		
+		ArrayList<Troupe> troupes = jeuxOupi.getTroupes();
+		ArrayList<Troupe> troupesJoueur = new ArrayList<>();
+		
+		for (int i = 0; i < troupes.size(); i++) {
+			if(troupes.get(i).getEquipe() == player) {
+				troupesJoueur.add(troupes.get(i));
+			}
 		}
+		return troupesJoueur;
+	}
+	
+	public boolean containsNexus (ArrayList<Troupe> liste) {
+		for(Troupe troupe : liste) {
+			if(troupe.getIsNexus() == true) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 

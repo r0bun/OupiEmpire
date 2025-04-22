@@ -201,8 +201,10 @@ public class appLaunch extends JFrame {
 		zoneAnimationOupi.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				if(evt.getPropertyName().equals("Fin")) {
-					fin.setVisible(true);
-					zoneAnimationOupi.setVisible(false);
+					
+					endAnimationPanel.setVisible(true);
+					endAnimationPanel.startAnimation();
+					//zoneAnimationOupi.setVisible(false);
 				}
 				
 				// Lorsqu'une troupe est sélectionnée ou mise a jour, update les stats affichées dans player card.
@@ -372,6 +374,10 @@ public class appLaunch extends JFrame {
 				zoneAnimationOupi.toggleJoueur();
 				// Changer la couleur de fond quand on change d'équipe
 				equipeActuelle = (equipeActuelle == 0) ? 1 : 0;
+				
+		        animationPanel.setVisible(true);
+		        animationPanel.startAnimation();
+		        
 				updateBackgroundColor();
 				zoneAnimationOupi.requestFocusInWindow();
 			}
@@ -388,10 +394,7 @@ public class appLaunch extends JFrame {
 				endAnimationPanel.startAnimation();
 		        
 				System.out.println("Partie win");
-				String a = zoneAnimationOupi.win();
-				if (a != null) {
-					lblEtat.setText("Vous avez " + a);
-				}
+
 			}
 		});
 		btnWin.setBounds(buttonsStartX + (buttonWidth + buttonSpacing) * 2, buttonY, buttonWidth, buttonHeight);
@@ -406,10 +409,7 @@ public class appLaunch extends JFrame {
 				endAnimationPanel.startAnimation();
 				
 				System.out.println("Partie lose");
-				String a = zoneAnimationOupi.lose();
-				if (a != null) {
-					lblEtat.setText("Vous avez " + a);
-				}
+		
 			}
 		});
 		btnLose.setBounds(buttonsStartX + (buttonWidth + buttonSpacing) * 3, buttonY, buttonWidth, buttonHeight);
@@ -484,16 +484,6 @@ public class appLaunch extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 		setLocationRelativeTo(null);
-		
-		// === 5. Button to trigger the animation ===
-	    JButton changePlayerButton = new JButton("Change Player");
-	    changePlayerButton.setBounds(700, 980, 150, 40);
-	    contentPane.add(changePlayerButton);
-
-	    changePlayerButton.addActionListener(e -> {
-	        animationPanel.setVisible(true);
-	        animationPanel.startAnimation();
-	    });
 	    
 	    // === 6. Final setup ===
 	    pack();               // Resize frame to preferred size

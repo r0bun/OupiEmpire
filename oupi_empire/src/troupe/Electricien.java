@@ -18,7 +18,7 @@ public class Electricien extends Troupe {
      * @param jeu l'instance du jeu associée à cette troupe
      */
     public Electricien(int col, int lig, int equipe, JeuxOupi jeu) {
-        super(lig, col, jeu, "L'électricien", "res/bak/electricien_player_card.png");
+        super(lig, col, jeu, "L'électricien", "res/bak/electricien_player_card.png", false);
         this.setDistanceParcourable(3);
         this.setBakDistParc(3);
         this.setEquipe(equipe);

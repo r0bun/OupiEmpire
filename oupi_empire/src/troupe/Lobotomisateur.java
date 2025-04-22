@@ -18,7 +18,7 @@ public class Lobotomisateur extends Troupe {
      * @param jeu l'instance du jeu associée à cette troupe
      */
     public Lobotomisateur(int col, int lig, int equipe, JeuxOupi jeu) {
-        super(lig, col, jeu, "Le Lobotomisateur", "res/bak/lobotomisateur_player_card.png");
+        super(lig, col, jeu, "Le Lobotomisateur", "res/bak/lobotomisateur_player_card.png", false);
         this.setDistanceParcourable(3);
         this.setBakDistParc(3);
         this.setEquipe(equipe);

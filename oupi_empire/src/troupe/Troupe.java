@@ -31,6 +31,7 @@ public class Troupe implements Dessinable {
     private int col, lig, preCol, preLig;
     private boolean selectionne;
     public boolean remplie;
+    private boolean isNexus;
     
     private boolean epuisee;
     private int equipe;
@@ -70,7 +71,7 @@ public class Troupe implements Dessinable {
      * @param col la colonne initiale de la troupe
      * @param jeu l'instance du jeu à laquelle appartient cette troupe
      */
-    public Troupe(int lig, int col, JeuxOupi jeu, String nom, String playerCardPath) {
+    public Troupe(int lig, int col, JeuxOupi jeu, String nom, String playerCardPath, boolean isNexus) {
         this.col = col;
         this.lig = lig;
         this.jeu = jeu;
@@ -88,6 +89,7 @@ public class Troupe implements Dessinable {
         distanceAttaque = 1; // Distance d'attaque par défaut (corps à corps)
         playerCard = playerCardPath;
         this.nom = nom;
+        this.isNexus = isNexus;
     }
 
     /**
@@ -690,5 +692,9 @@ public class Troupe implements Dessinable {
 
     public void setId(int id) {
         this.id = id;
+    }
+    
+    public boolean getIsNexus() {
+    	return isNexus;
     }
 }
