@@ -121,13 +121,17 @@ public class JeuxOupi implements Dessinable {
     public void setTroupes() {
         // Équipe 0 (joueur 1)
         troupes.add(new Oupi(1, 1, 0, this));
-        troupes.add(new Lobotomisateur(3, 1, 0, this));
-        
+        troupes.add(new Lobotomisateur(3, 1, 0, this));         
+        troupes.add(new Genial(4, 6, 0, this));
+        troupes.add(new Electricien(6, 6, 0, this)); 
         troupes.add(new Nexus(4, 4, 0, this));
 
         // Équipe 1 (joueur 2)
-        troupes.add(new Genial(12, 8, 1, this));
-        troupes.add(new Electricien(14, 8, 1, this));
+        troupes.add(new Genial(37, 19, 1, this));
+        troupes.add(new Electricien(36, 24, 1, this));
+        troupes.add(new Genial(34, 26, 1, this));
+        troupes.add(new Lobotomisateur(36, 20, 1, this)); 
+        troupes.add(new Nexus(34, 24, 1, this));
 
     }
 
@@ -595,5 +599,18 @@ public class JeuxOupi implements Dessinable {
     			plateau.getTuile(i, j).setAccessible(false);
     		}
     	}
+    }
+    
+    public Nexus getNexusEquipe(int equipe) {
+        for (Troupe troupe : troupes) {
+            if (troupe.getIsNexus() && troupe.getEquipe() == equipe) {
+                return (Nexus) troupe;
+            }
+        }
+        return null;
+    }
+    
+    public int getZonePlacer () {
+    	return zonePlacer;
     }
 }

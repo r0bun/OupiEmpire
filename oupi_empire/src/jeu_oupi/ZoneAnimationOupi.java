@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
+import plateau.Plateau;
 import plateau.Tuile;
 import troupe.Electricien;
 import troupe.Genial;
@@ -55,6 +56,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	private final double MIN_ZOOM = 0.5;
 
 	// Panning properties
+	public Plateau plateau;
 	private int translateX = 0;
 	private int translateY = 0;
 	private int dragStartX;
@@ -575,6 +577,16 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 
 		// Notification du changement d'équipe
 		pcs.firePropertyChange("equipeActuelle", -1, joueurActuel);
+		
+		// Centrer la caméra sur le Nexus de l'équipe active
+	    Nexus nexusActif = jeuxOupi.getNexusEquipe(joueurActuel);
+	    if (nexusActif != null) {
+	        // Utiliser les coordonnées centrales du Nexus (2x2 tuiles)
+	        centrerCameraSur(
+	            nexusActif.getCol() + 1,  // +1 pour être au centre du Nexus
+	            nexusActif.getLig() + 1
+	        );
+	    }
 	}
 
 	/**
@@ -660,12 +672,24 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	        
 	        // Réinitialiser la zone de placement pour l'équipe 1
 	        jeuxOupi.initZonePlacementEquipe1();
+	        
+	     // Centrer la caméra sur le Nexus de l'équipe 0 pour commencer la partie
+	        Nexus nexusEquipe1 = jeuxOupi.getNexusEquipe(1);
+	        if (nexusEquipe1 != null) {
+	            centrerCameraSur(nexusEquipe1);
+	        }
 	    } else {
 	        // Fin de la phase de placement
 	        placer = false;
 	        System.out.println("Fin de la phase de placement");
 	        jeuxOupi.finirPlacer();
 	        toggleJoueur();
+	        
+	     // Centrer la caméra sur le Nexus de l'équipe 0 pour commencer la partie
+	        Nexus nexusEquipe0 = jeuxOupi.getNexusEquipe(0);
+	        if (nexusEquipe0 != null) {
+	            centrerCameraSur(nexusEquipe0);
+	        }
 	        requestFocus();
 	    }
 		
@@ -753,5 +777,29 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 
 	public JeuxOupi getJeuxOupi() {
 		return jeuxOupi;
+	}
+	
+	public void centrerCameraSur(int x, int y) {
+	    // Calcule la position centrale de l'écran
+		
+	    int screenCenterX = getWidth() / 2;
+	    int screenCenterY = getHeight() / 2;
+	    
+	    plateau = jeuxOupi.getPlateau();
+	    int plateauLignes = plateau.getLignes();
+	    int plateauColonnes = plateau.getColonnes();
+	    
+	    // Calcule le décalage nécessaire pour centrer la position
+	    translateX = screenCenterX - (int)(x * jeuxOupi.tailleTuile * zoomFactor);
+	    translateY = screenCenterY - (int)(y * jeuxOupi.tailleTuile * zoomFactor);
+	    
+	    repaint();
+	}
+
+	// Surcharge pour centrer sur une troupe
+	public void centrerCameraSur(Troupe troupe) {
+	    if (troupe != null) {
+	        centrerCameraSur(troupe.getCol(), troupe.getLig());
+	    }
 	}
 }

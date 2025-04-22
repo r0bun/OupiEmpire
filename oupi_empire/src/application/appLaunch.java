@@ -5,6 +5,7 @@ import javax.swing.*;
 
 import jeu_oupi.GameManager;
 import jeu_oupi.ZoneAnimationOupi;
+import troupe.Nexus;
 import troupe.Troupe;
 import ecrans_jeu.*;
 import java.awt.event.ActionListener;
@@ -269,6 +270,14 @@ public class appLaunch extends JFrame {
 					zoneAnimationOupi.setVisible(true);
 					zoneAnimationOupi.demarrer();
 					cadreInfo.updateCadreInfo(GameManager.getInstance().getZoneAnimationOupi().getJeuxOupi().getTroupePlayer(equipeActuelle), equipeActuelle);
+					
+					/*
+					// Centrer la caméra sur le Nexus de l'équipe 0 pour commencer la partie
+			        Nexus nexusEquipe0 = zoneAnimationOupi.getJeuxOupi().getNexusEquipe(0);
+			        if (nexusEquipe0 != null) {
+			            zoneAnimationOupi.centrerCameraSur(nexusEquipe0);
+			        }
+			        */
 				}
 			}
 		});
