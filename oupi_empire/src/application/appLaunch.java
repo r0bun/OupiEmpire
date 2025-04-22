@@ -217,8 +217,14 @@ public class appLaunch extends JFrame {
 				// Détection du changement d'équipe
 				if(evt.getPropertyName().equals("equipeActuelle")) {
 					int nouvelleEquipe = (int) evt.getNewValue();
+					
+					animationPanel.setVisible(true);
+			        animationPanel.startAnimation();
+			       
+					cadreInfo.updateCadreInfo(GameManager.getInstance().getZoneAnimationOupi().getJeuxOupi().getTroupePlayer(equipeActuelle), equipeActuelle);
+					stats.updateTroupe( null, equipeActuelle);
+					
 					equipeActuelle = nouvelleEquipe;
-					updateBackgroundColor();
 				}
 				
 				// Quand des troupes sont ajoutées au tableau, leur quantité change.
@@ -435,6 +441,8 @@ public class appLaunch extends JFrame {
 		chboxPlacer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				zoneAnimationOupi.finirPlacer();
+				cadreInfo.updateCadreInfo(GameManager.getInstance().getZoneAnimationOupi().getJeuxOupi().getTroupePlayer(equipeActuelle), equipeActuelle);
+				stats.updateTroupe( null, equipeActuelle);
 			}
 		});
 		contentPane.add(chboxPlacer);

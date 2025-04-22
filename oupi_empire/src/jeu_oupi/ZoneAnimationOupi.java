@@ -66,7 +66,9 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 
 	private boolean placer = true;
 	private Troupe troupePlacer;
-	private int[] troupesDispo = { 2, 1, 0, 2 };
+	private int equipeQuiPlace = 0; // Nouvelle variable pour suivre l'équipe qui place
+	private int[] troupesDispoEquipe0 = { 2, 1, 0, 2 };
+	 private int[] troupesDispoEquipe1 = { 2, 1, 0, 2 }; // Troupes pour équipe 1
 	private String[] nomTroupes = {"Oupi", "Lobotomisateur", "Electricien", "Homme Genial"};
 	private int type = 0;
 
@@ -122,9 +124,13 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 					
 					Tuile tuileCliquee = jeuxOupi.getPlateau().getTuile(ligne, colonne);
 					System.out.println("Tuile cliquée : Ligne " + (ligne + 1) + ", Colonne " + (colonne + 1));
-					System.out.println(troupesDispo[type]);
+					//System.out.println(troupesDispo[type]);
 					
 					if (placer && jeuxOupi.getTroupeSelectionnee() == null) {
+						
+						//Change les troupes dispos en fonction de l'équipe qui place.
+						int[] troupesDispo = (equipeQuiPlace == 0) ? troupesDispoEquipe0 : troupesDispoEquipe1;
+						
 						if (troupesDispo[type] > 0) {
 							if (tuileCliquee instanceof tuiles.Eau) {
 								String message = "⚠️ Impossible de placer une troupe sur l'eau!";
@@ -134,15 +140,17 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 							}
 							
 							if (!tuileCliquee.estOccupee()) {
-								if(jeuxOupi.isInZone(tuileCliquee, jeuxOupi.getPlateau().getTuile(0, 0))) {
+								
+								// Vérifie si la tuile est dans la zone de placage.
+								if(jeuxOupi.isInZone(tuileCliquee, jeuxOupi.getPlateau().getTuile(0, 0), equipeQuiPlace)) {
 									
-									// Cas spécial pour le Nexus (qui occupe 4 tuiles)
+									// Début Cas spécial pour le Nexus (qui occupe 4 tuiles)
 									if (type == 4) { // Si c'est un Nexus
 										// Créer temporairement un Nexus pour vérifier si les cases sont disponibles
 										Nexus nexusTemp = new Nexus(colonne, ligne, 0, jeuxOupi);
 										
 										if (nexusTemp.peutEtrePlacé()) {
-											nouvelleTroupe(type);
+											nouvelleTroupe(type, equipeQuiPlace);
 											troupePlacer.setCol(colonne);
 											troupePlacer.setLig(ligne);
 											
@@ -163,9 +171,12 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 											System.out.println(message);
 											pcs.firePropertyChange("combatMessage", null, new ArrayList<String>() {{ add(message); }});
 										}
+										// Fin du cas Nexus
+										
+										
 									} else {
 										// Cas normal pour les autres troupes (qui occupent 1 tuile)
-										nouvelleTroupe(type);
+										nouvelleTroupe(type, equipeQuiPlace);
 										troupePlacer.setCol(colonne);
 										troupePlacer.setLig(ligne);
 										
@@ -315,6 +326,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 
 				if (e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
 					if (placer) {
+						int[] troupesDispo = (equipeQuiPlace == 0) ? troupesDispoEquipe0 : troupesDispoEquipe1;
 						int id = jeuxOupi.delTroupe(troupe);
 						Tuile tuileCliquee = jeuxOupi.getPlateau().getTuile(troupe.getLig(), troupe.getCol());
 						tuileCliquee.setOccupee(false);
@@ -636,10 +648,34 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	 * Change le mode de jeu pour permettre de placer les unitees
 	 */
 	public void finirPlacer() {
+		
+		if (equipeQuiPlace == 0) {
+	        // Passer à l'équipe 1
+	        equipeQuiPlace = 1;
+	        toggleJoueur();
+	        pcs.firePropertyChange("equipeActuelle", 0, 1);
+	        int[] troupesDispo = (equipeQuiPlace == 0) ? troupesDispoEquipe0 : troupesDispoEquipe1;
+	        pcs.firePropertyChange("troupes restantes", null, troupesDispo);
+	        System.out.println("Phase de placement : Au tour de l'équipe " + equipeQuiPlace);
+	        
+	        // Réinitialiser la zone de placement pour l'équipe 1
+	        jeuxOupi.initZonePlacementEquipe1();
+	    } else {
+	        // Fin de la phase de placement
+	        placer = false;
+	        System.out.println("Fin de la phase de placement");
+	        jeuxOupi.finirPlacer();
+	        toggleJoueur();
+	        requestFocus();
+	    }
+		
+		
+		/*
 		placer = false;
 		System.out.println("Mode placement = " + placer);
 		jeuxOupi.finirPlacer();
 		requestFocus();
+		*/
 	}
 
 	/**
@@ -656,26 +692,26 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	 * 
 	 * @param type Le type de la nouvelle troupe
 	 */
-	public void nouvelleTroupe(int type) {
+	public void nouvelleTroupe(int type, int equipe) {
 		switch (type) {
 		case 0:
-			troupePlacer = new Oupi(0, 0, 0, jeuxOupi);
+			troupePlacer = new Oupi(0, 0, equipe, jeuxOupi);
 			System.out.println("Type change Oupi " + type);
 			break;
 		case 1:
-			troupePlacer = new Electricien(0, 0, 0, jeuxOupi);
+			troupePlacer = new Electricien(0, 0, equipe, jeuxOupi);
 			System.out.println("Type change Elec " + type);
 			break;
 		case 2:
-			troupePlacer = new Genial(0, 0, 0, jeuxOupi);
+			troupePlacer = new Genial(0, 0, equipe, jeuxOupi);
 			System.out.println("Type change Genial " + type);
 			break;
 		case 3:
-			troupePlacer = new Lobotomisateur(0, 0, 0, jeuxOupi);
+			troupePlacer = new Lobotomisateur(0, 0, equipe, jeuxOupi);
 			System.out.println("Type change Lobo " + type);
 			break;
 		case 4:
-			troupePlacer = new Nexus(0, 0, 0, jeuxOupi);
+			troupePlacer = new Nexus(0, 0, equipe, jeuxOupi);
 			System.out.println("Type change Nexus " + type);
 			break;
 		}
@@ -684,6 +720,8 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	public void setVisible(boolean aFlag) {
 		super.setVisible(aFlag);
 
+		int[] troupesDispo = (equipeQuiPlace == 0) ? troupesDispoEquipe0 : troupesDispoEquipe1;
+		
 		pcs.firePropertyChange("troupes restantes",0,troupesDispo);
 	}
 	

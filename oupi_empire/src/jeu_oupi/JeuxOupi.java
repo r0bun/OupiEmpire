@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import plateau.Plateau;
 import plateau.Tuile;
 import troupe.*;
+import tuiles.Eau;
 
 /**
  * La classe {@code JeuxOupi} représente le jeu Oupi, gérant le plateau de jeu
@@ -58,7 +59,7 @@ public class JeuxOupi implements Dessinable {
         for(int i = 0; i < zonePlacer; i++) {
         	for(int j = 0 ; j < plateau.getColonnes(); j++) {
         		if(!plateau.getTuile(i, j).estOccupee()) {
-        			plateau.getTuile(i, j).setAccessible(true);
+        			plateau.getTuile(i, j).setPlacable(true);
         		}
         	}
         }
@@ -68,7 +69,7 @@ public class JeuxOupi implements Dessinable {
         for(int i = 0; i < zonePlacer; i++) {
         	for(int j = 0 ; j < plateau.getColonnes(); j++) {
         		if(!plateau.getTuile(zoneBas+i, j).estOccupee()) {
-        			plateau.getTuile(zoneBas+i, j).setPlacable(true);
+        			plateau.getTuile(zoneBas+i, j).setPlacable(false);
         		}
         	}
         }
@@ -79,6 +80,25 @@ public class JeuxOupi implements Dessinable {
 
         // Initialiser les positions des troupes
         setPosTroupes();
+    }
+    
+    public void initZonePlacementEquipe1() {
+        // Réinitialiser toutes les tuiles placables
+        for(int i = 0; i < plateau.getLignes(); i++) {
+            for(int j = 0; j < plateau.getColonnes(); j++) {
+                plateau.getTuile(i, j).setPlacable(false);
+            }
+        }
+        
+        // Définir la zone de placement pour l'équipe 1 (en bas)
+        int zoneBas = plateau.getLignes() - zonePlacer;
+        for(int i = zoneBas; i < plateau.getLignes(); i++) {
+            for(int j = 0; j < plateau.getColonnes(); j++) {
+                if(!plateau.getTuile(i, j).estOccupee() && !(plateau.getTuile(i, j) instanceof Eau)) {
+                    plateau.getTuile(i, j).setPlacable(true);
+                }
+            }
+        }
     }
 
     /**
@@ -549,10 +569,23 @@ public class JeuxOupi implements Dessinable {
         this.troupes = troupes;
     }
     
-    public boolean isInZone(Tuile clique, Tuile coin) {
-    	if(clique.getLig() <= coin.getLig()+zonePlacer && clique.getLig() >= coin.getLig()) {
-    			return true;    	}
-    	return false;
+    public boolean isInZone(Tuile clique, Tuile coin, int equipe) {
+    	
+    	if (equipe == 0) {
+            // Zone du haut pour l'équipe 0
+    		System.out.println("clique: " + clique.getLig());
+    		if ( clique.getLig() < zonePlacer) { //&& clique.isPlacable()) {
+    			return true;
+    		}
+    		return false;
+        } else {
+            // Zone du bas pour l'équipe 1
+            return clique.getLig() >= plateau.getLignes() - zonePlacer && clique.isPlacable();
+        }
+    	
+    	//if(clique.getLig() <= coin.getLig()+zonePlacer && clique.getLig() >= coin.getLig()) {
+    			//return true;    	}
+    	//return false;
     }
     
     public void finirPlacer() {
