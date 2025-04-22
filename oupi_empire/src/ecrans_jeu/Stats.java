@@ -47,14 +47,14 @@ public class Stats extends JPanel {
         setLayout(null);
         
         // Default background
-        setBackground(new Color(210, 180, 140)); // Light brown
+        //setBackground(new Color(210, 180, 140)); // Light brown
         
         // Ajouter un JLabel pour l'image de fond
         backgroundLabel = new JLabel();
         backgroundLabel.setBounds(0, 0, 380, 450); // Taille du panneau Stats
+        backgroundLabel.setIcon(new ImageIcon(scaleImage("res/bak/no_cat_pc.png", 380, 450)));
         add(backgroundLabel);
         
-        //TEST fndksjlfndsiajkfndsija
         
      // Stats labels
         lblHp = createStatLabel(40, 160);
@@ -100,7 +100,7 @@ public class Stats extends JPanel {
      * 
      * @param troupe The troop to display stats for, null to clear display.
      */
-    public void updateTroupe(Troupe troupe) {
+    public void updateTroupe(Troupe troupe, int equipeActuelle) {
         this.selectedTroupe = troupe;
 
         if (troupe != null) {
@@ -109,7 +109,11 @@ public class Stats extends JPanel {
             if (playerCardPath != null && !playerCardPath.isEmpty()) {
                 backgroundLabel.setIcon(new ImageIcon(scaleImage(playerCardPath, 380, 450)));
             } else {
-                backgroundLabel.setIcon(null);
+            	if (troupe.getEquipe() == 0) {
+            		backgroundLabel.setIcon(new ImageIcon(scaleImage("res/bak/no_cat_pc.png", 380, 450)));
+            	}else 
+            		
+            	backgroundLabel.setIcon(new ImageIcon(scaleImage("res/bak/no_cat_bk_gris.png", 380, 450)));
             }
 
             // Update stats
@@ -120,7 +124,11 @@ public class Stats extends JPanel {
             lblNom.setText("" + troupe.getNom());
         } else {
             // Reset to default state
-            backgroundLabel.setIcon(null);
+        	if (equipeActuelle == 0) {
+        		backgroundLabel.setIcon(new ImageIcon(scaleImage("res/bak/no_cat_pc.png", 380, 450)));
+        	}else 
+        		
+        	backgroundLabel.setIcon(new ImageIcon(scaleImage("res/bak/no_cat_bk_gris.png", 380, 450)));
             lblHp.setText("");
             lblAtk.setText("");
             lblDef.setText("");
@@ -140,7 +148,7 @@ public class Stats extends JPanel {
     }
     
   
-    
+    /*
     public void levelUp(Troupe troupe, int nombre) {
     	btnLvlHp.setVisible(true);
     	btnLvlAtk.setVisible(true);
@@ -164,4 +172,5 @@ public class Stats extends JPanel {
     	pcs.firePropertyChange("stat", selectedTroupe, id);
     	updateTroupe(selectedTroupe);
     }
+    */
 }

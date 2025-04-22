@@ -245,7 +245,7 @@ public class Troupe implements Dessinable {
      * 
      * @return la valeur maximale des points de vie
      */
-    protected int getHPMax() {
+    public int getHPMax() {
         // Valeurs par défaut pour chaque type de troupe
         // Ces valeurs correspondent aux HP initiaux définis dans les constructeurs
         String className = this.getClass().getSimpleName();

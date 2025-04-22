@@ -38,6 +38,8 @@ public class appLaunch extends JFrame {
 	
 	private Stats stats;
 	
+	private CadreInfo cadreInfo;
+	
 	private Fin fin;
 	
 	private JButton btnStart, btnToggle, btnWin, btnLose;
@@ -209,7 +211,7 @@ public class appLaunch extends JFrame {
 				
 				// Lorsqu'une troupe est sélectionnée ou mise a jour, update les stats affichées dans player card.
 				if(evt.getPropertyName().equals("troupe")) {
-					stats.updateTroupe((Troupe) evt.getNewValue());
+					stats.updateTroupe((Troupe) evt.getNewValue(), equipeActuelle);
 				}
 				
 				// Détection du changement d'équipe
@@ -230,7 +232,7 @@ public class appLaunch extends JFrame {
 				
 				if(evt.getPropertyName().equals("level")) {
 					int nbr = (int) evt.getNewValue();
-					stats.levelUp(zoneAnimationOupi.getJeuxOupi().getTroupeSelectionnee(), nbr);
+					//stats.levelUp(zoneAnimationOupi.getJeuxOupi().getTroupeSelectionnee(), nbr);
 				}
 			}
 		});
@@ -241,6 +243,11 @@ public class appLaunch extends JFrame {
 		stats = new Stats(screenWidth, screenHeight);
 		stats.setBounds((int) (6*screenWidth/11) + 80 , 350, 380, 450);
 		contentPane.add(stats);
+		
+		//Écran d'informations
+		cadreInfo = new CadreInfo(screenWidth, screenHeight);
+		cadreInfo.setBounds(1120, 47 , 380, 250);
+		contentPane.add(cadreInfo);
 		
 		// Écran de fin
 		fin = new Fin(screenWidth, screenHeight);
@@ -255,6 +262,7 @@ public class appLaunch extends JFrame {
 					ecranDebut.setVisible(false);
 					zoneAnimationOupi.setVisible(true);
 					zoneAnimationOupi.demarrer();
+					cadreInfo.updateCadreInfo(GameManager.getInstance().getZoneAnimationOupi().getJeuxOupi().getTroupePlayer(equipeActuelle), equipeActuelle);
 				}
 			}
 		});
@@ -267,7 +275,7 @@ public class appLaunch extends JFrame {
 				}
 				
 				if(evt.getPropertyName().equals("troupe")) {
-					stats.updateTroupe((Troupe) evt.getNewValue());
+					stats.updateTroupe((Troupe) evt.getNewValue(), equipeActuelle);
 				}
 				
 				// Détection du changement d'équipe
@@ -373,12 +381,14 @@ public class appLaunch extends JFrame {
 				System.out.println("Changement joueur");
 				zoneAnimationOupi.toggleJoueur();
 				// Changer la couleur de fond quand on change d'équipe
-				equipeActuelle = (equipeActuelle == 0) ? 1 : 0;
+				//int nextTeam = (equipeActuelle == 0) ? 1 : 0;
 				
 		        animationPanel.setVisible(true);
 		        animationPanel.startAnimation();
 		        
-				updateBackgroundColor();
+				System.out.println("Next team:" + equipeActuelle);
+				cadreInfo.updateCadreInfo(GameManager.getInstance().getZoneAnimationOupi().getJeuxOupi().getTroupePlayer(equipeActuelle), equipeActuelle);
+				stats.updateTroupe( null, equipeActuelle);
 				zoneAnimationOupi.requestFocusInWindow();
 			}
 		});
