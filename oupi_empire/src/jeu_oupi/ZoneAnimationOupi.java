@@ -135,19 +135,49 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 							
 							if (!tuileCliquee.estOccupee()) {
 								if(jeuxOupi.isInZone(tuileCliquee, jeuxOupi.getPlateau().getTuile(0, 0))) {
+									
+									// Cas spécial pour le Nexus (qui occupe 4 tuiles)
+									if (type == 4) { // Si c'est un Nexus
+										// Créer temporairement un Nexus pour vérifier si les cases sont disponibles
+										Nexus nexusTemp = new Nexus(colonne, ligne, 0, jeuxOupi);
+										
+										if (nexusTemp.peutEtrePlacé()) {
+											nouvelleTroupe(type);
+											troupePlacer.setCol(colonne);
+											troupePlacer.setLig(ligne);
+											
+											// Occuper toutes les tuiles du Nexus
+											if (troupePlacer instanceof Nexus) {
+												((Nexus) troupePlacer).occuperTuiles();
+											} else {
+												tuileCliquee.setOccupee(true);
+											}
+											
+											troupesDispo[type]--;
+											System.out.println("Il vous reste "+ troupesDispo[type]+ " troupes de ce type");
+											pcs.firePropertyChange("troupes restantes",0,troupesDispo);
+											jeuxOupi.addTroupe(troupePlacer);
+											System.out.println("Nexus placé et occupe 2x2 cases");
+										} else {
+											String message = "⚠️ Impossible de placer le Nexus ici - besoin de 4 cases libres (2x2)!";
+											System.out.println(message);
+											pcs.firePropertyChange("combatMessage", null, new ArrayList<String>() {{ add(message); }});
+										}
+									} else {
+										// Cas normal pour les autres troupes (qui occupent 1 tuile)
+										nouvelleTroupe(type);
+										troupePlacer.setCol(colonne);
+										troupePlacer.setLig(ligne);
+										
+										tuileCliquee.setOccupee(true);
+										troupesDispo[type]--;
+										System.out.println("Il vous reste "+ troupesDispo[type]+ " troupes de ce type");
+										pcs.firePropertyChange("troupes restantes",0,troupesDispo);
+										jeuxOupi.addTroupe(troupePlacer);
+										System.out.println("Troupe placee");
+									}
 								
-								nouvelleTroupe(type);
-								troupePlacer.setCol(colonne);
-								troupePlacer.setLig(ligne);
-								
-								tuileCliquee.setOccupee(true);
-								troupesDispo[type]--;
-								System.out.println("Il vous reste "+ troupesDispo[type]+ " troupes de ce type");
-								pcs.firePropertyChange("troupes restantes",0,troupesDispo);
-								jeuxOupi.addTroupe(troupePlacer);
-								System.out.println("Troupe placee");
-								
-								repaint();
+									repaint();
 								} else {
 									System.out.println("Veuillez selectionner une tuile dans la zone de placement");
 								}

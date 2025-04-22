@@ -106,6 +106,7 @@ public class JeuxOupi implements Dessinable {
         // Équipe 1 (joueur 2)
         troupes.add(new Genial(12, 8, 1, this));
         troupes.add(new Electricien(14, 8, 1, this));
+
     }
 
     /**
@@ -116,10 +117,19 @@ public class JeuxOupi implements Dessinable {
         for (Troupe troupe : troupes) {
             int lig = troupe.getLig();
             int col = troupe.getCol();
-            if (lig >= 0 && lig < nbTuiles && col >= 0 && col < nbTuiles) {
+            
+            // Traitement spécial pour les Nexus qui occupent une zone 2x2
+            if (troupe instanceof Nexus) {
+                // Utiliser la méthode spécifique du Nexus pour occuper ses 4 tuiles
+                ((Nexus) troupe).occuperTuiles();
+                System.out.println("Nexus initialisé aux coordonnées (" + lig + "," + col + ") - 4 tuiles occupées");
+            } 
+            // Traitement standard pour les autres troupes (1 tuile)
+            else if (lig >= 0 && lig < nbTuiles && col >= 0 && col < nbTuiles) {
                 plateau.getTuile(lig, col).setOccupee(true);
             }
-            // Forcer la mise à jour des positions en pixels
+            
+            // Forcer la mise à jour des positions en pixels (pour toutes les troupes)
             troupe.setCol(col);
             troupe.setLig(lig);
         }
@@ -359,10 +369,27 @@ public class JeuxOupi implements Dessinable {
      */
     private void gererMortTroupe(Troupe troupe) {
         if (troupe != null) {
-            // Libérer la tuile occupée
-            int lig = troupe.getLig();
-            int col = troupe.getCol();
-            plateau.getTuile(lig, col).setOccupee(false);
+
+           
+            // Vérifier si c'est un Nexus qui a été détruit
+            if (troupe instanceof Nexus) {
+                // Utiliser la méthode spéciale pour libérer les 4 tuiles du Nexus
+                ((Nexus) troupe).libererTuiles();
+                
+                // Si c'est un Nexus, on déclare la victoire de l'équipe adverse
+                int equipeNexus = troupe.getEquipe();
+                int equipeGagnante = (equipeNexus == 0) ? 1 : 0;
+                
+                String msg = "🏆 Le Nexus de l'équipe " + equipeNexus + " a été détruit ! L'équipe " + equipeGagnante + " GAGNE !";
+                System.out.println(msg);
+                combatMessages.add(msg);
+            } else {
+                // Cas normal: libérer la tuile occupée par la troupe
+                int lig = troupe.getLig();
+                int col = troupe.getCol();
+                plateau.getTuile(lig, col).setOccupee(false);
+            }
+
 
             // Retirer la troupe des listes
             troupes.remove(troupe);
