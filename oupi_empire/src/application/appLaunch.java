@@ -15,7 +15,6 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import animations.ChangePlayerAnimation;
 import animations.EndGameAnimation;
-//import animations.SpriteSheetAnimationPanel;
 
 /**
  * La classe {@code appLaunch} représente la fenêtre principale de l'application
@@ -47,18 +46,13 @@ public class appLaunch extends JFrame {
 
 	private JLabel lblEtat;
 	
-	private JRadioButton rdbtnOupi, rdbtnLobo, rdbtnElec, rdbtnGenial;
-	
-	private final ButtonGroup buttonGroupTroupe = new ButtonGroup();
-	
-	private JLabel lblOupi, lblElec, lblGenial, lblLobo;
-	
 	private JTextArea textAreaAttaque;
 	
 	private JLabel lblAnimChangeTurn;
 	
 	private PartieTerminee pagePartieTerminee = new PartieTerminee();
 	
+	private PlacementPanel placementPanel;
 	
 	// Pour suivre l'équipe actuelle (0 ou 1)
 	private int equipeActuelle = 0;
@@ -124,15 +118,30 @@ public class appLaunch extends JFrame {
 	    borderPanel.setLayout(null); // Absolute positioning
 	    borderPanel.setOpaque(false); // Make the panel transparent
 	    borderPanel.setBounds(-125, -120, (int) screenWidth, screenHeight ); // Same size as zoneAnimationOupi
+	    
+	    // === Add border image above the animation zone ===
+	    JPanel borderPanel2 = new JPanel();
+	    borderPanel2.setLayout(null); // Absolute positioning
+	    borderPanel2.setOpaque(false); // Make the panel transparent
+	    borderPanel2.setBounds(-364, 425, (int) screenWidth, screenHeight ); // Same size as zoneAnimationOupi
 
 	    // Add the border image to the panel
 	    ImageIcon borderIcon = new ImageIcon("res/bak/cadre_jeu.png"); // Replace with your border image path
 	    JLabel borderLabel = new JLabel(borderIcon);
 	    borderLabel.setBounds(0, 0, borderPanel.getWidth(), borderPanel.getHeight()); // Fill the panel
 	    borderPanel.add(borderLabel);
+	    
+	    // Add the border image to the panel
+	    ImageIcon borderIcon2 = new ImageIcon("res/bak/cadre_bas.png"); // Replace with your border image path
+	    JLabel borderLabel2 = new JLabel(borderIcon2);
+	    borderLabel2.setBounds(0, 0, borderPanel.getWidth(), borderPanel.getHeight()); // Fill the panel
+	    borderPanel2.add(borderLabel2);
 
 	    // Add the border panel to the layered pane above the animation zone
 	    layeredPane.add(borderPanel, Integer.valueOf(2)); // Add above the animation zone
+	    
+	 // Add the border panel2 to the layered pane above the animation zone
+	    layeredPane.add(borderPanel2, Integer.valueOf(3)); // Add above the animation zone
 	    
 	    // === Main content panel ===
 	    contentPane = new JPanel();
@@ -141,22 +150,6 @@ public class appLaunch extends JFrame {
 	    //contentPane.setBackground(COULEUR_EQUIPE_0); // Your team color background
 	    contentPane.setOpaque(false); // Pour que l'image soit visible à travers
 	    layeredPane.add(contentPane, Integer.valueOf(0));
-		
-		lblOupi = new JLabel("New label");
-		lblOupi.setBounds(206, 936, 56, 16);
-		contentPane.add(lblOupi);
-		
-		lblElec = new JLabel("New label");
-		lblElec.setBounds(206, 984, 56, 16);
-		contentPane.add(lblElec);
-		
-		lblGenial = new JLabel("New label");
-		lblGenial.setBounds(426, 936, 56, 16);
-		contentPane.add(lblGenial);
-		
-		lblLobo = new JLabel("New label");
-		lblLobo.setBounds(426, 984, 56, 16);
-		contentPane.add(lblLobo);
 		
 		// Add Nexus label
 		JLabel lblNexus = new JLabel("1");
@@ -231,10 +224,7 @@ public class appLaunch extends JFrame {
 				// Quand des troupes sont ajoutées au tableau, leur quantité change.
 				if(evt.getPropertyName().equals("troupes restantes")) {
 					int[] troupesDispo = (int[]) evt.getNewValue();
-					lblOupi.setText(troupesDispo[0]+"");
-					lblElec.setText(troupesDispo[1]+"");
-					lblGenial.setText(troupesDispo[2]+"");
-					lblLobo.setText(troupesDispo[3]+"");
+					placementPanel.updateTroupesLabels(troupesDispo);
 				}
 				
 				if(evt.getPropertyName().equals("level")) {
@@ -302,10 +292,7 @@ public class appLaunch extends JFrame {
 				
 				if(evt.getPropertyName().equals("troupes restantes")) {
 					int[] troupesDispo = (int[]) evt.getNewValue();
-					lblOupi.setText(troupesDispo[0]+"");
-					lblElec.setText(troupesDispo[1]+"");
-					lblGenial.setText(troupesDispo[2]+"");
-					lblLobo.setText(troupesDispo[3]+"");
+					placementPanel.updateTroupesLabels(troupesDispo);
 					}
 				
 				if(evt.getPropertyName().equals("combatMessages")) {
@@ -445,58 +432,11 @@ public class appLaunch extends JFrame {
 		lblEtat.setBounds(buttonsStartX, buttonY + buttonHeight + 10, buttonWidth * 2, 30);
 		contentPane.add(lblEtat);
 		
-		JButton chboxPlacer = new JButton("Finir placer");
-		chboxPlacer.setBounds(50, 939, 111, 25);
-		chboxPlacer.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				zoneAnimationOupi.finirPlacer();
-				cadreInfo.updateCadreInfo(GameManager.getInstance().getZoneAnimationOupi().getJeuxOupi().getTroupePlayer(equipeActuelle), equipeActuelle);
-				stats.updateTroupe( null, equipeActuelle);
-			}
-		});
-		contentPane.add(chboxPlacer);
-		
-		rdbtnOupi = new JRadioButton("Oupi");
-		rdbtnOupi.setBounds(270, 932, 123, 25);
-		rdbtnOupi.setSelected(true);
-		rdbtnOupi.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				zoneAnimationOupi.changerType(0);
-			}
-		});
-		buttonGroupTroupe.add(rdbtnOupi);
-		contentPane.add(rdbtnOupi);
-		
-		rdbtnElec = new JRadioButton("Electricien");
-		rdbtnElec.setBounds(270, 980, 123, 25);
-		rdbtnElec.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				zoneAnimationOupi.changerType(1);
-			}
-		});
-		buttonGroupTroupe.add(rdbtnElec);
-		contentPane.add(rdbtnElec);
-		
-		rdbtnGenial = new JRadioButton("Homme genial");
-		rdbtnGenial.setBounds(490, 932, 123, 25);
-		rdbtnGenial.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				zoneAnimationOupi.changerType(2);
-			}
-		});
-		buttonGroupTroupe.add(rdbtnGenial);
-		contentPane.add(rdbtnGenial);
-		
-		rdbtnLobo = new JRadioButton("Lobotomisateur");
-		rdbtnLobo.setBounds(490, 980, 123, 25);
-		rdbtnLobo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				zoneAnimationOupi.changerType(3);
-			}
-		});
-		buttonGroupTroupe.add(rdbtnLobo);
-		contentPane.add(rdbtnLobo);
-		
+		// Créer et ajouter le panneau de placement
+        placementPanel = new PlacementPanel(zoneAnimationOupi);
+        placementPanel.setBounds(30, 840, 1000, 175);
+        contentPane.add(placementPanel);
+
 		textAreaAttaque = new JTextArea();
 		textAreaAttaque.setBounds(1561, 30, 333, 783);
 		textAreaAttaque.setEditable(false);

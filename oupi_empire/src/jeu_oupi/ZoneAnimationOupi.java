@@ -802,4 +802,8 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	        centrerCameraSur(troupe.getCol(), troupe.getLig());
 	    }
 	}
+	
+	public int getJoueurActuel() {
+		return joueurActuel;
+	}
 }
