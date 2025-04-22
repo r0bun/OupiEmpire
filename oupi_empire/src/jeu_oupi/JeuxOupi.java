@@ -323,8 +323,16 @@ public class JeuxOupi implements Dessinable {
         }
 
         // Calculer la distance entre les troupes (distance Manhattan)
-        int distance = Math.abs(troupeSelectionnee.getCol() - troupeCible.getCol())
-                + Math.abs(troupeSelectionnee.getLig() - troupeCible.getLig());
+        int distance;
+        
+        // Si la cible est un Nexus, utiliser sa méthode spéciale pour calculer la distance minimale
+        if (troupeCible instanceof Nexus) {
+            distance = ((Nexus) troupeCible).getDistanceMinimale(troupeSelectionnee);
+        } else {
+            // Calcul standard pour les autres troupes
+            distance = Math.abs(troupeSelectionnee.getCol() - troupeCible.getCol())
+                    + Math.abs(troupeSelectionnee.getLig() - troupeCible.getLig());
+        }
 
         // Vérifier si la cible est à portée d'attaque selon la distance d'attaque de la troupe
         if (distance > troupeSelectionnee.getDistanceAttaque()) {

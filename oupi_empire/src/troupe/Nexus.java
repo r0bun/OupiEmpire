@@ -231,4 +231,32 @@ public class Nexus extends Troupe {
     private int getX(int col) {
         return col * getJeu().getTailleTuile();
     }
+
+    /**
+     * Calcule la distance minimale entre une troupe et n'importe quelle case du Nexus.
+     * 
+     * @param troupe La troupe dont on veut calculer la distance avec le Nexus
+     * @return La distance minimale (distance Manhattan) entre la troupe et le Nexus
+     */
+    public int getDistanceMinimale(Troupe troupe) {
+        int minDistance = Integer.MAX_VALUE;
+        
+        // Parcourir les 4 cases du Nexus (2x2)
+        for (int i = 0; i < TAILLE_NEXUS; i++) {
+            for (int j = 0; j < TAILLE_NEXUS; j++) {
+                int nexusLig = getLig() + i;
+                int nexusCol = getCol() + j;
+                
+                // Calculer la distance Manhattan avec cette case du Nexus
+                int distance = Math.abs(troupe.getCol() - nexusCol) + Math.abs(troupe.getLig() - nexusLig);
+                
+                // Garder la distance minimale
+                if (distance < minDistance) {
+                    minDistance = distance;
+                }
+            }
+        }
+        
+        return minDistance;
+    }
 }

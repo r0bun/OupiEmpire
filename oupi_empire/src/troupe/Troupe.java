@@ -426,7 +426,15 @@ public class Troupe implements Dessinable {
         }
         
         // Calcul de la distance entre les troupes
-        int distance = Math.abs(this.getCol() - troupeEnem.getCol()) + Math.abs(this.getLig() - troupeEnem.getLig());
+        int distance;
+        
+        // Si la cible est un Nexus, utiliser sa méthode spéciale pour calculer la distance minimale
+        if (troupeEnem instanceof Nexus) {
+            distance = ((Nexus) troupeEnem).getDistanceMinimale(this);
+        } else {
+            // Calcul standard pour les autres troupes
+            distance = Math.abs(this.getCol() - troupeEnem.getCol()) + Math.abs(this.getLig() - troupeEnem.getLig());
+        }
         
         // Vérifier que la troupe est à portée d'attaque
         if (distance > distanceAttaque) {
@@ -466,7 +474,13 @@ public class Troupe implements Dessinable {
             combatMessages.add(message);
         } else {
             // Contre-attaque si la troupe ennemie est encore en vie
-            if (troupeEnem.vitesse >= this.vitesse - 5) {
+            // Vérifier si l'attaque était à distance et que l'ennemi ne peut attaquer qu'au corps à corps
+            if (distance > 1 && troupeEnem.distanceAttaque == 1) {
+                message = "🛡️ " + troupeEnem.getClass().getSimpleName() + " ne peut pas contre-attaquer à distance!";
+                System.out.println(message);
+                combatMessages.add(message);
+            }
+            else if (troupeEnem.vitesse >= this.vitesse - 5) {
                 int counterDodgeChance = Math.max(0, Math.min(70, this.vitesse - troupeEnem.vitesse + 20));
                 
                 if (random.nextInt(100) < counterDodgeChance) {
@@ -502,10 +516,10 @@ public class Troupe implements Dessinable {
 
         // Réduction de l'endurance après l'attaque
         if(HP > 0) {
-        	this.endurance = Math.max(0, this.endurance - 5);
-        	message = "⚡ Endurance de " + this.getClass().getSimpleName() + " réduite à " + this.endurance;
-        	System.out.println(message);
-        	combatMessages.add(message);
+            this.endurance = Math.max(0, this.endurance - 5);
+            message = "⚡ Endurance de " + this.getClass().getSimpleName() + " réduite à " + this.endurance;
+            System.out.println(message);
+            combatMessages.add(message);
         }
     }
     
