@@ -2,10 +2,14 @@ package ecrans_jeu;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
@@ -54,12 +58,31 @@ public class PlacementPanel extends JPanel {
     private JLabel lblJoueurActuel;
     private ZoneAnimationOupi zoneAnimationOupi;
     private ActionPanel actionPanel; 
+    private Font customFont;
 
     public PlacementPanel(ZoneAnimationOupi zoneAnimationOupi, ActionPanel actionPanel) {
         this.zoneAnimationOupi = zoneAnimationOupi;
         this.actionPanel = actionPanel;
         setLayout(null);
         setOpaque(true);
+        
+     // === Custom Font ===
+        customFont = null;
+
+            try {
+            	customFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream("res/fonts/UncialAntiqua-Regular.ttf"))
+            		    .deriveFont(Font.BOLD, 36f);
+			} catch (FontFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            GraphicsEnvironment ge1 = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge1.registerFont(customFont);
+            
+            //customFont.deriveFont(Font.PLAIN, 40f);
         
         // Background
         backgroundLabel = new JLabel();
@@ -72,7 +95,7 @@ public class PlacementPanel extends JPanel {
         lblJoueurActuel = new JLabel("Joueur 1");
         lblJoueurActuel.setBounds(40, 30, 200, 25);
         lblJoueurActuel.setForeground(Color.WHITE);
-        lblJoueurActuel.setFont(new Font("Arial", Font.BOLD, 20));
+        lblJoueurActuel.setFont(customFont.deriveFont(Font.BOLD, 20f));
         add(lblJoueurActuel);
 
         // Configuration des boutons
@@ -110,7 +133,7 @@ public class PlacementPanel extends JPanel {
         lblLobo = createStyledLabel("0", startX + 3 * (buttonWidth + spacing) + (buttonWidth - labelWidth) / 2, labelY, labelWidth, labelHeight);
 
         // Bouton Finir
-        btnFinirPlacer = new JButton("Terminer placement");
+        btnFinirPlacer = new JButton("Fin placement");
      // Calculer la position pour le coin en bas à droite
         int finirX = 800; // Position fixe au lieu de getWidth()
         int finirY = 120; // Position plus haute pour être au-dessus du background
@@ -121,6 +144,7 @@ public class PlacementPanel extends JPanel {
         btnFinirPlacer.setContentAreaFilled(false);
         btnFinirPlacer.setFocusPainted(false);
         btnFinirPlacer.setForeground(Color.RED);
+        btnFinirPlacer.setFont(customFont.deriveFont(Font.BOLD, 12f));
         btnFinirPlacer.addActionListener(e -> {
             zoneAnimationOupi.finirPlacer();
             
@@ -188,6 +212,7 @@ public class PlacementPanel extends JPanel {
         button.setSelectedIcon(normalIcon);
         button.setHorizontalTextPosition(JButton.CENTER);
         button.setForeground(Color.WHITE);
+        button.setFont(customFont.deriveFont(Font.BOLD, 12f));
         
         // Style de bordure pour la sélection
         button.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));

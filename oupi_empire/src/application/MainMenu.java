@@ -3,6 +3,8 @@ package application;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 import javax.swing.*;
 
@@ -43,6 +45,24 @@ public class MainMenu extends JFrame {
         DisplayMode dm = gd.getDisplayMode();
         int screenWidth = dm.getWidth();
         int screenHeight = dm.getHeight();
+        
+        // === Custom Font ===
+        Font customFont = null;
+
+            try {
+            	customFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream("res/fonts/UncialAntiqua-Regular.ttf"))
+            		    .deriveFont(Font.BOLD, 36f);
+			} catch (FontFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            GraphicsEnvironment ge1 = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge1.registerFont(customFont);
+            
+            //customFont.deriveFont(Font.PLAIN, 40f);
 
         // Création du LayeredPane pour gérer les couches (background + contenu)
         JLayeredPane layeredPane = new JLayeredPane();
@@ -83,8 +103,13 @@ public class MainMenu extends JFrame {
 
         // Création des boutons arrondis et transparents
         JButton playButton = new RoundedButton("Jouer", 30);
-        JButton settingsButton = new RoundedButton("Options", 30);
+        JButton settingsButton = new RoundedButton("Tutoriel", 30);
         JButton exitButton = new RoundedButton("Quitter", 30);
+        
+        playButton.setFont(customFont.deriveFont(Font.PLAIN, 20f));
+        settingsButton.setFont(customFont.deriveFont(Font.PLAIN, 20f));
+        exitButton.setFont(customFont.deriveFont(Font.PLAIN, 20f));
+
 
         // Positionner les boutons au centre de l'écran
         int buttonWidth = 200;
@@ -126,7 +151,7 @@ public class MainMenu extends JFrame {
         settingsButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("Bouton 'Options' cliqué !");
+                System.out.println("Bouton 'Tutoriel' cliqué !");
             }
         });
 

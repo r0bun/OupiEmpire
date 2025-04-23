@@ -3,8 +3,13 @@ package ecrans_jeu;
 import javax.swing.*;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 import jeu_oupi.ZoneAnimationOupi;
 
 public class ActionPanel extends JPanel {
@@ -19,6 +24,24 @@ public class ActionPanel extends JPanel {
         setLayout(null);
         setOpaque(true);
         
+		// === Custom Font ===
+        Font customFont = null;
+
+            try {
+            	customFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream("res/fonts/UncialAntiqua-Regular.ttf"))
+            		    .deriveFont(Font.BOLD, 36f);
+			} catch (FontFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            GraphicsEnvironment ge1 = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge1.registerFont(customFont);
+            
+            //customFont.deriveFont(Font.PLAIN, 40f);
+        
         // Background
         backgroundLabel = new JLabel();
         backgroundLabel.setBounds(0, 0, 1000, 175);
@@ -28,9 +51,9 @@ public class ActionPanel extends JPanel {
 
         // Label joueur actuel
         lblJoueurActuel = new JLabel("Joueur 1");
+        lblJoueurActuel.setFont(customFont.deriveFont(Font.BOLD, 20f));
         lblJoueurActuel.setBounds(40, 30, 200, 25);
         lblJoueurActuel.setForeground(Color.WHITE);
-        lblJoueurActuel.setFont(new Font("Arial", Font.BOLD, 20));
         add(lblJoueurActuel);
 
         // Configuration des boutons
@@ -43,10 +66,12 @@ public class ActionPanel extends JPanel {
         // Boutons de droite
         int rightX = 800; // Position X pour les boutons de droite
         btnTerminerTour = createStyledButton("Terminer Tour", rightX, buttonY, buttonWidth, buttonHeight);
+        btnTerminerTour.setFont(customFont.deriveFont(Font.BOLD, 12f));
         btnTerminerTour.setForeground(Color.BLACK);
         btnTerminerTour.addActionListener(e -> zoneAnimationOupi.toggleJoueur());
 
         btnQuitterPartie = createStyledButton("Quitter la Partie", rightX, buttonY + buttonHeight + spacing, buttonWidth, buttonHeight);
+        btnQuitterPartie.setFont(customFont.deriveFont(Font.BOLD, 12f));
         btnQuitterPartie.setForeground(Color.RED);
         btnQuitterPartie.addActionListener(e -> zoneAnimationOupi.win());
 
@@ -54,12 +79,15 @@ public class ActionPanel extends JPanel {
         int secondRowY = buttonY + buttonHeight + spacing;
         
         btnAttaque = createStyledButton("Attaquer (F)", startX, secondRowY, buttonWidth, buttonHeight);
+        btnAttaque.setFont(customFont.deriveFont(Font.BOLD, 12f));
         btnAttaque.addActionListener(e -> simulateKeyPress(KeyEvent.VK_F));
 
         btnConfirmer = createStyledButton("Confirmer (C)", startX + (buttonWidth + spacing), secondRowY, buttonWidth, buttonHeight);
+        btnConfirmer.setFont(customFont.deriveFont(Font.BOLD, 12f));
         btnConfirmer.addActionListener(e -> simulateKeyPress(KeyEvent.VK_C));
 
         btnReset = createStyledButton("Reset (R)", startX + 2 * (buttonWidth + spacing), secondRowY, buttonWidth, buttonHeight);
+        btnReset.setFont(customFont.deriveFont(Font.BOLD, 12f));
         btnReset.addActionListener(e -> simulateKeyPress(KeyEvent.VK_R));
 
         // Ajouter tous les boutons
@@ -97,6 +125,7 @@ public class ActionPanel extends JPanel {
         button.setIcon(normalIcon);
         button.setHorizontalTextPosition(JButton.CENTER);
         button.setForeground(Color.WHITE);
+        
         
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {

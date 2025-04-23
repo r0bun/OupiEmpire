@@ -5,9 +5,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import troupe.Troupe;
-import java.awt.Graphics2D;
 
 public class CadreInfo extends JPanel {
     private JLabel lblNomJoueur;
@@ -19,10 +20,28 @@ public class CadreInfo extends JPanel {
         setLayout(null);
         setPreferredSize(new Dimension(380, 250));
         setBackground(new Color(210, 180, 140)); // Fond général (brun clair)
+        
+		// === Custom Font ===
+        Font customFont = null;
+
+            try {
+            	customFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream("res/fonts/UncialAntiqua-Regular.ttf"))
+            		    .deriveFont(Font.BOLD, 36f);
+			} catch (FontFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            GraphicsEnvironment ge1 = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge1.registerFont(customFont);
+            
+            //customFont.deriveFont(Font.PLAIN, 40f);
 
         // Nom du joueur en haut
         lblNomJoueur = new JLabel(" ");
-        lblNomJoueur.setFont(new Font("Arial", Font.BOLD, 24));
+        lblNomJoueur.setFont(customFont.deriveFont(Font.BOLD, 24f));
         lblNomJoueur.setForeground(Color.WHITE);
         lblNomJoueur.setHorizontalAlignment(SwingConstants.CENTER);
         lblNomJoueur.setBounds(94, 20, 200, 30); // Position du nom

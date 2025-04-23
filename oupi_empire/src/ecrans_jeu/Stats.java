@@ -2,8 +2,10 @@ package ecrans_jeu;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.RenderingHints;
@@ -12,6 +14,8 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -49,6 +53,24 @@ public class Stats extends JPanel {
         // Default background
         //setBackground(new Color(210, 180, 140)); // Light brown
         
+		// === Custom Font ===
+        Font customFont = null;
+
+            try {
+            	customFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream("res/fonts/UncialAntiqua-Regular.ttf"))
+            		    .deriveFont(Font.BOLD, 36f);
+			} catch (FontFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            GraphicsEnvironment ge1 = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge1.registerFont(customFont);
+            
+            //customFont.deriveFont(Font.PLAIN, 40f);
+        
         // Ajouter un JLabel pour l'image de fond
         backgroundLabel = new JLabel();
         backgroundLabel.setBounds(0, 0, 380, 450); // Taille du panneau Stats
@@ -69,7 +91,7 @@ public class Stats extends JPanel {
         
         // Nom Label
         lblNom = new JLabel("");
-        lblNom.setFont(new Font("Arial", Font.BOLD, 20));
+        lblNom.setFont(customFont.deriveFont(Font.PLAIN, 16f));
         lblNom.setForeground(Color.WHITE);
         lblNom.setHorizontalAlignment(SwingConstants.RIGHT);
 
