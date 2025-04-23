@@ -693,13 +693,10 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	        requestFocus();
 	    }
 		
-		
-		/*
-		placer = false;
-		System.out.println("Mode placement = " + placer);
-		jeuxOupi.finirPlacer();
-		requestFocus();
-		*/
+		if (!placer) {
+			// Afficher ActionPanel une fois que le placement est terminé
+			pcs.firePropertyChange("showActionPanel", false, true);
+		}
 	}
 
 	/**

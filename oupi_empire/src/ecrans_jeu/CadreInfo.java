@@ -21,11 +21,11 @@ public class CadreInfo extends JPanel {
         setBackground(new Color(210, 180, 140)); // Fond général (brun clair)
 
         // Nom du joueur en haut
-        lblNomJoueur = new JLabel("Nom Joueur");
+        lblNomJoueur = new JLabel(" ");
         lblNomJoueur.setFont(new Font("Arial", Font.BOLD, 24));
         lblNomJoueur.setForeground(Color.WHITE);
         lblNomJoueur.setHorizontalAlignment(SwingConstants.CENTER);
-        lblNomJoueur.setBounds(96, 20, 200, 30); // Position du nom
+        lblNomJoueur.setBounds(94, 20, 200, 30); // Position du nom
         add(lblNomJoueur);
         
         backgroundLabel = new JLabel();
@@ -48,7 +48,7 @@ public class CadreInfo extends JPanel {
     }
 
     public void updateCadreInfo(ArrayList<Troupe> liste, int equipeActuelle) {
-        System.out.println("Updating cadreInfo");
+        System.out.println("Updating cadreInfo, equipe = " + equipeActuelle);
 
         lblNomJoueur.setText("Joueur " + (equipeActuelle + 1));
         for(int i = 0; i < 3; i++) {

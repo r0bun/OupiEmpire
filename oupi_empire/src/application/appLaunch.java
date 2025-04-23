@@ -40,10 +40,10 @@ public class appLaunch extends JFrame {
 	
 	private CadreInfo cadreInfo;
 	
+	private ActionPanel actionPanel;
+	
 	private Fin fin;
 	
-	private JButton btnStart, btnToggle, btnWin, btnLose;
-
 	private JLabel lblEtat;
 	
 	private JTextArea textAreaAttaque;
@@ -141,7 +141,7 @@ public class appLaunch extends JFrame {
 	    layeredPane.add(borderPanel, Integer.valueOf(2)); // Add above the animation zone
 	    
 	 // Add the border panel2 to the layered pane above the animation zone
-	    layeredPane.add(borderPanel2, Integer.valueOf(3)); // Add above the animation zone
+	    layeredPane.add(borderPanel2, Integer.valueOf(2)); // Add above the animation zone
 	    
 	    // === Main content panel ===
 	    contentPane = new JPanel();
@@ -152,9 +152,9 @@ public class appLaunch extends JFrame {
 	    layeredPane.add(contentPane, Integer.valueOf(0));
 		
 		// Add Nexus label
-		JLabel lblNexus = new JLabel("1");
-		lblNexus.setBounds(600, 936, 56, 16);
-		contentPane.add(lblNexus);
+		//JLabel lblNexus = new JLabel("1");
+		//lblNexus.setBounds(600, 936, 56, 16);
+		//contentPane.add(lblNexus);
 		
 		ecranDebut = new Debut(screenWidth, screenHeight);
 		ecranDebut.setBounds(50, 30, (int) (screenWidth / 2), (int) (screenHeight*0.725));
@@ -192,6 +192,26 @@ public class appLaunch extends JFrame {
 	    } else {
 	        System.err.println("Erreur : ZoneAnimationOupi n'a pas été initialisée !");
 	    }
+	    
+	    // Action Panel
+	    actionPanel = new ActionPanel(zoneAnimationOupi);
+	    actionPanel.setBounds(30, 840, 1000, 175); // Utilisez les mêmes dimensions que placementPanel
+	    actionPanel.setVisible(false); // Caché au début
+	    contentPane.add(actionPanel);
+	    
+	    zoneAnimationOupi.addPropertyChangeListener(new PropertyChangeListener() {
+	        @Override
+	        public void propertyChange(PropertyChangeEvent evt) {
+	            // ...existing listeners...
+	            
+	            if (evt.getPropertyName().equals("showActionPanel")) {
+	                boolean show = (boolean) evt.getNewValue();
+	                placementPanel.setVisible(!show);
+	                actionPanel.setVisible(show);
+	            }
+	        }
+	    });
+	    
 		
 		// Écouteur pour réagir aux différents évènements générés par ZoneAnimationOupi.
 		zoneAnimationOupi.addPropertyChangeListener(new PropertyChangeListener() {
@@ -214,11 +234,14 @@ public class appLaunch extends JFrame {
 					
 					animationPanel.setVisible(true);
 			        animationPanel.startAnimation();
-			       
+			        
+			       	equipeActuelle = nouvelleEquipe;
+			       	
 					cadreInfo.updateCadreInfo(GameManager.getInstance().getZoneAnimationOupi().getJeuxOupi().getTroupePlayer(equipeActuelle), equipeActuelle);
 					stats.updateTroupe( null, equipeActuelle);
+					actionPanel.setJoueurActuel(equipeActuelle);
 					
-					equipeActuelle = nouvelleEquipe;
+				
 				}
 				
 				// Quand des troupes sont ajoutées au tableau, leur quantité change.
@@ -356,84 +379,13 @@ public class appLaunch extends JFrame {
 			}
 		});
 
-		// Calcul de la position pour les boutons sous la zone d'animation
-		int buttonY = 30 + (int)(screenHeight*0.725) + 20; // 20px de marge après la zone d'animation
-		int buttonWidth = 200;
-		int buttonHeight = 50;
-		int buttonSpacing = 20;
-		int buttonsStartX = 50; // Même X que la zone d'animation
-
-		// Bouton Commencer partie
-		btnStart = new JButton("Commencer partie");
-		btnStart.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Partie start");
-				zoneAnimationOupi.demarrer();
-				// Demander le focus pour l'entrée du clavier
-				zoneAnimationOupi.requestFocusInWindow();
-			}
-		});
-		btnStart.setBounds(buttonsStartX, buttonY, buttonWidth, buttonHeight);
-		contentPane.add(btnStart);
-
-		// Bouton Toggle team
-		btnToggle = new JButton("Toggle team");
-		btnToggle.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Changement joueur");
-				zoneAnimationOupi.toggleJoueur();
-				// Changer la couleur de fond quand on change d'équipe
-				//int nextTeam = (equipeActuelle == 0) ? 1 : 0;
-				
-		        animationPanel.setVisible(true);
-		        animationPanel.startAnimation();
-		        
-				System.out.println("Next team:" + equipeActuelle);
-				cadreInfo.updateCadreInfo(GameManager.getInstance().getZoneAnimationOupi().getJeuxOupi().getTroupePlayer(equipeActuelle), equipeActuelle);
-				stats.updateTroupe( null, equipeActuelle);
-				zoneAnimationOupi.requestFocusInWindow();
-			}
-		});
-		btnToggle.setBounds(buttonsStartX + buttonWidth + buttonSpacing, buttonY, buttonWidth, buttonHeight);
-		contentPane.add(btnToggle);
-
-		// Bouton Gagner partie
-		btnWin = new JButton("Gagner partie");
-		btnWin.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				endAnimationPanel.setVisible(true);
-				endAnimationPanel.startAnimation();
-		        
-				System.out.println("Partie win");
-
-			}
-		});
-		btnWin.setBounds(buttonsStartX + (buttonWidth + buttonSpacing) * 2, buttonY, buttonWidth, buttonHeight);
-		contentPane.add(btnWin);
-
-		// Bouton Perdre partie
-		btnLose = new JButton("Perdre partie");
-		btnLose.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				endAnimationPanel.setVisible(true);
-				endAnimationPanel.startAnimation();
-				
-				System.out.println("Partie lose");
-		
-			}
-		});
-		btnLose.setBounds(buttonsStartX + (buttonWidth + buttonSpacing) * 3, buttonY, buttonWidth, buttonHeight);
-		contentPane.add(btnLose);
-
 		lblEtat = new JLabel("");
 		lblEtat.setHorizontalAlignment(SwingConstants.CENTER);
-		lblEtat.setBounds(buttonsStartX, buttonY + buttonHeight + 10, buttonWidth * 2, 30);
+		lblEtat.setBounds(50, 30 + (int)(screenHeight*0.725) + 90, 400, 30);
 		contentPane.add(lblEtat);
 		
 		// Créer et ajouter le panneau de placement
-        placementPanel = new PlacementPanel(zoneAnimationOupi);
+        placementPanel = new PlacementPanel(zoneAnimationOupi, actionPanel);
         placementPanel.setBounds(30, 840, 1000, 175);
         contentPane.add(placementPanel);
 
