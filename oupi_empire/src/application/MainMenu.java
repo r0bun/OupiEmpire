@@ -1,18 +1,15 @@
 package application;
 
+import animations.ChangePlayerAnimation;
+import animations.EndGameAnimation;
+import editeur_carte.MapBuilderApp;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.IOException;
-
 import javax.swing.*;
-
-import animations.ChangePlayerAnimation;
-import animations.EndGameAnimation;
-import jeu_oupi.Game;
 import jeu_oupi.GameManager;
-import jeu_oupi.ZoneAnimationOupi;
 import styles.RoundedButton;
 
 public class MainMenu extends JFrame {
@@ -104,10 +101,12 @@ public class MainMenu extends JFrame {
         // Création des boutons arrondis et transparents
         JButton playButton = new RoundedButton("Jouer", 30);
         JButton settingsButton = new RoundedButton("Tutoriel", 30);
+        JButton mapEditorButton = new RoundedButton("Éditeur", 30);
         JButton exitButton = new RoundedButton("Quitter", 30);
         
         playButton.setFont(customFont.deriveFont(Font.PLAIN, 20f));
         settingsButton.setFont(customFont.deriveFont(Font.PLAIN, 20f));
+        mapEditorButton.setFont(customFont.deriveFont(Font.PLAIN, 20f));
         exitButton.setFont(customFont.deriveFont(Font.PLAIN, 20f));
 
 
@@ -119,8 +118,9 @@ public class MainMenu extends JFrame {
         int centerX = screenWidth / 2 - buttonWidth / 2;
         int centerY = screenHeight / 2 - buttonHeight / 2;
 
-        playButton.setBounds(centerX, centerY - (buttonHeight + buttonSpacing), buttonWidth, buttonHeight);
-        settingsButton.setBounds(centerX, centerY, buttonWidth, buttonHeight);
+        playButton.setBounds(centerX, centerY - (buttonHeight + buttonSpacing) * 2, buttonWidth, buttonHeight);
+        settingsButton.setBounds(centerX, centerY - (buttonHeight + buttonSpacing), buttonWidth, buttonHeight);
+        mapEditorButton.setBounds(centerX, centerY, buttonWidth, buttonHeight);
         exitButton.setBounds(centerX, centerY + (buttonHeight + buttonSpacing), buttonWidth, buttonHeight);
 
         // Ajout d'un MouseListener à chaque bouton
@@ -154,6 +154,20 @@ public class MainMenu extends JFrame {
                 System.out.println("Bouton 'Tutoriel' cliqué !");
             }
         });
+        
+        // Add mouse listener for the map editor button
+        mapEditorButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // Open the map editor in a new window
+                SwingUtilities.invokeLater(() -> {
+                    MapBuilderApp mapEditor = new MapBuilderApp();
+                    // Set to dispose only this window when closed, not the entire application
+                    mapEditor.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    mapEditor.setVisible(true);
+                });
+            }
+        });
 
         exitButton.addMouseListener(new MouseAdapter() {
             @Override
@@ -166,6 +180,7 @@ public class MainMenu extends JFrame {
         // Ajouter les boutons au panel
         contentPane.add(playButton);
         contentPane.add(settingsButton);
+        contentPane.add(mapEditorButton);
         contentPane.add(exitButton);
     }
 }
