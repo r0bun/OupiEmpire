@@ -3,6 +3,7 @@ package jeu_oupi;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -11,10 +12,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import plateau.Plateau;
@@ -40,6 +43,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
 
 	private JeuxOupi jeuxOupi;
+	private Image backgroundImage; // Background image for areas without tiles
 
 	final int FPS = 27;
 
@@ -63,6 +67,10 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	private int dragStartY;
 	private boolean isDragging = false;
 
+	// Camera boundary constants - margin beyond plateau edge
+	private final int CAMERA_MARGIN = 200; // pixels beyond the plateau edge
+	private final double BACKGROUND_SCALE = 0.5; // Scale factor for background tiles (smaller)
+
 	// Attack mode state
 	private boolean modeAttaque = false;
 
@@ -70,7 +78,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	private Troupe troupePlacer;
 	private int equipeQuiPlace = 0; // Nouvelle variable pour suivre l'équipe qui place
 	private int[] troupesDispoEquipe0 = { 2, 1, 0, 2 };
-	 private int[] troupesDispoEquipe1 = { 2, 1, 0, 2 }; // Troupes pour équipe 1
+	private int[] troupesDispoEquipe1 = { 2, 1, 0, 2 }; // Troupes pour équipe 1
 	private String[] nomTroupes = {"Oupi", "Lobotomisateur", "Electricien", "Homme Genial"};
 	private int type = 0;
 
@@ -88,6 +96,19 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	 */
 	public ZoneAnimationOupi(int screenWidth, int screenHeight) {
 		jeuxOupi = new JeuxOupi(screenWidth, screenHeight);
+		
+		// Load the background image
+		try {
+			backgroundImage = new ImageIcon("res/bak/map_background.jpg").getImage();
+			if (backgroundImage.getWidth(null) <= 0) {
+				System.err.println("Could not load background image. Using fallback.");
+				backgroundImage = new ImageIcon("res/bak/map_background.png").getImage();
+			}
+		} catch (Exception e) {
+			System.err.println("Error loading background image: " + e.getMessage());
+			// Create a fallback pattern if image loading fails
+			backgroundImage = createFallbackBackground();
+		}
 
 		troupePlacer = new Oupi(0, 0, 0, jeuxOupi);
 		addMouseListener(new MouseAdapter() {
@@ -260,8 +281,25 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				if (isDragging) {
-					translateX += e.getX() - dragStartX;
-					translateY += e.getY() - dragStartY;
+					int newTranslateX = translateX + e.getX() - dragStartX;
+					int newTranslateY = translateY + e.getY() - dragStartY;
+					
+					// Calculate camera bounds
+					int plateauWidthPx = jeuxOupi.getTailleTuile() * jeuxOupi.getPlateau().getColonnes();
+					int plateauHeightPx = jeuxOupi.getTailleTuile() * jeuxOupi.getPlateau().getLignes();
+					
+					// Min bounds (right/bottom edge of plateau) - allow scrolling right/down to see whole plateau
+					int minTranslateX = getWidth() - (int)(plateauWidthPx * zoomFactor) - CAMERA_MARGIN;
+					int minTranslateY = getHeight() - (int)(plateauHeightPx * zoomFactor) - CAMERA_MARGIN;
+					
+					// Max bounds (left/top edge of plateau + margin)
+					int maxTranslateX = CAMERA_MARGIN;
+					int maxTranslateY = CAMERA_MARGIN;
+					
+					// Apply constraints
+					translateX = Math.min(maxTranslateX, Math.max(minTranslateX, newTranslateX));
+					translateY = Math.min(maxTranslateY, Math.max(minTranslateY, newTranslateY));
+					
 					dragStartX = e.getX();
 					dragStartY = e.getY();
 					repaint();
@@ -281,6 +319,9 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 				double oldGameX = (mouseX - translateX) / zoomFactor;
 				double oldGameY = (mouseY - translateY) / zoomFactor;
 
+				 // Store old zoom factor for boundary calculations
+				double oldZoomFactor = zoomFactor;
+
 				// Adjust zoom based on wheel rotation
 				if (e.getPreciseWheelRotation() < 0) {
 					// Zoom in
@@ -290,14 +331,27 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 					zoomFactor = Math.max(MIN_ZOOM, zoomFactor - ZOOM_STEP);
 				}
 
-				// Calculate new screen position to keep the same game position under cursor
-				double newGameX = (mouseX - translateX) / zoomFactor;
-				double newGameY = (mouseY - translateY) / zoomFactor;
+				// Calculate new translation to keep the same game position under cursor
+				int newTranslateX = (int)(mouseX - oldGameX * zoomFactor);
+				int newTranslateY = (int)(mouseY - oldGameY * zoomFactor);
 
-				// Adjust translation to keep mouse position over same game coordinates
-				translateX -= (oldGameX - newGameX) * zoomFactor;
-				translateY -= (oldGameY - newGameY) * zoomFactor;
-
+				// Apply the same boundary constraints as in mouseDragged
+				plateau = jeuxOupi.getPlateau();
+				int plateauWidthPx = jeuxOupi.getTailleTuile() * plateau.getColonnes();
+				int plateauHeightPx = jeuxOupi.getTailleTuile() * plateau.getLignes();
+				
+				// Min bounds (right/bottom edge of plateau)
+				int minTranslateX = getWidth() - (int)(plateauWidthPx * zoomFactor) - CAMERA_MARGIN;
+				int minTranslateY = getHeight() - (int)(plateauHeightPx * zoomFactor) - CAMERA_MARGIN;
+				
+				// Max bounds (left/top edge of plateau + margin)
+				int maxTranslateX = CAMERA_MARGIN;
+				int maxTranslateY = CAMERA_MARGIN;
+				
+				// Apply constraints
+				translateX = Math.min(maxTranslateX, Math.max(minTranslateX, newTranslateX));
+				translateY = Math.min(maxTranslateY, Math.max(minTranslateY, newTranslateY));
+				
 				repaint();
 			}
 		});
@@ -381,6 +435,22 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 			}
 
 		});
+	}
+
+	/**
+	 * Creates a fallback background pattern if the image can't be loaded
+	 */
+	private Image createFallbackBackground() {
+		// Create a simple checkered pattern as fallback
+		BufferedImage img = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g = img.createGraphics();
+		g.setColor(new Color(240, 230, 200)); // Sandy color
+		g.fillRect(0, 0, 64, 64);
+		g.setColor(new Color(230, 220, 190)); // Slightly darker
+		g.fillRect(0, 0, 32, 32);
+		g.fillRect(32, 32, 32, 32);
+		g.dispose();
+		return img;
 	}
 
 	/**
@@ -484,17 +554,50 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		// Apply zoom and translation
 		g2d.translate(translateX, translateY);
 		g2d.scale(zoomFactor, zoomFactor);
+		
+		// Draw background pattern
+		if (backgroundImage != null) {
+			// Get plateau dimensions
+			int tileSize = jeuxOupi.getTailleTuile();
+			int plateauWidth = jeuxOupi.getPlateau().getColonnes() * tileSize;
+			int plateauHeight = jeuxOupi.getPlateau().getLignes() * tileSize;
+			
+			// Extend the background area beyond the plateau by CAMERA_MARGIN * 2
+			int extendedMargin = CAMERA_MARGIN * 2;
+			int bgStartX = -extendedMargin;
+			int bgStartY = -extendedMargin;
+			int bgWidth = plateauWidth + (extendedMargin * 2);
+			int bgHeight = plateauHeight + (extendedMargin * 2);
+			
+			// Calculate scaled dimensions for smaller tiles
+			int imgWidth = backgroundImage.getWidth(null);
+			int imgHeight = backgroundImage.getHeight(null);
+			
+			if (imgWidth > 0 && imgHeight > 0) {
+				// Calculate scaled dimensions
+				int scaledWidth = (int)(imgWidth * BACKGROUND_SCALE);
+				int scaledHeight = (int)(imgHeight * BACKGROUND_SCALE);
+				
+				// Add different overlaps to prevent horizontal and vertical gaps
+				int horizontalOverlap = 4; // Increased horizontal overlap to fix horizontal gaps
+				int verticalOverlap = 2;   // Keep the same vertical overlap
+				
+				// Draw smaller tiles to create a denser pattern
+				for (int x = bgStartX; x < bgStartX + bgWidth; x += scaledWidth) {
+					for (int y = bgStartY; y < bgStartY + bgHeight; y += scaledHeight) {
+						g2d.drawImage(backgroundImage, 
+							x, y, x + scaledWidth + horizontalOverlap, y + scaledHeight + verticalOverlap,
+							0, 0, imgWidth, imgHeight, 
+							null);
+					}
+				}
+			}
+		}
 
 		jeuxOupi.dessiner(g2d);
 
 		// Restore the original transform
 		g2d.setTransform(oldTransform);
-
-		// Draw zoom level indicator
-		g2d.setColor(Color.WHITE);
-		g2d.fillRect(10, 10, 120, 30);
-		g2d.setColor(Color.BLACK);
-		g2d.drawString("Zoom: " + String.format("%.1f", zoomFactor) + "x", 20, 30);
 	}
 
 	/**
@@ -776,21 +879,33 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		return jeuxOupi;
 	}
 	
+	/**
+	 * Centre la caméra sur les coordonnées spécifiées avec les limites de mouvement
+	 */
 	public void centrerCameraSur(int x, int y) {
-	    // Calcule la position centrale de l'écran
+		// Calcule la position centrale de l'écran
+		int screenCenterX = getWidth() / 2;
+		int screenCenterY = getHeight() / 2;
 		
-	    int screenCenterX = getWidth() / 2;
-	    int screenCenterY = getHeight() / 2;
-	    
-	    plateau = jeuxOupi.getPlateau();
-	    int plateauLignes = plateau.getLignes();
-	    int plateauColonnes = plateau.getColonnes();
-	    
-	    // Calcule le décalage nécessaire pour centrer la position
-	    translateX = screenCenterX - (int)(x * jeuxOupi.tailleTuile * zoomFactor);
-	    translateY = screenCenterY - (int)(y * jeuxOupi.tailleTuile * zoomFactor);
-	    
-	    repaint();
+		plateau = jeuxOupi.getPlateau();
+		int plateauWidthPx = jeuxOupi.getTailleTuile() * plateau.getColonnes();
+		int plateauHeightPx = jeuxOupi.getTailleTuile() * plateau.getLignes();
+		
+		// Calcule le décalage initial pour centrer la position
+		int newTranslateX = screenCenterX - (int)(x * jeuxOupi.tailleTuile * zoomFactor);
+		int newTranslateY = screenCenterY - (int)(y * jeuxOupi.tailleTuile * zoomFactor);
+		
+		// Contraintes comme dans mouseDragged
+		int minTranslateX = getWidth() - (int)(plateauWidthPx * zoomFactor) - CAMERA_MARGIN;
+		int minTranslateY = getHeight() - (int)(plateauHeightPx * zoomFactor) - CAMERA_MARGIN;
+		int maxTranslateX = CAMERA_MARGIN;
+		int maxTranslateY = CAMERA_MARGIN;
+		
+		// Applique les contraintes
+		translateX = Math.min(maxTranslateX, Math.max(minTranslateX, newTranslateX));
+		translateY = Math.min(maxTranslateY, Math.max(minTranslateY, newTranslateY));
+		
+		repaint();
 	}
 
 	// Surcharge pour centrer sur une troupe
