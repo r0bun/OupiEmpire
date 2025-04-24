@@ -158,7 +158,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 							if (tuileCliquee instanceof tuiles.Eau) {
 								String message = "⚠️ Impossible de placer une troupe sur l'eau!";
 								System.out.println(message);
-								pcs.firePropertyChange("combatMessage", null, new ArrayList<String>() {{ add(message); }});
+								getPcs().firePropertyChange("combatMessage", null, new ArrayList<String>() {{ add(message); }});
 								return;
 							}
 							
@@ -186,13 +186,13 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 											
 											troupesDispo[type]--;
 											System.out.println("Il vous reste "+ troupesDispo[type]+ " troupes de ce type");
-											pcs.firePropertyChange("troupes restantes",0,troupesDispo);
+											getPcs().firePropertyChange("troupes restantes",0,troupesDispo);
 											jeuxOupi.addTroupe(troupePlacer);
 											System.out.println("Nexus placé et occupe 2x2 cases");
 										} else {
 											String message = "⚠️ Impossible de placer le Nexus ici - besoin de 4 cases libres (2x2)!";
 											System.out.println(message);
-											pcs.firePropertyChange("combatMessage", null, new ArrayList<String>() {{ add(message); }});
+											getPcs().firePropertyChange("combatMessage", null, new ArrayList<String>() {{ add(message); }});
 										}
 										// Fin du cas Nexus
 										
@@ -206,7 +206,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 										tuileCliquee.setOccupee(true);
 										troupesDispo[type]--;
 										System.out.println("Il vous reste "+ troupesDispo[type]+ " troupes de ce type");
-										pcs.firePropertyChange("troupes restantes",0,troupesDispo);
+										getPcs().firePropertyChange("troupes restantes",0,troupesDispo);
 										jeuxOupi.addTroupe(troupePlacer);
 										System.out.println("Troupe placee");
 									}
@@ -246,7 +246,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 								
 								jeuxOupi.getTroupeSelectionnee().setEpuisee(true);
 								if(lvlUp > 0) {
-									pcs.firePropertyChange("level", 0, lvlUp);
+									getPcs().firePropertyChange("level", 0, lvlUp);
 								} else {
 									jeuxOupi.deselectionnerTroupeAct();
 								}
@@ -268,10 +268,11 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 				
 
 				if (cliquee == null && jeuxOupi.getTroupeSelectionnee() != null) {
-					pcs.firePropertyChange("troupe", "", null);
+					getPcs().firePropertyChange("troupe", "", null);
 					jeuxOupi.deselectionnerTroupeAct();
 				} else if (cliquee != null && !cliquee.equals(jeuxOupi.getTroupeSelectionnee())) {
-					pcs.firePropertyChange("troupe", "", cliquee);
+					System.out.println("click de sélection effectuer");
+					getPcs().firePropertyChange("troupe", "", cliquee);
 					jeuxOupi.selectionnerTroupe(cliquee);
 				}
 			}
@@ -305,6 +306,19 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 					repaint();
 				}
 			}
+			
+			 @Override
+			    public void mouseClicked(MouseEvent e) {
+			        System.out.println("\n=== Mouse Click Event ===");
+			        System.out.println("Click coordinates: " + e.getX() + ", " + e.getY());
+			        
+			        // ...existing troop selection code...
+			        
+			        System.out.println("Selected troupe after click: " + jeuxOupi.getTroupeSelectionnee());
+			        if (jeuxOupi.getTroupeSelectionnee() != null) {
+			            System.out.println("Selected troupe position: ");
+			        }
+			    }
 		});
 
 		// Add mouse wheel listener for zoom
@@ -371,7 +385,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 						System.out.println(msg);
 						tempCombatMessages.add(msg);
 						
-						pcs.firePropertyChange("troupe", "", null);
+						getPcs().firePropertyChange("troupe", "", null);
 						jeuxOupi.deselectionnerTroupeAct();
 						modeAttaque = false; // Désactiver le mode attaque si actif
 						
@@ -388,7 +402,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 						tuileCliquee.setOccupee(false);
 						troupesDispo[id]++;
 						System.out.println("Troupes de ce type dispo : " + troupesDispo[id]);
-						pcs.firePropertyChange("troupes restantes",0,troupesDispo);
+						getPcs().firePropertyChange("troupes restantes",0,troupesDispo);
 					}
 				}
 
@@ -416,7 +430,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 							break;
 						case KeyEvent.VK_C:
 							jeuxOupi.confirm();
-							pcs.firePropertyChange("troupe", "", null);
+							getPcs().firePropertyChange("troupe", "", null);
 							checkFinTour();
 							break;
 						case KeyEvent.VK_F: // F pour "Fire" ou attaquer
@@ -456,7 +470,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	/**
 	 * Active le mode attaque, permettant de sélectionner une troupe à attaquer.
 	 */
-	private void activerModeAttaque() {
+	public void activerModeAttaque() {
 		tempCombatMessages.clear(); // Effacer les messages précédents
 		
 		if (jeuxOupi.getTroupeSelectionnee() != null) {
@@ -510,7 +524,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	 * @param listener l'écouteur de changement de propriété
 	 */
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		this.pcs.addPropertyChangeListener(listener);
+		this.getPcs().addPropertyChangeListener(listener);
 	}
 
 	/**
@@ -630,7 +644,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		threadJeu.interrupt();
 		if (enCours) {
 			enCours = false;
-			pcs.firePropertyChange("Fin", 10, 0);
+			getPcs().firePropertyChange("Fin", 10, 0);
 			return "win";
 		}
 		return null;
@@ -646,7 +660,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		threadJeu.interrupt();
 		if (enCours) {
 			enCours = false;
-			pcs.firePropertyChange("Fin", 10, 1);
+			getPcs().firePropertyChange("Fin", 10, 1);
 			return "lose";
 		}
 		return null;
@@ -659,7 +673,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		checkFinPartie();
 		// Désélectionner la troupe actuelle si elle existe
 		if (jeuxOupi.getTroupeSelectionnee() != null) {
-			pcs.firePropertyChange("troupe", "", null);
+			getPcs().firePropertyChange("troupe", "", null);
 			jeuxOupi.deselectionnerTroupeAct();
 		}
 
@@ -679,7 +693,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		Troupe.toggleEquipeActuelle();
 
 		// Notification du changement d'équipe
-		pcs.firePropertyChange("equipeActuelle", -1, joueurActuel);
+		getPcs().firePropertyChange("equipeActuelle", -1, joueurActuel);
 		
 		// Centrer la caméra sur le Nexus de l'équipe active
 	    Nexus nexusActif = jeuxOupi.getNexusEquipe(joueurActuel);
@@ -732,7 +746,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		
 
 		if (nbEq1 == 0 || nbEq2 == 0 || !containsNexus(troupes)) {
-			pcs.firePropertyChange("Fin", 10, -1);
+			getPcs().firePropertyChange("Fin", 10, -1);
 		}
 	}
 	
@@ -768,9 +782,9 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	        // Passer à l'équipe 1
 	        equipeQuiPlace = 1;
 	        toggleJoueur();
-	        pcs.firePropertyChange("equipeActuelle", 0, 1);
+	        getPcs().firePropertyChange("equipeActuelle", 0, 1);
 	        int[] troupesDispo = (equipeQuiPlace == 0) ? troupesDispoEquipe0 : troupesDispoEquipe1;
-	        pcs.firePropertyChange("troupes restantes", null, troupesDispo);
+	        getPcs().firePropertyChange("troupes restantes", null, troupesDispo);
 	        System.out.println("Phase de placement : Au tour de l'équipe " + equipeQuiPlace);
 	        
 	        // Réinitialiser la zone de placement pour l'équipe 1
@@ -798,7 +812,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		
 		if (!placer) {
 			// Afficher ActionPanel une fois que le placement est terminé
-			pcs.firePropertyChange("showActionPanel", false, true);
+			getPcs().firePropertyChange("showActionPanel", false, true);
 		}
 	}
 
@@ -846,7 +860,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 
 		int[] troupesDispo = (equipeQuiPlace == 0) ? troupesDispoEquipe0 : troupesDispoEquipe1;
 		
-		pcs.firePropertyChange("troupes restantes",0,troupesDispo);
+		getPcs().firePropertyChange("troupes restantes",0,troupesDispo);
 	}
 	
 	/**
@@ -856,21 +870,21 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		// Ajouter les messages temporaires à la liste principale
 		ArrayList<String> messagesToSend = new ArrayList<>(tempCombatMessages);
 		if (!messagesToSend.isEmpty()) {
-			pcs.firePropertyChange("combatMessages", null, messagesToSend);
+			getPcs().firePropertyChange("combatMessages", null, messagesToSend);
 			tempCombatMessages.clear(); // Vider la liste temporaire après envoi
 		}
 		
 		// Envoyer aussi les messages générés par la classe JeuxOupi
 		ArrayList<String> jeuxOupiMessages = jeuxOupi.getCombatMessages();
 		if (!jeuxOupiMessages.isEmpty()) {
-			pcs.firePropertyChange("combatMessages", null, jeuxOupiMessages);
+			getPcs().firePropertyChange("combatMessages", null, jeuxOupiMessages);
 			jeuxOupi.clearCombatMessages();
 		}
 		
 		// Envoyer aussi les messages générés par la classe Troupe
 		ArrayList<String> troupeMessages = Troupe.getCombatMessages();
 		if (!troupeMessages.isEmpty()) {
-			pcs.firePropertyChange("combatMessages", null, troupeMessages);
+			getPcs().firePropertyChange("combatMessages", null, troupeMessages);
 			Troupe.clearCombatMessages();
 		}
 	}
@@ -917,5 +931,9 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 	
 	public int getJoueurActuel() {
 		return joueurActuel;
+	}
+
+	public PropertyChangeSupport getPcs() {
+		return pcs;
 	}
 }

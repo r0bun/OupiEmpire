@@ -80,15 +80,39 @@ public class ActionPanel extends JPanel {
         
         btnAttaque = createStyledButton("Attaquer (F)", startX, secondRowY, buttonWidth, buttonHeight);
         btnAttaque.setFont(customFont.deriveFont(Font.BOLD, 12f));
-        btnAttaque.addActionListener(e -> simulateKeyPress(KeyEvent.VK_F));
+        btnAttaque.addActionListener(e -> {
+        	zoneAnimationOupi.activerModeAttaque();
+        });
 
         btnConfirmer = createStyledButton("Confirmer (C)", startX + (buttonWidth + spacing), secondRowY, buttonWidth, buttonHeight);
         btnConfirmer.setFont(customFont.deriveFont(Font.BOLD, 12f));
-        btnConfirmer.addActionListener(e -> simulateKeyPress(KeyEvent.VK_C));
+        btnConfirmer.setFocusable(false); // Prevent button from taking focus
+        btnConfirmer.addActionListener(e -> {
+            System.out.println("\n=== Confirm Button Debug ===");
+            // Debug focus state
+            System.out.println("ZoneAnimationOupi has focus before: " + zoneAnimationOupi.hasFocus());
+            
+            if (zoneAnimationOupi.getJeuxOupi().getTroupeSelectionnee() != null) {
+                zoneAnimationOupi.getJeuxOupi().confirm();
+                zoneAnimationOupi.getPcs().firePropertyChange("troupe", "", null);
+                zoneAnimationOupi.checkFinTour();
+            } else {
+                System.out.println("WARNING: No troupe selected when confirm button clicked");
+            }
+            
+            // Return focus to game panel
+            zoneAnimationOupi.requestFocusInWindow();
+            System.out.println("ZoneAnimationOupi has focus after: " + zoneAnimationOupi.hasFocus());
+        });
 
         btnReset = createStyledButton("Reset (R)", startX + 2 * (buttonWidth + spacing), secondRowY, buttonWidth, buttonHeight);
         btnReset.setFont(customFont.deriveFont(Font.BOLD, 12f));
-        btnReset.addActionListener(e -> simulateKeyPress(KeyEvent.VK_R));
+        btnReset.setFocusable(false); // Prevent button from taking focus
+        btnReset.addActionListener(e -> { // Changed from btnConfirmer to btnReset
+            System.out.println("\n=== Reset Button Pressed ===");
+            zoneAnimationOupi.getJeuxOupi().resetTroupeAct();
+            zoneAnimationOupi.requestFocusInWindow();
+        });
 
         // Ajouter tous les boutons
         add(btnTerminerTour);
