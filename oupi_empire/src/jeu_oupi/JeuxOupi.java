@@ -430,6 +430,22 @@ public class JeuxOupi implements Dessinable {
             // Retirer la troupe des listes
             troupes.remove(troupe);
             simTroupes.remove(troupe);
+            
+            
+            
+            //Statistiques
+            int equipeAdverse = troupe.getEquipe();
+            equipeAdverse = (equipeAdverse == 0) ? 1 : 0;
+            
+            if(troupe.getId() == 5){
+            	GameManager.getInstance().getCurrentGame().addTowerDestroyed(equipeAdverse);
+            }
+            
+            if(troupe.getId() <= 3) {
+            	GameManager.getInstance().getCurrentGame().addKill(equipeAdverse);
+            GameManager.getInstance().getCurrentGame().addDeath(troupe.getEquipe());
+            }
+            
         }
     }
 

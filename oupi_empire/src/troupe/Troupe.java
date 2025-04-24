@@ -10,6 +10,7 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 import interfaces.Dessinable;
+import jeu_oupi.GameManager;
 import jeu_oupi.JeuxOupi;
 import plateau.Tuile;
 import tuiles.Sable;
@@ -519,6 +520,10 @@ public class Troupe implements Dessinable {
 
         // Application des dégâts
         troupeEnem.HP = Math.max(0, troupeEnem.HP - degats);
+        
+        if(troupeEnem.getIsNexus() == true) {
+        	GameManager.getInstance().getCurrentGame().addNexusHpLost(equipe, degats);
+        }
 
         String message = "🗡️ " + this.getClass().getSimpleName() + " attaque et inflige " + degats + " points de dégâts!";
         System.out.println(message);

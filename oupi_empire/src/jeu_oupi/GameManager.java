@@ -8,6 +8,7 @@ public class GameManager {
 	private static GameManager instance;
 	private Game currentGame;
 	private appLaunch gameWindow;
+	private ZoneAnimationOupi zoneAnimation;
 	
 	private GameManager () {}
 	
@@ -21,15 +22,13 @@ public class GameManager {
 	public void startNewGame(int screenWidth, int screenHeight) {
 		
 		// Créer une nouvelle instance de Game
-        ZoneAnimationOupi zoneAnimation = new ZoneAnimationOupi(screenWidth, screenHeight);
+        zoneAnimation = new ZoneAnimationOupi(screenWidth, screenHeight);
         currentGame = new Game(zoneAnimation.getJeuxOupi(), zoneAnimation);
         
         //Créer et afficher la fenêtre principale
         gameWindow = new appLaunch();
         gameWindow.setVisible(true);
         
-        //Démarrer la partie
-        currentGame.demarrer();
 	}
 	
 	public Game getCurrentGame() {
@@ -41,9 +40,6 @@ public class GameManager {
 	}
 	
 	public ZoneAnimationOupi getZoneAnimationOupi() {
-	    if (currentGame != null) {
-	        return currentGame.getZoneAnimation();
-	    }
-	    return null;
+	        return zoneAnimation;
 	}
 }
