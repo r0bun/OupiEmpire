@@ -33,6 +33,7 @@ public class MainMenu extends JFrame {
     public MainMenu() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setUndecorated(true);
         setResizable(false);
         setLocationRelativeTo(null);
 

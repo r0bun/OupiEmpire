@@ -19,6 +19,7 @@ public class PartieTerminee extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1920, 1080); // Dimension de la fenêtre
         setLocationRelativeTo(null); // Centrer la fenêtre
+        setUndecorated(true);
 
         initUI();
     }

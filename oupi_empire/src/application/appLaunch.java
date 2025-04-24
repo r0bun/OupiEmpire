@@ -88,6 +88,7 @@ public class appLaunch extends JFrame {
 		// Frame setup
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    setExtendedState(JFrame.MAXIMIZED_BOTH);
+	    setUndecorated(true);
 	    setAlwaysOnTop(true);
 
 	    // Get screen dimensions
