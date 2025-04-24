@@ -177,7 +177,7 @@ public class Login extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    Desktop.getDesktop().browse(new URI("http://127.0.0.1:3000/index.html"));
+                    Desktop.getDesktop().browse(new URI("http://127.0.0.1/ClientWeb/index.html"));
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

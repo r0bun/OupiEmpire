@@ -34,6 +34,7 @@ public class MainMenu extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setResizable(false);
+        setUndecorated(true);
         setLocationRelativeTo(null);
 
         // Obtenir la taille de l'écran
@@ -151,7 +152,25 @@ public class MainMenu extends JFrame {
         settingsButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("Bouton 'Tutoriel' cliqué !");
+                LoadingScreen loading = new LoadingScreen();
+                loading.startLoading(
+                    () -> {
+                        // Simulate loading for minimum 3 seconds
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                        }
+                        // Pre-load tutorial assets
+                        new TutorialIntro();
+                    },
+                    () -> {
+                        // When loading is done, show the tutorial
+                        new TutorialIntro().setVisible(true);
+                        dispose();
+                    }
+                );
+                setVisible(false);
             }
         });
         
