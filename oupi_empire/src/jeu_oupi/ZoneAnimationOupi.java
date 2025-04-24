@@ -615,41 +615,41 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		// Save the original transform
+		
 		AffineTransform oldTransform = g2d.getTransform();
 
-		// Apply zoom and translation
+		
 		g2d.translate(translateX, translateY);
 		g2d.scale(zoomFactor, zoomFactor);
 		
-		// Draw background pattern
+		
 		if (backgroundImage != null) {
 			// Get plateau dimensions
 			int tileSize = jeuxOupi.getTailleTuile();
 			int plateauWidth = jeuxOupi.getPlateau().getColonnes() * tileSize;
 			int plateauHeight = jeuxOupi.getPlateau().getLignes() * tileSize;
 			
-			// Extend the background area beyond the plateau by CAMERA_MARGIN * 2
+			
 			int extendedMargin = CAMERA_MARGIN * 2;
 			int bgStartX = -extendedMargin;
 			int bgStartY = -extendedMargin;
 			int bgWidth = plateauWidth + (extendedMargin * 2);
 			int bgHeight = plateauHeight + (extendedMargin * 2);
 			
-			// Calculate scaled dimensions for smaller tiles
+			
 			int imgWidth = backgroundImage.getWidth(null);
 			int imgHeight = backgroundImage.getHeight(null);
 			
 			if (imgWidth > 0 && imgHeight > 0) {
-				// Calculate scaled dimensions
+				
 				int scaledWidth = (int)(imgWidth * BACKGROUND_SCALE);
 				int scaledHeight = (int)(imgHeight * BACKGROUND_SCALE);
 				
-				// Add different overlaps to prevent horizontal and vertical gaps
-				int horizontalOverlap = 4; // Increased horizontal overlap to fix horizontal gaps
-				int verticalOverlap = 2;   // Keep the same vertical overlap
+			
+				int horizontalOverlap = 4; 
+				int verticalOverlap = 2;  
 				
-				// Draw smaller tiles to create a denser pattern
+				
 				for (int x = bgStartX; x < bgStartX + bgWidth; x += scaledWidth) {
 					for (int y = bgStartY; y < bgStartY + bgHeight; y += scaledHeight) {
 						g2d.drawImage(backgroundImage, 
@@ -663,7 +663,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 
 		jeuxOupi.dessiner(g2d);
 
-		// Restore the original transform
+		
 		g2d.setTransform(oldTransform);
 	}
 
