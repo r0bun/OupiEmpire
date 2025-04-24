@@ -141,7 +141,7 @@ public class ActionPanel extends JPanel {
         button.setBounds(x, y, width, height);
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);
-        button.setFocusPainted(false);
+        button.setFocusable(false); // Prevent button from taking focus
         
         ImageIcon normalIcon = new ImageIcon(scaleImage("res/bak/gold_button.png", width, height));
         ImageIcon smallerIcon = new ImageIcon(scaleImage("res/bak/gold_button.png", width-4, height-4));
@@ -160,6 +160,11 @@ public class ActionPanel extends JPanel {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 button.setIcon(normalIcon);
                 button.setBounds(x, y, width, height);
+            }
+            
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                // Request focus back to game panel after button click
+                zoneAnimationOupi.requestFocusInWindow();
             }
         });
         

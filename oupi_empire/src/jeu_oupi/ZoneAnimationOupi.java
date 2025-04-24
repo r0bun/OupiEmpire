@@ -264,8 +264,10 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 						sendCombatMessages();
 						return;
 					}
-				}
+				 }
 				
+				// Request focus after any mouse click
+				requestFocusInWindow();
 
 				if (cliquee == null && jeuxOupi.getTroupeSelectionnee() != null) {
 					getPcs().firePropertyChange("troupe", "", null);
@@ -395,14 +397,41 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 				}
 
 				if (e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-					if (placer) {
+					if (placer && troupe != null) {
+						// Check if troupe is Nexus - prevent deletion
+						if (troupe.getIsNexus()) {
+							String message = "⚠️ Impossible de supprimer le Nexus!";
+							System.out.println(message);
+							getPcs().firePropertyChange("combatMessage", null, new ArrayList<String>() {{ add(message); }});
+							return;
+						}
+
+						if(troupe.getEquipe() != joueurActuel) {
+							String message = "⚠️ Impossible de supprimer les troupes adverses!";
+							System.out.println(message);
+							getPcs().firePropertyChange("combatMessage", null, new ArrayList<String>() {{ add(message); }});
+							return;
+						}
+						
 						int[] troupesDispo = (equipeQuiPlace == 0) ? troupesDispoEquipe0 : troupesDispoEquipe1;
-						int id = jeuxOupi.delTroupe(troupe);
+						// Identify the type of troupe
+						int id = 0;
+						if (troupe instanceof Oupi) id = 0;
+						else if (troupe instanceof Lobotomisateur) id = 3;
+						else if (troupe instanceof Electricien) id = 1;
+						else if (troupe instanceof Genial) id = 2;
+						else id = 4; // For Nexus or other types
+						
+						// Delete the troupe and free the tile
+						jeuxOupi.delTroupe(troupe);
 						Tuile tuileCliquee = jeuxOupi.getPlateau().getTuile(troupe.getLig(), troupe.getCol());
 						tuileCliquee.setOccupee(false);
+						
+						// Increment available troops counter
 						troupesDispo[id]++;
 						System.out.println("Troupes de ce type dispo : " + troupesDispo[id]);
-						getPcs().firePropertyChange("troupes restantes",0,troupesDispo);
+						getPcs().firePropertyChange("troupes restantes", 0, troupesDispo);
+						getPcs().firePropertyChange("troupe", "", null);
 					}
 				}
 
@@ -719,7 +748,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		for (int i = 0; i < troupes.size(); i++) {
 			if (!troupes.get(i).isEpuisee() && troupes.get(i).getEquipe() == joueurActuel) {
 				nbActionnable += 1;
-			}
+			 }
 		}
 
 		System.out.println(nbActionnable);
