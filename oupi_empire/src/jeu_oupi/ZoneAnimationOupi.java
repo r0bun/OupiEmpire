@@ -391,6 +391,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 						getPcs().firePropertyChange("troupe", "", null);
 						jeuxOupi.deselectionnerTroupeAct();
 						modeAttaque = false; // Désactiver le mode attaque si actif
+						jeuxOupi.setModeAttaque(modeAttaque);
 						
 						sendCombatMessages();
 					}
