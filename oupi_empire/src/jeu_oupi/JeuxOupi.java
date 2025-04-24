@@ -348,53 +348,56 @@ public class JeuxOupi implements Dessinable {
             return false;
         }
 
-        // Calculer la distance entre les troupes (distance Manhattan)
-        int distance;
-        
-        // Si la cible est un Nexus, utiliser sa méthode spéciale pour calculer la distance minimale
-        if (troupeCible instanceof Nexus) {
-            distance = ((Nexus) troupeCible).getDistanceMinimale(troupeSelectionnee);
-        } else {
-            // Calcul standard pour les autres troupes
-            distance = Math.abs(troupeSelectionnee.getCol() - troupeCible.getCol())
-                    + Math.abs(troupeSelectionnee.getLig() - troupeCible.getLig());
-        }
+        if(!troupeSelectionnee.isEpuisee()) {
+        	// Calculer la distance entre les troupes (distance Manhattan)
+            int distance;
+            
+            // Si la cible est un Nexus, utiliser sa méthode spéciale pour calculer la distance minimale
+            if (troupeCible instanceof Nexus) {
+                distance = ((Nexus) troupeCible).getDistanceMinimale(troupeSelectionnee);
+            } else {
+                // Calcul standard pour les autres troupes
+                distance = Math.abs(troupeSelectionnee.getCol() - troupeCible.getCol())
+                        + Math.abs(troupeSelectionnee.getLig() - troupeCible.getLig());
+            }
 
-        // Vérifier si la cible est à portée d'attaque selon la distance d'attaque de la troupe
-        if (distance > troupeSelectionnee.getDistanceAttaque()) {
-            String msg = "⚠️ Échec de l'attaque: La cible est trop éloignée (distance " + distance
-                    + ", portée maximale " + troupeSelectionnee.getDistanceAttaque() + ")";
+            // Vérifier si la cible est à portée d'attaque selon la distance d'attaque de la troupe
+            if (distance > troupeSelectionnee.getDistanceAttaque()) {
+                String msg = "⚠️ Échec de l'attaque: La cible est trop éloignée (distance " + distance
+                        + ", portée maximale " + troupeSelectionnee.getDistanceAttaque() + ")";
+                System.out.println(msg);
+                combatMessages.add(msg);
+                return false;
+            }
+
+            String msg = "🗡️ Attaque initiée par " + troupeSelectionnee.getClass().getSimpleName()
+                    + " contre " + troupeCible.getClass().getSimpleName();
             System.out.println(msg);
             combatMessages.add(msg);
-            return false;
+
+            // Appel de la méthode d'attaque de la troupe
+            troupeSelectionnee.attaquer(troupeCible);
+            
+            fireAttackEvent();
+
+            // Vérifier si la troupe cible est morte (HP <= 0)
+            if (troupeCible.getHP() <= 0) {
+            	System.out.println("💀 " + troupeCible.getClass().getSimpleName() + " a été vaincu!");
+            	troupeSelectionnee.kill();
+            	gererMortTroupe(troupeCible);
+            	
+            }
+
+            // Vérifier si l'attaquant est mort suite à une contre-attaque
+            if (troupeSelectionnee.getHP() <= 0) {
+            	System.out.println("💀 " + troupeSelectionnee.getClass().getSimpleName() + " a été vaincu!");
+            	gererMortTroupe(troupeSelectionnee);
+            	troupeSelectionnee = null;
+            }
+            
+            return true;
         }
-
-        String msg = "🗡️ Attaque initiée par " + troupeSelectionnee.getClass().getSimpleName()
-                + " contre " + troupeCible.getClass().getSimpleName();
-        System.out.println(msg);
-        combatMessages.add(msg);
-
-        // Appel de la méthode d'attaque de la troupe
-        troupeSelectionnee.attaquer(troupeCible);
-        
-        fireAttackEvent();
-
-        // Vérifier si la troupe cible est morte (HP <= 0)
-        if (troupeCible.getHP() <= 0) {
-        	System.out.println("💀 " + troupeCible.getClass().getSimpleName() + " a été vaincu!");
-        	troupeSelectionnee.kill();
-        	gererMortTroupe(troupeCible);
-        	
-        }
-
-        // Vérifier si l'attaquant est mort suite à une contre-attaque
-        if (troupeSelectionnee.getHP() <= 0) {
-        	System.out.println("💀 " + troupeSelectionnee.getClass().getSimpleName() + " a été vaincu!");
-        	gererMortTroupe(troupeSelectionnee);
-        	troupeSelectionnee = null;
-        }
-        
-        return true;
+        return false;
     }
 
     /**

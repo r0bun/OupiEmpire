@@ -248,6 +248,8 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 								if(lvlUp > 0) {
 									getPcs().firePropertyChange("level", 0, lvlUp);
 								} else {
+									modeAttaque = false;
+									jeuxOupi.setModeAttaque(modeAttaque);
 									jeuxOupi.deselectionnerTroupeAct();
 								}
 							}
@@ -255,7 +257,9 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 						}
 						// Désactiver le mode attaque après une tentative
 						modeAttaque = false;
-						jeuxOupi.setModeAttaque(modeAttaque);
+						if(jeuxOupi.getTroupeSelectionnee()!=null) {
+							jeuxOupi.setModeAttaque(modeAttaque);
+						}
 						sendCombatMessages();
 						return;
 					} else {
@@ -391,7 +395,9 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 						getPcs().firePropertyChange("troupe", "", null);
 						jeuxOupi.deselectionnerTroupeAct();
 						modeAttaque = false; // Désactiver le mode attaque si actif
-						jeuxOupi.setModeAttaque(modeAttaque);
+						if(jeuxOupi.getTroupeSelectionnee()!=null) {
+							jeuxOupi.setModeAttaque(modeAttaque);
+						}
 						
 						sendCombatMessages();
 					}
@@ -517,27 +523,33 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 				sendCombatMessages();
 				return;
 			}
-
-			modeAttaque = !modeAttaque; // Toggle attack mode
-			jeuxOupi.setModeAttaque(modeAttaque);
-			if (modeAttaque) {
-				String msg = "🔴 MODE ATTAQUE ACTIVÉ! Cliquez sur une troupe ennemie à attaquer.";
-				System.out.println(msg);
-				tempCombatMessages.add(msg);
-				
-				msg = "   - L'ennemi doit être adjacent (distance 1)";
-				System.out.println(msg);
-				tempCombatMessages.add(msg);
-				
-				msg = "   - Appuyez sur F ou X à nouveau pour annuler";
-				System.out.println(msg);
-				tempCombatMessages.add(msg);
-				
-				msg = "   - Appuyez sur ECHAP pour désélectionner la troupe";
-				System.out.println(msg);
-				tempCombatMessages.add(msg);
+			
+			if(!jeuxOupi.getTroupeSelectionnee().isEpuisee()) {
+				modeAttaque = !modeAttaque; // Toggle attack mode
+				jeuxOupi.setModeAttaque(modeAttaque);
+				if (modeAttaque) {
+					String msg = "🔴 MODE ATTAQUE ACTIVÉ! Cliquez sur une troupe ennemie à attaquer.";
+					System.out.println(msg);
+					tempCombatMessages.add(msg);
+					
+					msg = "   - L'ennemi doit être adjacent (distance 1)";
+					System.out.println(msg);
+					tempCombatMessages.add(msg);
+					
+					msg = "   - Appuyez sur F ou X à nouveau pour annuler";
+					System.out.println(msg);
+					tempCombatMessages.add(msg);
+					
+					msg = "   - Appuyez sur ECHAP pour désélectionner la troupe";
+					System.out.println(msg);
+					tempCombatMessages.add(msg);
+				} else {
+					String msg = "🟢 Mode attaque désactivé.";
+					System.out.println(msg);
+					tempCombatMessages.add(msg);
+				}
 			} else {
-				String msg = "🟢 Mode attaque désactivé.";
+				String msg = "⚠️ Veuillez sélectionner une troupe n'ayant pas attaquée.";
 				System.out.println(msg);
 				tempCombatMessages.add(msg);
 			}
