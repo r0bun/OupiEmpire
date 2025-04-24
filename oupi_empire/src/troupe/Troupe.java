@@ -59,9 +59,7 @@ public class Troupe implements Dessinable {
     // Référence à l'instance de JeuxOupi
     private JeuxOupi jeu;
 
-    // Variables pour l'animation de sautillement
-    private int bounceSize = 0;
-    private boolean bounceGrowing = true;
+   
     
     private static ArrayList<String> combatMessages = new ArrayList<>();
     private static final Random random = new Random();
@@ -241,12 +239,7 @@ public class Troupe implements Dessinable {
         // Dessiner un contour si la troupe est sélectionnée
         if (equipe == equipeActuelle) {
             couleur = Color.GREEN;
-        } else {
-            bounceSize -= 2;
-            if (bounceSize <= 0) { // Taille minimale de la réduction
-                bounceGrowing = true;
-            }
-        }
+        } 
 
         g2dPrive.setColor(couleur);
 
@@ -490,9 +483,11 @@ public class Troupe implements Dessinable {
         // Calcul de la distance entre les troupes
         int distance;
         
-        // Si la cible est un Nexus, utiliser sa méthode spéciale pour calculer la distance minimale
+        // Si la cible est un Nexus ou une Tour, utiliser sa méthode spéciale pour calculer la distance minimale
         if (troupeEnem instanceof Nexus) {
             distance = ((Nexus) troupeEnem).getDistanceMinimale(this);
+        } else if (troupeEnem instanceof Tour) {
+            distance = ((Tour) troupeEnem).getDistanceMinimale(this);
         } else {
             // Calcul standard pour les autres troupes
             distance = Math.abs(this.getCol() - troupeEnem.getCol()) + Math.abs(this.getLig() - troupeEnem.getLig());

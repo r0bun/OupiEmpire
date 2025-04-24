@@ -127,6 +127,7 @@ public class JeuxOupi implements Dessinable {
         troupes.add(new Genial(4, 6, 0, this));
         troupes.add(new Electricien(6, 6, 0, this)); 
         troupes.add(new Nexus(4, 4, 0, this));
+        troupes.add(new Tour(0, 4, 0, this));
 
         // Équipe 1 (joueur 2)
         troupes.add(new Genial(37, 19, 1, this));
@@ -223,7 +224,12 @@ public class JeuxOupi implements Dessinable {
      * Désélectionne la troupe actuellement sélectionnée.
      */
     public void deselectionnerTroupeAct() {
-    	if (troupeSelectionnee != null) {
+        if (troupeSelectionnee != null) {
+            // S'assurer que le mode attaque est désactivé avant de désélectionner
+            if (troupeSelectionnee.isAttaqueMode()) {
+                troupeSelectionnee.setAttaqueMode(false);
+            }
+            
             troupeSelectionnee.deselec();
 
             // Réinitialiser le marquage de la position de départ
@@ -352,9 +358,11 @@ public class JeuxOupi implements Dessinable {
         	// Calculer la distance entre les troupes (distance Manhattan)
             int distance;
             
-            // Si la cible est un Nexus, utiliser sa méthode spéciale pour calculer la distance minimale
+            // Si la cible est un Nexus ou une Tour, utiliser sa méthode spéciale pour calculer la distance minimale
             if (troupeCible instanceof Nexus) {
                 distance = ((Nexus) troupeCible).getDistanceMinimale(troupeSelectionnee);
+            } else if (troupeCible instanceof Tour) {
+                distance = ((Tour) troupeCible).getDistanceMinimale(troupeSelectionnee);
             } else {
                 // Calcul standard pour les autres troupes
                 distance = Math.abs(troupeSelectionnee.getCol() - troupeCible.getCol())
@@ -410,7 +418,7 @@ public class JeuxOupi implements Dessinable {
         if (troupe != null) {
 
            
-            // Vérifier si c'est un Nexus qui a été détruit
+            // Vérifier si c'est un Nexus ou une Tour qui a été détruit
             if (troupe instanceof Nexus) {
                 // Utiliser la méthode spéciale pour libérer les 4 tuiles du Nexus
                 ((Nexus) troupe).libererTuiles();
@@ -420,6 +428,13 @@ public class JeuxOupi implements Dessinable {
                 int equipeGagnante = (equipeNexus == 0) ? 1 : 0;
                 
                 String msg = "🏆 Le Nexus de l'équipe " + equipeNexus + " a été détruit ! L'équipe " + equipeGagnante + " GAGNE !";
+                System.out.println(msg);
+                combatMessages.add(msg);
+            } else if (troupe instanceof Tour) {
+                // Utiliser la méthode spéciale pour libérer les 4 tuiles de la Tour
+                ((Tour) troupe).libererTuiles();
+                
+                String msg = "🏰 Une Tour de l'équipe " + troupe.getEquipe() + " a été détruite !";
                 System.out.println(msg);
                 combatMessages.add(msg);
             } else {

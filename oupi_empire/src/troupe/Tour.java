@@ -5,61 +5,60 @@ import java.awt.Graphics2D;
 import jeu_oupi.JeuxOupi;
 
 /**
- * Classe Nexus - Une structure stationnaire qui occupe une zone de 2x2 tuiles.
- * Quand un Nexus est détruit, l'équipe adverse gagne la partie.
+ * Classe Tour - Une structure stationnaire défensive qui occupe une zone de 2x2 tuiles.
+ * Contrairement au Nexus, la Tour est principalement offensive et peut attaquer les unités ennemies.
  * 
  * @author Badr Rifki
  */
-public class Nexus extends Troupe {
+public class Tour extends Troupe {
     
-    // Dimensions du Nexus (2x2 tuiles)
-    private static final int TAILLE_NEXUS = 2;
+    // Dimensions de la Tour (2x2 tuiles)
+    private static final int TAILLE_TOUR = 2;
     
     /**
-     * Constructeur pour créer un objet de type Nexus
+     * Constructeur pour créer un objet de type Tour
      * 
-     * @param col colonne supérieure gauche du Nexus
-     * @param lig ligne supérieure gauche du Nexus
-     * @param equipe l'équipe à laquelle appartient le Nexus
-     * @param jeu l'instance du jeu associée à ce Nexus
+     * @param col colonne supérieure gauche de la Tour
+     * @param lig ligne supérieure gauche de la Tour
+     * @param equipe l'équipe à laquelle appartient la Tour
+     * @param jeu l'instance du jeu associée à cette Tour
      */
-    public Nexus(int col, int lig, int equipe, JeuxOupi jeu) {
-
-        super(lig, col, jeu, "Oupi Goupi", "res/bak/nexus_player_card.png", true);
+    public Tour(int col, int lig, int equipe, JeuxOupi jeu) {
+        super(lig, col, jeu, "Tour de défense", "res/bak/tower_player_card.png", false);
 
         this.setEquipe(equipe);
-        image = getImage("/troupes/nexus.png");
+        image = getImage("/troupes/tour.png");
         
         // Ne peut pas se déplacer, donc la distance parcourable est 0
         this.setDistanceParcourable(0);
         this.setBakDistParc(0);
         
-        // Le Nexus a une portée d'attaque de 1 (défense de proximité)
-        this.setDistanceAttaque(0);
+        // La Tour a une portée d'attaque de 3 (attaque à distance)
+        this.setDistanceAttaque(3);
         
-        // Statistiques puissantes pour une structure défensive
-        HP = 300;
-        attaque = 15;
-        defense = 30;
+        // Statistiques adaptées pour une structure offensive
+        HP = 200;
+        attaque = 30;
+        defense = 20;
         vitesse = 0;
         endurance = 100;
         
         // Nom personnalisé selon l'équipe
-        nom = "Nexus de l'équipe " + equipe;
+        nom = "Tour de l'équipe " + equipe;
         
         // Marquer les 4 tuiles comme occupées
         occuperTuiles();
         
-        id = 4; // Identifiant unique pour le Nexus
+        id = 5; // Identifiant unique pour la Tour (différent du Nexus)
     }
     
     /**
-     * Marque les 4 tuiles occupées par le Nexus
+     * Marque les 4 tuiles occupées par la Tour
      */
     public void occuperTuiles() {
         if (getJeu() != null && getJeu().getPlateau() != null) {
-            for (int i = 0; i < TAILLE_NEXUS; i++) {
-                for (int j = 0; j < TAILLE_NEXUS; j++) {
+            for (int i = 0; i < TAILLE_TOUR; i++) {
+                for (int j = 0; j < TAILLE_TOUR; j++) {
                     int ligCible = getLig() + i;
                     int colCible = getCol() + j;
                     
@@ -75,12 +74,12 @@ public class Nexus extends Troupe {
     }
     
     /**
-     * Libère les 4 tuiles occupées par le Nexus (appelé lors de sa destruction)
+     * Libère les 4 tuiles occupées par la Tour (appelé lors de sa destruction)
      */
     public void libererTuiles() {
         if (getJeu() != null && getJeu().getPlateau() != null) {
-            for (int i = 0; i < TAILLE_NEXUS; i++) {
-                for (int j = 0; j < TAILLE_NEXUS; j++) {
+            for (int i = 0; i < TAILLE_TOUR; i++) {
+                for (int j = 0; j < TAILLE_TOUR; j++) {
                     int ligCible = getLig() + i;
                     int colCible = getCol() + j;
                     
@@ -96,7 +95,7 @@ public class Nexus extends Troupe {
     }
     
     /**
-     * Vérifie si toutes les tuiles nécessaires pour placer le Nexus sont disponibles
+     * Vérifie si toutes les tuiles nécessaires pour placer la Tour sont disponibles
      * 
      * @return true si toutes les tuiles sont disponibles, false sinon
      */
@@ -105,8 +104,8 @@ public class Nexus extends Troupe {
             return false;
         }
         
-        for (int i = 0; i < TAILLE_NEXUS; i++) {
-            for (int j = 0; j < TAILLE_NEXUS; j++) {
+        for (int i = 0; i < TAILLE_TOUR; i++) {
+            for (int j = 0; j < TAILLE_TOUR; j++) {
                 int ligCible = getLig() + i;
                 int colCible = getCol() + j;
                 
@@ -124,7 +123,7 @@ public class Nexus extends Troupe {
     }
     
     /**
-     * Dessine le Nexus sur une zone de 2x2 tuiles.
+     * Dessine la Tour sur une zone de 2x2 tuiles.
      */
     @Override
     public void dessiner(Graphics2D g2d) {
@@ -137,25 +136,25 @@ public class Nexus extends Troupe {
         // Dessiner le fond transparent avec la couleur de l'équipe
         Color couleur;
         if (getEquipe() == 0) {
-            couleur = new Color(0, 200, 0, 80); // Vert semi-transparent
+            couleur = new Color(0, 100, 200, 80); // Bleu semi-transparent pour équipe 0
         } else {
-            couleur = new Color(200, 0, 0, 80); // Rouge semi-transparent
+            couleur = new Color(200, 100, 0, 80); // Orange semi-transparent pour équipe 1
         }
         
         g2dPrive.setColor(couleur);
-        g2dPrive.fillRect(x, y, tailleTuile * TAILLE_NEXUS, tailleTuile * TAILLE_NEXUS);
+        g2dPrive.fillRect(x, y, tailleTuile * TAILLE_TOUR, tailleTuile * TAILLE_TOUR);
         
         // Dessiner une bordure si la tour est sélectionnée
         if (estSelectionne()) {
             g2dPrive.setColor(Color.YELLOW);
-            g2dPrive.drawRect(x, y, tailleTuile * TAILLE_NEXUS, tailleTuile * TAILLE_NEXUS);
+            g2dPrive.drawRect(x, y, tailleTuile * TAILLE_TOUR, tailleTuile * TAILLE_TOUR);
         }
         
         // Dessiner l'image sur toute la zone 2x2
-        g2dPrive.drawImage(image, x, y, tailleTuile * TAILLE_NEXUS, tailleTuile * TAILLE_NEXUS, null);
+        g2dPrive.drawImage(image, x, y, tailleTuile * TAILLE_TOUR, tailleTuile * TAILLE_TOUR, null);
         
-        // Dessiner une barre de vie au-dessus du Nexus
-        int barreWidth = tailleTuile * TAILLE_NEXUS;
+        // Dessiner une barre de vie au-dessus de la Tour
+        int barreWidth = tailleTuile * TAILLE_TOUR;
         int barreHeight = 5;
         int yBarre = y - 10;
         
@@ -164,7 +163,7 @@ public class Nexus extends Troupe {
         g2dPrive.fillRect(x, yBarre, barreWidth, barreHeight);
         
         // Partie remplie de la barre de vie (vert)
-        float pourcentageVie = (float)HP / 300.0f; // 300 est la vie max initiale
+        float pourcentageVie = (float)HP / 200.0f; // 200 est la vie max initiale
         g2dPrive.setColor(Color.GREEN);
         g2dPrive.fillRect(x, yBarre, (int)(barreWidth * pourcentageVie), barreHeight);
         
@@ -172,83 +171,59 @@ public class Nexus extends Troupe {
     }
     
     /**
-     * Vérifie si une position donnée est à l'intérieur du Nexus.
+     * Vérifie si une position donnée est à l'intérieur de la Tour.
      */
     @Override
     public boolean estA(int clickX, int clickY) {
         int tailleTuile = getJeu().getTailleTuile();
-        int nexusX = getX(getCol());
-        int nexusY = getY(getLig());
+        int tourX = getX(getCol());
+        int tourY = getY(getLig());
         
-        return clickX >= nexusX && clickX < nexusX + (tailleTuile * TAILLE_NEXUS) && 
-               clickY >= nexusY && clickY < nexusY + (tailleTuile * TAILLE_NEXUS);
+        return clickX >= tourX && clickX < tourX + (tailleTuile * TAILLE_TOUR) && 
+               clickY >= tourY && clickY < tourY + (tailleTuile * TAILLE_TOUR);
     }
     
     /**
      * Les méthodes de déplacement sont surchargées pour ne rien faire,
-     * car un Nexus est stationnaire.
+     * car une Tour est stationnaire.
      */
     @Override
     public void deplacerHaut() {
-        // Ne fait rien - le Nexus est immobile
+        // Ne fait rien - la Tour est immobile
     }
     
     @Override
     public void deplacerBas() {
-        // Ne fait rien - le Nexus est immobile
+        // Ne fait rien - la Tour est immobile
     }
     
     @Override
     public void deplacerGauche() {
-        // Ne fait rien - le Nexus est immobile
+        // Ne fait rien - la Tour est immobile
     }
     
     @Override
     public void deplacerDroite() {
-        // Ne fait rien - le Nexus est immobile
+        // Ne fait rien - la Tour est immobile
     }
     
     /**
-     * Méthode appelée quand un Nexus est détruit.
-     * Doit libérer toutes les tuiles et signal la victoire de l'adversaire.
-     */
-    public void detruire() {
-        // Libérer toutes les tuiles occupées
-        libererTuiles();
-        
-        // L'équipe qui n'est pas propriétaire du Nexus gagne
-        int equipeGagnante = (getEquipe() == 0) ? 1 : 0;
-        
-        // À ce stade, il faudrait signaler la fin du jeu avec l'équipe gagnante
-        System.out.println("🏆 Le Nexus de l'équipe " + getEquipe() + " a été détruit ! L'équipe " + equipeGagnante + " GAGNE !");
-    }
-    
-    // Helper methods to access coordinates
-    private int getY(int lig) {
-        return lig * getJeu().getTailleTuile();
-    }
-
-    private int getX(int col) {
-        return col * getJeu().getTailleTuile();
-    }
-
-    /**
-     * Calcule la distance minimale entre une troupe et n'importe quelle case du Nexus.
+     * Calcule la distance minimale entre une troupe et n'importe quelle case de la Tour.
      * 
-     * @param troupe La troupe dont on veut calculer la distance avec le Nexus
-     * @return La distance minimale (distance Manhattan) entre la troupe et le Nexus
+     * @param troupe La troupe dont on veut calculer la distance avec la Tour
+     * @return La distance minimale (distance Manhattan) entre la troupe et la Tour
      */
     public int getDistanceMinimale(Troupe troupe) {
         int minDistance = Integer.MAX_VALUE;
         
-        // Parcourir les 4 cases du Nexus (2x2)
-        for (int i = 0; i < TAILLE_NEXUS; i++) {
-            for (int j = 0; j < TAILLE_NEXUS; j++) {
-                int nexusLig = getLig() + i;
-                int nexusCol = getCol() + j;
+        // Parcourir les 4 cases de la Tour (2x2)
+        for (int i = 0; i < TAILLE_TOUR; i++) {
+            for (int j = 0; j < TAILLE_TOUR; j++) {
+                int tourLig = getLig() + i;
+                int tourCol = getCol() + j;
                 
-                // Calculer la distance Manhattan avec cette case du Nexus
-                int distance = Math.abs(troupe.getCol() - nexusCol) + Math.abs(troupe.getLig() - nexusLig);
+                // Calculer la distance Manhattan avec cette case de la Tour
+                int distance = Math.abs(troupe.getCol() - tourCol) + Math.abs(troupe.getLig() - tourLig);
                 
                 // Garder la distance minimale
                 if (distance < minDistance) {
@@ -258,5 +233,22 @@ public class Nexus extends Troupe {
         }
         
         return minDistance;
+    }
+    
+    /**
+     * Retourne la valeur maximale des points de vie pour cette Tour.
+     */
+    @Override
+    public int getHPMax() {
+        return 200; // HP max de la Tour
+    }
+    
+    // Helper methods to access coordinates
+    private int getY(int lig) {
+        return lig * getJeu().getTailleTuile();
+    }
+
+    private int getX(int col) {
+        return col * getJeu().getTailleTuile();
     }
 }

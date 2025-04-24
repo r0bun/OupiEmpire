@@ -266,6 +266,13 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 						String msg = "❌ Pas de troupe à attaquer ici! Cliquez sur une troupe ennemie.";
 						System.out.println(msg);
 						tempCombatMessages.add(msg);
+						
+						// Désactiver également le mode attaque dans ce cas
+						modeAttaque = false;
+						if(jeuxOupi.getTroupeSelectionnee()!=null) {
+							jeuxOupi.setModeAttaque(modeAttaque);
+						}
+						
 						sendCombatMessages();
 						return;
 					}
@@ -392,12 +399,14 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 						System.out.println(msg);
 						tempCombatMessages.add(msg);
 						
-						getPcs().firePropertyChange("troupe", "", null);
-						jeuxOupi.deselectionnerTroupeAct();
-						modeAttaque = false; // Désactiver le mode attaque si actif
-						if(jeuxOupi.getTroupeSelectionnee()!=null) {
+						// Important: Désactiver d'abord le mode attaque avant de désélectionner la troupe
+						if (modeAttaque) {
+							modeAttaque = false;
 							jeuxOupi.setModeAttaque(modeAttaque);
 						}
+						
+						getPcs().firePropertyChange("troupe", "", null);
+						jeuxOupi.deselectionnerTroupeAct();
 						
 						sendCombatMessages();
 					}
