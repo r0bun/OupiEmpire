@@ -35,6 +35,8 @@ public class JeuxOupi implements Dessinable {
     private int ligO = 0;
     
     private int zonePlacer = 4;
+    
+    private boolean modeAttaque = false;
 
     // Liste pour stocker les messages d'attaque et d'erreur
     private ArrayList<String> combatMessages = new ArrayList<>();
@@ -613,4 +615,9 @@ public class JeuxOupi implements Dessinable {
     public int getZonePlacer () {
     	return zonePlacer;
     }
+
+	public void setModeAttaque(boolean modeAttaque) {
+		this.modeAttaque = modeAttaque;
+		troupeSelectionnee.setAttaqueMode(modeAttaque);
+	}
 }

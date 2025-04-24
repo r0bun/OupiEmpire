@@ -32,6 +32,7 @@ public class Troupe implements Dessinable {
     private boolean selectionne;
     public boolean remplie;
     private boolean isNexus;
+    private boolean attaqueMode = false;
     
     private boolean epuisee;
     private int equipe;
@@ -42,7 +43,7 @@ public class Troupe implements Dessinable {
     // Variables pour garder la position centrale quand tuilesSelec a été créé
     private int centreCol, centreLig;
     
-    private Tuile[][] tuilesSelec;
+    private Tuile[][] tuilesSelec, tuilesAttaque;
     
     protected int HP, attaque, defense, vitesse, endurance;
     protected ArrayList<Debuff> debuffs = new ArrayList<Debuff>();
@@ -163,6 +164,50 @@ public class Troupe implements Dessinable {
             tuilesSelec = null;
         }
     }
+    
+    private void initModeAttaque() {
+    	int range = 2 * distanceAttaque + 1 ;
+        int mapRows = jeu.getPlateau().getLignes();
+        int mapCols = jeu.getPlateau().getColonnes();
+        
+        tuilesAttaque = new Tuile[range][range];
+    	for (int i = 0; i < range; i++) {
+            for (int j = 0; j < range; j++) {
+                int ligne = lig - distanceAttaque + i;
+                int colonne = col - distanceAttaque + j;
+                
+                if (Math.abs(i-distanceAttaque) + Math.abs(j-distanceAttaque) <= distanceAttaque && ligne >= 0 
+                		&& ligne < mapRows && colonne >=0 && colonne < mapCols) {
+                	
+                    Tuile tuile = jeu.getPlateau().getTuile(ligne, colonne);
+                    if ((ligne == lig && colonne == col)) {
+                        tuilesAttaque[i][j] = null;
+                    } else {
+                        tuilesAttaque[i][j] = tuile;
+                        // Marquer la tuile comme accessible pour le rendu visuel
+                        tuile.setAttaque(true);
+                    }
+                } else {
+                    tuilesAttaque[i][j] = null; // En dehors du plateau ou en dehors du losange
+                }
+            }
+        }
+    }
+    
+    private void effacerZoneAttaque() {
+        if (tuilesAttaque != null) {
+            int taille = tuilesAttaque.length;
+            for (int i = 0; i < taille; i++) {
+                for (int j = 0; j < taille; j++) {
+                    if (tuilesAttaque[i][j] != null) {
+                        tuilesAttaque[i][j].setAttaque(false);
+                    }
+                }
+            }
+            // Pour s'assurer que les références sont libérées correctement
+            tuilesAttaque = null;
+        }
+    }
 
     private void printTuilesSelec() {
         int taille = tuilesSelec.length;
@@ -279,6 +324,10 @@ public class Troupe implements Dessinable {
             if (currentTile instanceof tuiles.Sable) {
             }
         }
+        if(attaqueMode) {
+        	effacerZoneAttaque();
+        	initModeAttaque();
+        }
     }
 
     /**
@@ -294,6 +343,10 @@ public class Troupe implements Dessinable {
             Tuile currentTile = jeu.getPlateau().getTuile(lig, col);
             if (currentTile instanceof tuiles.Sable) {
             }
+        }
+        if(attaqueMode) {
+        	effacerZoneAttaque();
+        	initModeAttaque();
         }
     }
 
@@ -311,6 +364,10 @@ public class Troupe implements Dessinable {
             if (currentTile instanceof tuiles.Sable) {
             }
         }
+        if(attaqueMode) {
+        	effacerZoneAttaque();
+        	initModeAttaque();
+        }
     }
 
     /**
@@ -326,6 +383,10 @@ public class Troupe implements Dessinable {
             Tuile currentTile = jeu.getPlateau().getTuile(lig, col);
             if (currentTile instanceof tuiles.Sable) {
             }
+        }
+        if(attaqueMode) {
+        	effacerZoneAttaque();
+        	initModeAttaque();
         }
     }
 
@@ -654,6 +715,20 @@ public class Troupe implements Dessinable {
 
     public void setEpuisee(boolean epuisee) {
         this.epuisee = epuisee;
+    }
+    
+    public boolean isAttaqueMode() {
+        return attaqueMode;
+    }
+
+    public void setAttaqueMode(boolean attaqueMode) {
+        this.attaqueMode = attaqueMode;
+        
+        if(attaqueMode) {
+            initModeAttaque();
+        } else {
+        	effacerZoneAttaque();
+        }
     }
 
     public int getAttaque() {

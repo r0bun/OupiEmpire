@@ -255,6 +255,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 						}
 						// Désactiver le mode attaque après une tentative
 						modeAttaque = false;
+						jeuxOupi.setModeAttaque(modeAttaque);
 						sendCombatMessages();
 						return;
 					} else {
@@ -517,6 +518,7 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 			}
 
 			modeAttaque = !modeAttaque; // Toggle attack mode
+			jeuxOupi.setModeAttaque(modeAttaque);
 			if (modeAttaque) {
 				String msg = "🔴 MODE ATTAQUE ACTIVÉ! Cliquez sur une troupe ennemie à attaquer.";
 				System.out.println(msg);

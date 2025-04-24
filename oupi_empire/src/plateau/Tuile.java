@@ -25,6 +25,7 @@ public abstract class Tuile {
     protected boolean posDep;
     protected boolean accessible; // Indique si la tuile est accessible par la troupe sélectionnée
     protected boolean placable;
+    protected boolean attaque;
     protected Color couleur; // Couleur de la tuile
     protected BufferedImage texture;
     protected TerrainObstacle obstacle;
@@ -86,18 +87,18 @@ public abstract class Tuile {
             }
             
             // Si la tuile est accessible par la troupe sélectionnée
-            if (accessible || placable) {
+            if (accessible || placable || attaque) {
                 // Sauvegarder le composite original
                 Composite originalComposite = g2dPrive.getComposite();
                 
                 // Appliquer un effet de surbrillance (vert clair semi-transparent)
                 g2dPrive.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
-                if(accessible) {
-                	g2dPrive.setColor(new Color(100, 255, 100)); // Vert clair
+                if(attaque) {
+                	g2dPrive.setColor(new Color(255, 0, 0)); //rouge
                 } else if(placable){
-                	g2dPrive.setColor(new Color(100, 100, 255));
+                	g2dPrive.setColor(new Color(100, 100, 255)); //bleu (tuile ou on peut placer des troupes)
                 } else {
-                	g2dPrive.setColor(new Color(255, 100, 100));
+                	g2dPrive.setColor(new Color(100, 255, 100)); // Vert clair
                 }
                 g2dPrive.fillRect(x, y, taille, taille);
                 
@@ -170,12 +171,40 @@ public abstract class Tuile {
         this.accessible = accessible;
     }
 
+    /**
+     * Vérifie si la tuile est dans la zone de placement des troupes du joueur
+     *
+     * @return {@code true} si la tuile est dans la zone, {@code false} sinon
+     */
     public boolean isPlacable() {
 		return placable;
 	}
 
+    /**
+     * Définit si la tuile dans la zone placable pour le joueur.
+     *
+     * @param placable l'état d'accessibilité de la tuile
+     */
 	public void setPlacable(boolean placable) {
 		this.placable = placable;
+	}
+	
+	/**
+     * Vérifie si la tuile est dans la zone d'attaque de la troupe selectionnee
+     *
+     * @return {@code true} si la tuile est dans la zone, {@code false} sinon
+     */
+    public boolean isAttaque() {
+		return attaque;
+	}
+
+    /**
+     * Définit si la tuile dans la zone d'attaque de la troupe
+     *
+     * @param attaque 
+     */
+	public void setAttaque(boolean attaque) {
+		this.attaque = attaque;
 	}
 
 	/**

@@ -16,7 +16,7 @@ public class MainMenu extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
-    private TutorialIntro tutorialIntro;
+
     private appLaunch afficherFrame;
 
     public static void main(String[] args) {
@@ -33,7 +33,6 @@ public class MainMenu extends JFrame {
     public MainMenu() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setUndecorated(true);
         setResizable(false);
         setLocationRelativeTo(null);
 
@@ -153,29 +152,6 @@ public class MainMenu extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("Bouton 'Tutoriel' cliqué !");
-                LoadingScreen loading = new LoadingScreen();
-                final long startTime = System.currentTimeMillis();
-                
-                loading.startLoading(
-                    () -> {
-                    	
-                    	long elapsedTime = System.currentTimeMillis() - startTime;
-                        if (elapsedTime < 2000) {
-                            try {
-                                Thread.sleep(2000 - elapsedTime);
-                            } catch (InterruptedException ex) {
-                                ex.printStackTrace();
-                            }
-                        }
-                        
-                        tutorialIntro = new TutorialIntro();
-                    },
-                    () -> {
-                        
-                       tutorialIntro.setVisible(true);
-                    }
-                );
-                dispose();
             }
         });
         
