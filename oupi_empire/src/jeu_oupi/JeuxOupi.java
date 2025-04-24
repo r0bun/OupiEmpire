@@ -127,6 +127,7 @@ public class JeuxOupi implements Dessinable {
         troupes.add(new Genial(4, 6, 0, this));
         troupes.add(new Electricien(6, 6, 0, this)); 
         troupes.add(new Nexus(4, 4, 0, this));
+        troupes.add(new Tour(0, 4, 0, this));
 
         // Équipe 1 (joueur 2)
         troupes.add(new Genial(37, 19, 1, this));
@@ -223,7 +224,12 @@ public class JeuxOupi implements Dessinable {
      * Désélectionne la troupe actuellement sélectionnée.
      */
     public void deselectionnerTroupeAct() {
-    	if (troupeSelectionnee != null) {
+        if (troupeSelectionnee != null) {
+            // S'assurer que le mode attaque est désactivé avant de désélectionner
+            if (troupeSelectionnee.isAttaqueMode()) {
+                troupeSelectionnee.setAttaqueMode(false);
+            }
+            
             troupeSelectionnee.deselec();
 
             // Réinitialiser le marquage de la position de départ
@@ -348,53 +354,58 @@ public class JeuxOupi implements Dessinable {
             return false;
         }
 
-        // Calculer la distance entre les troupes (distance Manhattan)
-        int distance;
-        
-        // Si la cible est un Nexus, utiliser sa méthode spéciale pour calculer la distance minimale
-        if (troupeCible instanceof Nexus) {
-            distance = ((Nexus) troupeCible).getDistanceMinimale(troupeSelectionnee);
-        } else {
-            // Calcul standard pour les autres troupes
-            distance = Math.abs(troupeSelectionnee.getCol() - troupeCible.getCol())
-                    + Math.abs(troupeSelectionnee.getLig() - troupeCible.getLig());
-        }
+        if(!troupeSelectionnee.isEpuisee()) {
+        	// Calculer la distance entre les troupes (distance Manhattan)
+            int distance;
+            
+            // Si la cible est un Nexus ou une Tour, utiliser sa méthode spéciale pour calculer la distance minimale
+            if (troupeCible instanceof Nexus) {
+                distance = ((Nexus) troupeCible).getDistanceMinimale(troupeSelectionnee);
+            } else if (troupeCible instanceof Tour) {
+                distance = ((Tour) troupeCible).getDistanceMinimale(troupeSelectionnee);
+            } else {
+                // Calcul standard pour les autres troupes
+                distance = Math.abs(troupeSelectionnee.getCol() - troupeCible.getCol())
+                        + Math.abs(troupeSelectionnee.getLig() - troupeCible.getLig());
+            }
 
-        // Vérifier si la cible est à portée d'attaque selon la distance d'attaque de la troupe
-        if (distance > troupeSelectionnee.getDistanceAttaque()) {
-            String msg = "⚠️ Échec de l'attaque: La cible est trop éloignée (distance " + distance
-                    + ", portée maximale " + troupeSelectionnee.getDistanceAttaque() + ")";
+            // Vérifier si la cible est à portée d'attaque selon la distance d'attaque de la troupe
+            if (distance > troupeSelectionnee.getDistanceAttaque()) {
+                String msg = "⚠️ Échec de l'attaque: La cible est trop éloignée (distance " + distance
+                        + ", portée maximale " + troupeSelectionnee.getDistanceAttaque() + ")";
+                System.out.println(msg);
+                combatMessages.add(msg);
+                return false;
+            }
+
+            String msg = "🗡️ Attaque initiée par " + troupeSelectionnee.getClass().getSimpleName()
+                    + " contre " + troupeCible.getClass().getSimpleName();
             System.out.println(msg);
             combatMessages.add(msg);
-            return false;
+
+            // Appel de la méthode d'attaque de la troupe
+            troupeSelectionnee.attaquer(troupeCible);
+            
+            fireAttackEvent();
+
+            // Vérifier si la troupe cible est morte (HP <= 0)
+            if (troupeCible.getHP() <= 0) {
+            	System.out.println("💀 " + troupeCible.getClass().getSimpleName() + " a été vaincu!");
+            	troupeSelectionnee.kill();
+            	gererMortTroupe(troupeCible);
+            	
+            }
+
+            // Vérifier si l'attaquant est mort suite à une contre-attaque
+            if (troupeSelectionnee.getHP() <= 0) {
+            	System.out.println("💀 " + troupeSelectionnee.getClass().getSimpleName() + " a été vaincu!");
+            	gererMortTroupe(troupeSelectionnee);
+            	troupeSelectionnee = null;
+            }
+            
+            return true;
         }
-
-        String msg = "🗡️ Attaque initiée par " + troupeSelectionnee.getClass().getSimpleName()
-                + " contre " + troupeCible.getClass().getSimpleName();
-        System.out.println(msg);
-        combatMessages.add(msg);
-
-        // Appel de la méthode d'attaque de la troupe
-        troupeSelectionnee.attaquer(troupeCible);
-        
-        fireAttackEvent();
-
-        // Vérifier si la troupe cible est morte (HP <= 0)
-        if (troupeCible.getHP() <= 0) {
-        	System.out.println("💀 " + troupeCible.getClass().getSimpleName() + " a été vaincu!");
-        	troupeSelectionnee.kill();
-        	gererMortTroupe(troupeCible);
-        	
-        }
-
-        // Vérifier si l'attaquant est mort suite à une contre-attaque
-        if (troupeSelectionnee.getHP() <= 0) {
-        	System.out.println("💀 " + troupeSelectionnee.getClass().getSimpleName() + " a été vaincu!");
-        	gererMortTroupe(troupeSelectionnee);
-        	troupeSelectionnee = null;
-        }
-        
-        return true;
+        return false;
     }
 
     /**
@@ -407,7 +418,7 @@ public class JeuxOupi implements Dessinable {
         if (troupe != null) {
 
            
-            // Vérifier si c'est un Nexus qui a été détruit
+            // Vérifier si c'est un Nexus ou une Tour qui a été détruit
             if (troupe instanceof Nexus) {
                 // Utiliser la méthode spéciale pour libérer les 4 tuiles du Nexus
                 ((Nexus) troupe).libererTuiles();
@@ -417,6 +428,13 @@ public class JeuxOupi implements Dessinable {
                 int equipeGagnante = (equipeNexus == 0) ? 1 : 0;
                 
                 String msg = "🏆 Le Nexus de l'équipe " + equipeNexus + " a été détruit ! L'équipe " + equipeGagnante + " GAGNE !";
+                System.out.println(msg);
+                combatMessages.add(msg);
+            } else if (troupe instanceof Tour) {
+                // Utiliser la méthode spéciale pour libérer les 4 tuiles de la Tour
+                ((Tour) troupe).libererTuiles();
+                
+                String msg = "🏰 Une Tour de l'équipe " + troupe.getEquipe() + " a été détruite !";
                 System.out.println(msg);
                 combatMessages.add(msg);
             } else {
