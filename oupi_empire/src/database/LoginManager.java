@@ -4,10 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.mindrot.jbcrypt.BCrypt;
-
-import jeu_oupi.GameManager;
 //import org.mindrot.jbcrypt.BCrypt;
 
 public class LoginManager {
@@ -40,10 +36,7 @@ public class LoginManager {
             		    passwordHashed = "$2a$" + passwordHashed.substring(4);
             		}
 
-            	   if(BCrypt.checkpw(password, passwordHashed)){
-            		   GameManager.getInstance().setStringJ1(username);
-            		   return true;
-            	   }
+            	   //return BCrypt.checkpw(password, passwordHashed);
                }
                System.out.println("Aucun résultat pour ce username.");
                return false;

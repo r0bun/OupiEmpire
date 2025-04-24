@@ -776,21 +776,9 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 			}
 		}
 		
-		int joueurAdverse = (joueurActuel == 0)? 1 : 0;
-		
-		ArrayList<Troupe> troupesJoueur = new ArrayList<>();
-		troupesJoueur = getPlayerTroupes(joueurAdverse);
 
-		if (nbEq1 == 0 || nbEq2 == 0 || !containsNexus(troupesJoueur)) {
-			if(joueurActuel == 1) {
-				System.out.println("Le joueur" + joueurActuel + " a gagné");
-				getPcs().firePropertyChange("Win", 10, -1);
-				getPcs().firePropertyChange("Fin", 10, -1);
-			}else {
-			System.out.println("Le joueur" + joueurActuel + " a perdu");
-			getPcs().firePropertyChange("Win", 10, -1);
+		if (nbEq1 == 0 || nbEq2 == 0 || !containsNexus(troupes)) {
 			getPcs().firePropertyChange("Fin", 10, -1);
-			}
 		}
 	}
 	
@@ -798,8 +786,6 @@ public class ZoneAnimationOupi extends JPanel implements Runnable {
 		
 		ArrayList<Troupe> troupes = jeuxOupi.getTroupes();
 		ArrayList<Troupe> troupesJoueur = new ArrayList<>();
-		
-		
 		
 		for (int i = 0; i < troupes.size(); i++) {
 			if(troupes.get(i).getEquipe() == player) {

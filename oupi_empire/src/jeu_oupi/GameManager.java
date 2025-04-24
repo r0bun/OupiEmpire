@@ -9,8 +9,6 @@ public class GameManager {
 	private Game currentGame;
 	private appLaunch gameWindow;
 	private ZoneAnimationOupi zoneAnimation;
-	String J1;
-	String J2;
 	
 	private GameManager () {}
 	
@@ -43,21 +41,5 @@ public class GameManager {
 	
 	public ZoneAnimationOupi getZoneAnimationOupi() {
 	        return zoneAnimation;
-	}
-	
-	public void setStringJ2(String string) {
-		J2 = string;
-	}
-	
-	public String getStringJ2() {
-		return J2;
-	}
-	
-	public void setStringJ1(String string) {
-		J1 = string;
-	}
-	
-	public String getStringJ1() {
-		return J1;
 	}
 }

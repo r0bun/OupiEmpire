@@ -1,17 +1,15 @@
 
 package jeu_oupi;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
-import database.DatabaseUpload;
 import troupe.Troupe;
 
 public class Game {
     private JeuxOupi jeuxOupi; // Instance de la logique du jeu
     private ZoneAnimationOupi zoneAnimation; // Interface utilisateur
-    private boolean resultat; // "Victoire", "Défaite", ou "Égalité"
+    private boolean enCours; // État de la partie (en cours ou terminée)
+    private String resultat; // "Victoire", "Défaite", ou "Égalité"
     private int killsJ1;
     private int killsJ2;
     private int towersDestroyedJ1;
@@ -20,8 +18,6 @@ public class Game {
     private int deathsJ2;
     private int nexusHpLostJ1;
     private int nexusHpLostJ2;
-    private DatabaseUpload db;
-
 
     /**
      * Constructeur de la classe Game. 
@@ -41,29 +37,8 @@ public class Game {
         nexusHpLostJ1 = 0;
         nexusHpLostJ2 = 0;
         
-        
-        zoneAnimation.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getPropertyName().equals("Win")) {
-                	
-                	
-                    db = new DatabaseUpload();
-                    
-                    db.insertData(GameManager.getInstance().getStringJ1(), killsJ1, deathsJ1, towersDestroyedJ1, nexusHpLostJ1, true);
-                }
-                
-                if (evt.getPropertyName().equals("Lose")) {
-                	
-                	
-                    db = new DatabaseUpload();
-                    
-                    db.insertData(GameManager.getInstance().getStringJ1(), killsJ1, deathsJ1, towersDestroyedJ1, nexusHpLostJ1, false);
-                }
-            }
-           
-        });
+        enCours = true;
     }
-     
     
     public ZoneAnimationOupi getZoneAnimation () {
     	return zoneAnimation;
