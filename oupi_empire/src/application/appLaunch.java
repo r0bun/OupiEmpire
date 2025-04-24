@@ -163,7 +163,7 @@ public class appLaunch extends JFrame {
 		
 		// === animation panel (on top) ===
 	    String pathToFrames = "res\\png_animations\\Change_Player";
-	    ChangePlayerAnimation animationPanel = new ChangePlayerAnimation(pathToFrames);
+	    ChangePlayerAnimation animationPanel = new ChangePlayerAnimation();
 	    animationPanel.setBounds(0, 0, screenWidth, screenHeight);
 	    animationPanel.setOpaque(false); // Important!
 	    animationPanel.setVisible(false);
@@ -233,10 +233,9 @@ public class appLaunch extends JFrame {
 				if(evt.getPropertyName().equals("equipeActuelle")) {
 					int nouvelleEquipe = (int) evt.getNewValue();
 					
+					equipeActuelle = nouvelleEquipe;
 					animationPanel.setVisible(true);
-			        animationPanel.startAnimation();
-			        
-			       	equipeActuelle = nouvelleEquipe;
+			        animationPanel.startAnimation(equipeActuelle);
 			       	
 					cadreInfo.updateCadreInfo(GameManager.getInstance().getZoneAnimationOupi().getJeuxOupi().getTroupePlayer(equipeActuelle), equipeActuelle);
 					stats.updateTroupe( null, equipeActuelle);

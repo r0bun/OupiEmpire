@@ -134,7 +134,7 @@ public class MainMenu extends JFrame {
                 loading.startLoading(
                     () -> {
                         // Load game assets, levels, sprites
-                    	new ChangePlayerAnimation("res/png_animations/Change_Player");
+                    	new ChangePlayerAnimation();
                         new EndGameAnimation("res/png_animations/End_Game");
                         
                         GameManager.getInstance().startNewGame(1920, 1080);

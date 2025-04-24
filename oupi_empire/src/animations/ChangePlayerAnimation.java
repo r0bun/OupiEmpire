@@ -10,13 +10,16 @@ import java.util.List;
 
 public class ChangePlayerAnimation extends JPanel {
     private List<ImageIcon> frames;  // List to hold the PNG frames
+    private List<ImageIcon> frames2;  // List to hold the PNG frames
+    private List<ImageIcon> activeFrames; // Currently active animation frames
     private JLabel animationLabel;    // Label to display the current frame
     private int currentFrame = 0;     // Track the current frame being displayed
     private Timer timer;
 
-    public ChangePlayerAnimation(String imageFolderPath) {
+    public ChangePlayerAnimation() {
 
     	frames = loadPNGFrames("res\\png_animations\\Change_Player");
+    	frames2 = loadPNGFrames("res\\png_animations\\Change_Player2");
        
     	// Set up the Panel
         setLayout(null);
@@ -28,29 +31,29 @@ public class ChangePlayerAnimation extends JPanel {
         add(animationLabel);
     }
 
-    public void startAnimation() {
-        // Reset to the first frame if the animation was already running
+    public void startAnimation(int team) {
+        // Select animation based on team number
+        activeFrames = (team == 1) ? frames2 : frames;
+        
         currentFrame = 0;
 
-        // Stop any existing timer
         if (timer != null && timer.isRunning()) {
             timer.stop();
         }
 
-        // Start the animation
         timer = new Timer(1000 / 30, e -> {
-            if (currentFrame >= frames.size()) {
-                ((Timer) e.getSource()).stop(); // Stop the animation when it finishes
-                setVisible(false); // Hide the animation panel after finishing
+            if (currentFrame >= activeFrames.size()) {
+                ((Timer) e.getSource()).stop();
+                setVisible(false);
                 return;
             }
 
-            animationLabel.setIcon(frames.get(currentFrame));  // Display the next frame
+            animationLabel.setIcon(activeFrames.get(currentFrame));
             currentFrame++;
         });
 
-        setVisible(true);  // Ensure the panel is visible when the animation starts
-        timer.start();    // Start the timer for the animation
+        setVisible(true);
+        timer.start();
     }
         
     private List<ImageIcon> loadPNGFrames(String folderPath) {
@@ -79,7 +82,7 @@ public class ChangePlayerAnimation extends JPanel {
 
         // Create the animation panel
         ChangePlayerAnimation animationPanel = new ChangePlayerAnimation(
-            "res\\png_animations\\Change_Player"
+            
         );
         animationPanel.setBounds(0, 0, 1920, 1080); // Make sure the panel fits the frame
 
@@ -88,7 +91,7 @@ public class ChangePlayerAnimation extends JPanel {
         frame.setVisible(true);
 
         // Start the animation
-        animationPanel.startAnimation();
+        animationPanel.startAnimation(1);
     }
 
 }
