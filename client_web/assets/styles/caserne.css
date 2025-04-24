@@ -1,0 +1,73 @@
+html, body {
+    height: 100%; /* Ensures the body and html elements take up the full viewport height */
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-image: url('../images/CatBackground.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover; /* Revert to cover for consistent scaling across pages */
+    background-attachment: fixed; /* Optional: Matches default behavior if fixed is unnecessary */
+    background-color: #000; /* Optional: Adds a fallback background color */
+    margin: 0;
+    padding: 0;
+}
+
+main {
+    padding: 6rem 1rem; /* Augmente l'espacement supérieur pour éviter le chevauchement avec la barre de navigation */
+}
+
+.welcome-message {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: gold; /* Couleur dorée pour le message d'accueil */
+    margin-bottom: 2rem;
+}
+
+.unit-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: rgba(83, 37, 23, 0.9); /* Couleur similaire */
+    border-radius: 0.5rem;
+    box-shadow: 0px 0px 0.625rem rgba(0, 0, 0, 0.1);
+    border: 2px solid gold; /* Bordure dorée */
+}
+
+.unit-image {
+    flex: 0 0 10rem; /* Largeur fixe en rem */
+    height: 10rem; /* Hauteur fixe en rem */
+    width: 10rem; /* Largeur fixe en rem */
+    margin-right: 1rem;
+    border-radius: 0.5rem;
+    object-fit: cover;
+    border: 2px solid gold; /* Bordure dorée */
+}
+
+.unit-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.unit-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: gold; /* Titre en doré */
+}
+
+.unit-stats {
+    font-size: 1rem;
+    color: #f0e68c; /* Statistiques avec une teinte dorée */
+}
+
+.unit-description {
+    font-size: 0.9rem;
+    color: #f5deb3; /* Description avec une teinte dorée pâle */
+}

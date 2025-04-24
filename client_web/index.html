@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="assets/styles/styles.css">
+    <link rel="stylesheet" href="assets/styles/nav.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="assets/js/index.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Lakaka Land</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="caserne.html">Casèrne</a></li>
+                <li><a href="stats.html">Statistiques</a></li>
+                <li><a href="profil.html">Mon profil</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div id="Section-connexion">
+        <div id="Section-image">
+            <img id="Lobotomisateur" src="assets/images/Lobotomisateur.jpg">
+            <div id="texteBulle">
+                <p>Salutation puissant guerrier!</p>
+                <p>Identifie toi!</p>
+            </div>
+            <img id="bulle" src="assets/images/text box.png">
+        </div>
+        <div id="Section-form">
+
+            <div id="message-erreur" display="none">
+                <div id="erreurs-mdp" display="none">
+                    <p class="msg-erreur-mdp msg-erreur"></p>
+                </div>
+            </div>
+            
+            <form id="formulaire" method="post">
+                <label for="identifiant">Identifiant:</label>
+                <input class="usernameInput" type="text" id="identifiant" name="id" placeholder="Entrez votre identifiant">
+                
+                <label for="mot_de_passe">Mot de passe :</label>
+                <input class="mdpInput" type="password" id="mot_de_passe" name="mdp" placeholder="Entrez votre mot de passe">
+                
+                <button type="submit" name="login">Se connecter</button>
+                <button type="reset">Réinitialiser</button>
+                <button type="button" class="sinscrire" id="inscription">S'inscrire</button>
+            </form>
+        </div>
+    </div>
+    
+</body>
+</html>

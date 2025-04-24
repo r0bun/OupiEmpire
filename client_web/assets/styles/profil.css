@@ -1,0 +1,96 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background-image:url('../images/CatBackground.png');
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents repetition */
+    background-attachment: fixed;
+}
+
+#section-formulaire {
+    padding-top: 4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top:10%;
+}
+
+#message-erreur {
+    display: flex;
+    margin-top:4rem;
+    justify-content: center;
+    align-items: center;
+} 
+
+#formulaire {
+    background-color: rgba(83, 37, 23, 0.986);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0px 0px 0.625rem rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 20rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: .625rem;
+}
+
+h1{
+    color:aliceblue;
+    text-align: center;
+    border:white solid 2px;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+label {
+    font-size: 1.5rem;
+    color:aliceblue
+}
+
+.mdpInput, .usernameInput {
+    width: 100%;
+    padding: 0.1rem; 
+    font-size: 0.8rem; 
+    border: 2px solid #575454;
+    border-radius: 0.5rem;
+    height: 2rem; 
+}
+
+.sinscrire{
+    background-color: #921d1d;
+    color: rgb(255, 255, 255);
+    border: none;
+    padding: 0.75rem;
+    border-radius: 0.3125rem;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+button {
+    background-color: #494949;
+    color: rgb(255, 255, 255);
+    border: none;
+    padding: 0.75rem;
+    border-radius: 0.3125rem;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+#label-email + p {
+    padding: 0;
+    margin:0;
+    color: aliceblue;
+}
+
+#label-username + p {
+    padding: 0;
+    margin:0;
+    color: aliceblue;
+}
+
+#erreurs-mdp {
+    color: red;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    z-index: 3;
+}

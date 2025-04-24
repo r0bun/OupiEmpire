@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="assets/styles/inscription.css">
+    <link rel="stylesheet" href="assets/styles/nav.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="assets/js/inscription.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Lakaka Land</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="caserne.html">Casèrne</a></li>
+                <li><a href="stats.html">Statistiques</a></li>
+                <li><a href="profil.html">Mon profil</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div id="message-erreur">
+        <div id="erreurs-mdp">
+            <p class="msg-erreur-mdp msg-erreur"></p>
+        </div>
+    </div>
+
+
+    <div id="formInscription">
+        <form id="formulaire" method="post">
+            <label for="id">Identifiant :</label>
+            <input class="usernameInput" type="text" id="id" placeholder="Entrez votre identifiant" required>
+
+            <label for="email">Adresse email :</label>
+            <input class="usernameInput" type="text" id="email" placeholder="Entrez votre adresse email" required>
+
+            <label for="mdp">Mot de passe :</label>
+            <input class="mdpInput" type="password" id="mdp" placeholder="Entrez votre mot de passe" required>
+
+            <button type="submit">S'inscrire</button>
+        </form>
+    </div>
+</body>
+</html>

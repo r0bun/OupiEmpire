@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="assets/styles/profil.css">
+    <link rel="stylesheet" href="assets/styles/nav.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="assets/js/profil.js"></script>
+    
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Lakaka Land</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="caserne.html">Casèrne</a></li>
+                <li><a href="stats.html">Statistiques</a></li>
+                <li><a href="profil.html">Mon profil</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div id="message-erreur" display="none">
+        <div id="erreurs-mdp" display="none">
+            <p class="msg-erreur-mdp msg-erreur"></p>
+        </div>
+    </div>
+
+
+    <div id="section-formulaire">
+        <form id="formulaire" autocomplete="off" method="post">
+
+            <h1>Mon profil</h1>
+            <label for="id" id="label-username">Identifiant:</label>
+            <p id="username"></p>
+            <input class="usernameInput" type="text" id="id" placeholder="Nouvel identifiant" required>
+
+            <label for="email" id="label-email">Adresse email:</label>
+            <p id="email"></p>
+            <input class="usernameInput" type="text" id="id1" placeholder="Nouvelle adresse" required>
+
+            <label for="mdp" id="mdp">Mot de passe :</label>
+            <input class="mdpInput" type="password" id="ancien-mdp" placeholder="Ancien mot de passe" required>
+            <input class="mdpInput" type="password" id="mot-de-passe" placeholder="Nouveau mot de passe" autocomplete="new-password" required>
+
+        <button type="submit">Enregistrer les changements</button>
+        </form>
+    </div>
+</body>
+</html>
