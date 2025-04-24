@@ -12,7 +12,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -95,12 +97,15 @@ public class MapBuilderApp extends JFrame {
 
         JMenu fileMenu = new JMenu("File");
         JMenuItem newItem = new JMenuItem("New Map");
+        JMenuItem loadItem = new JMenuItem("Load Map");
         JMenuItem exportItem = new JMenuItem("Export Map");
 
         newItem.addActionListener(e -> showNewMapDialog());
+        loadItem.addActionListener(e -> loadMap());
         exportItem.addActionListener(e -> exportMap());
 
         fileMenu.add(newItem);
+        fileMenu.add(loadItem);
         fileMenu.add(exportItem);
         menuBar.add(fileMenu);
 
@@ -276,18 +281,93 @@ public class MapBuilderApp extends JFrame {
                 // Add or replace obstacle
                 mapData.setObstacle(col, row, selectedObstacleType);
             } else {
-                // Check if there's an existing obstacle at this location
-                Obstacle existingObstacle = mapData.getObstacle(col, row);
-                
                 // Update the tile type
                 mapData.setTile(col, row, selectedTileType);
                 
-                // If there was an obstacle, make sure it's preserved
-                if (existingObstacle != null) {
-                    mapData.setObstacle(col, row, existingObstacle.getType());
-                }
+                // When "No Obstacle" is selected, explicitly remove any obstacle
+                mapData.setObstacle(col, row, null);
             }
             mapPanel.repaint();
+        }
+    }
+    
+    private void loadMap() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Load Map");
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+                "Text Files", "txt"));
+
+        int userSelection = fileChooser.showOpenDialog(this);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                // Read dimensions
+                int rows = Integer.parseInt(reader.readLine().trim());
+                int cols = Integer.parseInt(reader.readLine().trim());
+                int tileSize = Integer.parseInt(reader.readLine().trim());
+
+                // Create new map data
+                mapData = new MapData(rows, cols, tileSize);
+
+                // Read map tiles
+                for (int row = 0; row < rows; row++) {
+                    String line = reader.readLine();
+                    if (line == null || line.equals("OBS")) break;
+
+                    for (int col = 0; col < Math.min(cols, line.length()); col++) {
+                        char tileChar = line.charAt(col);
+                        TileType tileType = TileType.fromSymbol(tileChar);
+                        if (tileType != null) {
+                            mapData.setTile(col, row, tileType);
+                        }
+                    }
+                }
+
+                // Look for obstacle section
+                String line;
+                boolean foundObsSection = false;
+                while ((line = reader.readLine()) != null) {
+                    if (line.equals("OBS")) {
+                        foundObsSection = true;
+                        break;
+                    }
+                }
+
+                // Read obstacles if section is found
+                if (foundObsSection) {
+                    while ((line = reader.readLine()) != null) {
+                        if (line.trim().isEmpty()) continue;
+                        
+                        String[] parts = line.split(" ");
+                        if (parts.length >= 3) {
+                            String obstacleType = parts[0];
+                            int col = Integer.parseInt(parts[1]);
+                            int row = Integer.parseInt(parts[2]);
+                            
+                            Obstacle.Type type = Obstacle.Type.fromExportName(obstacleType);
+                            if (type != null && col >= 0 && col < cols && row >= 0 && row < rows) {
+                                mapData.setObstacle(col, row, type);
+                            }
+                        }
+                    }
+                }
+
+                // Update UI
+                mapPanel.updateSize();
+                mapPanel.repaint();
+                
+                JOptionPane.showMessageDialog(this,
+                        "Map loaded successfully from " + file.getAbsolutePath(),
+                        "Load Successful", JOptionPane.INFORMATION_MESSAGE);
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this,
+                        "An error occurred while loading the map: " + e.getMessage(),
+                        "Load Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
         }
     }
 

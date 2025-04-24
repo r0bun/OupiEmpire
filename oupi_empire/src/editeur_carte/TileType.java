@@ -1,25 +1,25 @@
 package editeur_carte;
 
 public enum TileType {
-    GRASS('H', "Grass"),
-    WATER('W', "Water"),
-    SAND('S', "Sand"),
-    GRAVEL('G', "Gravel");
+    GRASS("Grass", 'H'),
+    WATER("Water", 'W'),
+    SAND("Sand", 'S'),
+    GRAVEL("Gravel", 'G');
     
-    private final char symbol;
     private final String displayName;
+    private final char symbol;
     
-    TileType(char symbol, String displayName) {
-        this.symbol = symbol;
+    TileType(String displayName, char symbol) {
         this.displayName = displayName;
-    }
-    
-    public char getSymbol() {
-        return symbol;
+        this.symbol = symbol;
     }
     
     public String getDisplayName() {
         return displayName;
+    }
+    
+    public char getSymbol() {
+        return symbol;
     }
     
     public static TileType fromSymbol(char symbol) {
@@ -28,6 +28,6 @@ public enum TileType {
                 return type;
             }
         }
-        return GRASS; // Default
+        return GRASS; // Default if not found
     }
 }
