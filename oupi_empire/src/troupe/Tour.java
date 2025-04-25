@@ -33,8 +33,8 @@ public class Tour extends Troupe {
         this.setDistanceParcourable(0);
         this.setBakDistParc(0);
         
-        // La Tour a une portée d'attaque de 3 (attaque à distance)
-        this.setDistanceAttaque(3);
+        // La Tour a une portée d'attaque de 10 (attaque à distance)
+        this.setDistanceAttaque(10);
         
         // Statistiques adaptées pour une structure offensive
         HP = 200;

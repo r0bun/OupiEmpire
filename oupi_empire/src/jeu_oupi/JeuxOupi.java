@@ -127,7 +127,7 @@ public class JeuxOupi implements Dessinable {
         troupes.add(new Genial(4, 6, 0, this));
         troupes.add(new Electricien(6, 6, 0, this)); 
         troupes.add(new Nexus(4, 4, 0, this));
-        troupes.add(new Tour(0, 4, 0, this));
+        troupes.add(new Tour(0, 10, 0, this));
 
         // Équipe 1 (joueur 2)
         troupes.add(new Genial(37, 19, 1, this));
@@ -135,6 +135,7 @@ public class JeuxOupi implements Dessinable {
         troupes.add(new Genial(34, 26, 1, this));
         troupes.add(new Lobotomisateur(36, 20, 1, this)); 
         troupes.add(new Nexus(34, 24, 1, this));
+        troupes.add(new Tour(30, 20, 0, this));
 
     }
 

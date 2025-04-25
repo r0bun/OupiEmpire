@@ -25,7 +25,7 @@ public class Electricien extends Troupe {
         image = getImage("/troupes/electricien.png");
         
         // Utilisation de la propriété distanceAttaque de la classe parent
-        this.setDistanceAttaque(2);
+        this.setDistanceAttaque(4);
         
         // Statistiques spécifiques - faible en défense mais bon en attaque à distance
         HP = 90;
